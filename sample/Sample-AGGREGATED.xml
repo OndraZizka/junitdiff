@@ -1,0 +1,95 @@
+<aggregate>
+	<groups>
+		<group name="db2-97-69" path="workdir/db2-97-69"/>
+		<group name="oracle10g-69" path="workdir/oracle10g-69"/>
+		<group name="oracle11gR1-69" path="workdir/oracle11gR1-69"/>
+		<group name="oracle11gR1-70" path="workdir/oracle11gR1-70"/>
+	</groups>
+
+	<testcase classname="org.hibernate.test.idgen.enhanced.sequence.BasicSequenceTest" name="testNormalBoundary">
+		<testrun result="OK" time="0.022" group="workdir/db2-97-69">
+		</testrun>
+		<testrun result="OK" time="0.038" group="workdir/oracle10g-69">
+		</testrun>
+		<testrun result="OK" time="0.004" group="workdir/oracle11gR1-69">
+		</testrun>
+		<testrun result="OK" time="0.004" group="workdir/oracle11gR1-70">
+		</testrun>
+	</testcase>
+	<testcase classname="org.hibernate.test.cascade.circle.CascadeMergeToChildBeforeParentTest" name="testMergeData3Nodes">
+		<testrun result="OK" time="0.17" group="workdir/db2-97-69">
+		</testrun>
+		<testrun result="OK" time="0.29" group="workdir/oracle10g-69">
+		</testrun>
+		<testrun result="OK" time="0.015" group="workdir/oracle11gR1-69">
+		</testrun>
+		<testrun result="OK" time="0.016" group="workdir/oracle11gR1-70">
+		</testrun>
+	</testcase>
+	<testcase classname="org.hibernate.test.cascade.circle.CascadeMergeToChildBeforeParentTest" name="testMerge">
+		<testrun result="OK" time="0.121" group="workdir/db2-97-69">
+		</testrun>
+		<testrun result="OK" time="0.072" group="workdir/oracle10g-69">
+		</testrun>
+		<testrun result="OK" time="0.082" group="workdir/oracle11gR1-69">
+		</testrun>
+		<testrun result="OK" time="0.083" group="workdir/oracle11gR1-70">
+		</testrun>
+	</testcase>
+	...
+	<testsuites>
+		<testsuite group="workdir/db2-97-69" name="org.hibernate.test.idgen.enhanced.sequence.BasicSequenceTest" origin="workdir/db2-97-69/surefire-reports/TEST-org.hibernate.test.idgen.enhanced.sequence.BasicSequenceTest.xml">
+		<system-out><![CDATA[]]></system-out>
+		<system-err><![CDATA[]]></system-err>
+		</testsuite>
+		<testsuite group="workdir/db2-97-69" name="org.hibernate.test.cascade.circle.CascadeMergeToChildBeforeParentTest" origin="workdir/db2-97-69/surefire-reports/TEST-org.hibernate.test.cascade.circle.CascadeMergeToChildBeforeParentTest.xml">
+		<system-out><![CDATA[]]></system-out>
+		<system-err><![CDATA[]]></system-err>
+		</testsuite>
+		<testsuite group="workdir/db2-97-69" name="org.hibernate.test.component.cascading.collection.CascadeToComponentCollectionTest" origin="workdir/db2-97-69/surefire-reports/TEST-org.hibernate.test.component.cascading.collection.CascadeToComponentCollectionTest.xml">
+		<system-out><![CDATA[]]></system-out>
+		<system-err><![CDATA[]]></system-err>
+		</testsuite>
+		...
+		<testsuite group="workdir/oracle10g-69" name="org.hibernate.test.idgen.enhanced.sequence.BasicSequenceTest" origin="workdir/oracle10g-69/surefire-reports/TEST-org.hibernate.test.idgen.enhanced.sequence.BasicSequenceTest.xml">
+		<system-out><![CDATA[]]></system-out>
+		<system-err><![CDATA[]]></system-err>
+		</testsuite>
+		<testsuite group="workdir/oracle10g-69" name="org.hibernate.test.cascade.circle.CascadeMergeToChildBeforeParentTest" origin="workdir/oracle10g-69/surefire-reports/TEST-org.hibernate.test.cascade.circle.CascadeMergeToChildBeforeParentTest.xml">
+		<system-out><![CDATA[]]></system-out>
+		<system-err><![CDATA[]]></system-err>
+		</testsuite>
+		<testsuite group="workdir/oracle10g-69" name="org.hibernate.test.component.cascading.collection.CascadeToComponentCollectionTest" origin="workdir/oracle10g-69/surefire-reports/TEST-org.hibernate.test.component.cascading.collection.CascadeToComponentCollectionTest.xml">
+		<system-out><![CDATA[]]></system-out>
+		<system-err><![CDATA[]]></system-err>
+		</testsuite>
+		...
+		<testsuite group="workdir/oracle11gR1-69" name="org.hibernate.test.idgen.enhanced.sequence.BasicSequenceTest" origin="workdir/oracle11gR1-69/surefire-reports/TEST-org.hibernate.test.idgen.enhanced.sequence.BasicSequenceTest.xml">
+		<system-out><![CDATA[]]></system-out>
+		<system-err><![CDATA[]]></system-err>
+		</testsuite>
+		<testsuite group="workdir/oracle11gR1-69" name="org.hibernate.test.cascade.circle.CascadeMergeToChildBeforeParentTest" origin="workdir/oracle11gR1-69/surefire-reports/TEST-org.hibernate.test.cascade.circle.CascadeMergeToChildBeforeParentTest.xml">
+		<system-out><![CDATA[]]></system-out>
+		<system-err><![CDATA[]]></system-err>
+		</testsuite>
+		<testsuite group="workdir/oracle11gR1-69" name="org.hibernate.test.component.cascading.collection.CascadeToComponentCollectionTest" origin="workdir/oracle11gR1-69/surefire-reports/TEST-org.hibernate.test.component.cascading.collection.CascadeToComponentCollectionTest.xml">
+		<system-out><![CDATA[]]></system-out>
+		<system-err><![CDATA[]]></system-err>
+		</testsuite>
+		...
+		<testsuite group="workdir/oracle11gR1-70" name="org.hibernate.test.idgen.enhanced.sequence.BasicSequenceTest" origin="workdir/oracle11gR1-70/surefire-reports/TEST-org.hibernate.test.idgen.enhanced.sequence.BasicSequenceTest.xml">
+		<system-out><![CDATA[]]></system-out>
+		<system-err><![CDATA[]]></system-err>
+		</testsuite>
+		<testsuite group="workdir/oracle11gR1-70" name="org.hibernate.test.cascade.circle.CascadeMergeToChildBeforeParentTest" origin="workdir/oracle11gR1-70/surefire-reports/TEST-org.hibernate.test.cascade.circle.CascadeMergeToChildBeforeParentTest.xml">
+		<system-out><![CDATA[]]></system-out>
+		<system-err><![CDATA[]]></system-err>
+		</testsuite>
+		<testsuite group="workdir/oracle11gR1-70" name="org.hibernate.test.component.cascading.collection.CascadeToComponentCollectionTest" origin="workdir/oracle11gR1-70/surefire-reports/TEST-org.hibernate.test.component.cascading.collection.CascadeToComponentCollectionTest.xml">
+		<system-out><![CDATA[]]></system-out>
+		<system-err><![CDATA[]]></system-err>
+		</testsuite>
+		...
+	</testsuites>
+
+</aggregate>

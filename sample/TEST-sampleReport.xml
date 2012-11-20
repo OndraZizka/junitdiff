@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite failures="1" time="885.978" errors="0" skipped="0" tests="18" name="TestSuite">
+  <properties>
+    <property name="sun.cpu.isalist" value=""/>
+
+  </properties>
+  <testcase time="0" classname="org.jboss.jopr.jsfunit.as5.app.ear.EarStressTest" name="testEarDeploymentRepeated"/>
+  <testcase time="9.844" classname="org.jboss.jopr.jsfunit.as5.app.ear.EarTest" name="testEarBasicDeployment"/>
+  <testcase time="13.416" classname="org.jboss.jopr.jsfunit.as5.app.ear.EarTest" name="testEarMalformedDescriptorDeployment"/>
+  <testcase time="22.379" classname="org.jboss.jopr.jsfunit.as5.app.ear.EarTest" name="testEarDeployFineThenRedeployMalformedDescriptor"/>
+  <testcase time="24.431" classname="org.jboss.jopr.jsfunit.as5.app.ear.EarTest" name="testEarNavigation"/>
+  <testcase time="35.954" classname="org.jboss.jopr.jsfunit.as5.app.ear.EarTest" name="testEarDeploymentNavigation"/>
+  <testcase time="45.489" classname="org.jboss.jopr.jsfunit.as5.app.ear.EarTest" name="testEarSummaryTab"/>
+  <testcase time="55.583" classname="org.jboss.jopr.jsfunit.as5.app.ear.EarTest" name="testEarRedeployment"/>
+    <failure message="Exception message" type="org.jboss.jopr.jsfunit.exceptions.HtmlElementNotFoundException">
+Exception message
+	at org.jboss.jopr.jsfunit.util.EmbJoprTestToolkit$NavTree.getNodeByLabel(EmbJoprTestToolkit.java:379)
+	at org.jboss.jopr.jsfunit.util.EmbJoprTestToolkit$NavTree.getNodeByLabel(EmbJoprTestToolkit.java:351)
+	...
+    </failure>
+  </testcase>
+</testsuite>
