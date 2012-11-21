@@ -1,11 +1,11 @@
+PROGNAME=`basename $0`
+DIRNAME=`dirname $0`
 
 
 if [ "" == "$1" ] ; then
-	echo "  Usage:  transform.sh <XML file>"
-	exit
+    echo "  Usage:  transform.sh <XML file>"
+    exit
 fi
 
 
-~/scripts/xslt $1 JUnitDiff-to-HTML.xsl $1.html
-#./xslt $1 JUnitDiff-to-HTML.xsl $1.html
-
+$DIRNAME/xslt $1 $DIRNAME/JUnitDiff-to-HTML.xsl $1.html
