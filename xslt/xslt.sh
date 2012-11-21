@@ -26,6 +26,7 @@ if [ `which $XALAN_XSLT_SCRIPT` ] ; then
   return
 fi
 
+###  Nothing found.
 echo "  No XSLT transformer found." > &2
 echo "  Install xsltproc:       sudo apt-get install xsltproc" > &2
 echo "  Or set path to XALAN:   export XALAN_XSLT_SCRIPT=~/sw/tools/xalan/2.7.1/transform.sh" > &2
