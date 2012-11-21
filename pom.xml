@@ -97,110 +97,110 @@
                 </target> </configuration> </execution> </executions>
             </plugin>
 
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <version>2.12.4</version> <!-- Needs to be set, does not work without. -->
-              <configuration>
-                  <systemProperties>
-                      <junitdiff.test.data.dir>${basedir}/src/test/data</junitdiff.test.data.dir>
-                      <moje>AaA</moje>
-                  </systemProperties>
-                  <systemPropertyVariables>
-                      <junitdiff.test.data.dir>${basedir}/src/test/data</junitdiff.test.data.dir>
-                      <moje>AaA</moje>
-                  </systemPropertyVariables>
-              </configuration>
-          </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12.4</version> <!-- Needs to be set, does not work without. -->
+                <configuration>
+                    <systemProperties>
+                        <junitdiff.test.data.dir>${basedir}/src/test/data</junitdiff.test.data.dir>
+                        <moje>AaA</moje>
+                    </systemProperties>
+                    <systemPropertyVariables>
+                        <junitdiff.test.data.dir>${basedir}/src/test/data</junitdiff.test.data.dir>
+                        <moje>AaA</moje>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
 
-      </plugins>
+        </plugins>
 
-  </build>
-
-
-  <repositories>
-    <repository><id>ondrazizka-googlecode</id><url>http://ondrazizka.googlecode.com/svn/maven</url></repository>
-  </repositories>
+    </build>
 
 
-  <dependencies>
-
-    <!-- Commons -->
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.6</version>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.1</version>
-    </dependency>
+    <repositories>
+        <repository><id>ondrazizka-googlecode</id><url>http://ondrazizka.googlecode.com/svn/maven</url></repository>
+    </repositories>
 
 
-    <!-- JDom -->
-    <dependency>
-      <groupId>org.jdom</groupId>
-      <artifactId>jdom</artifactId>
-      <version>1.1.3</version>
-    </dependency>
-    <!-- JDom's XPath needs this - XPath.newInstance("/testsuite/testcase") -> CNFEx org.jaxen.NamespaceContext -->
-    <dependency>
-      <groupId>org.jdom</groupId>
-      <artifactId>jaxen-core</artifactId>
-      <version>1.0-FCS</version>
-    </dependency>
-    <!-- JDom's XPath needs this - XPath.newInstance("/testsuite/testcase") -> NoClassDefFoundError: org/jaxen/jdom/JDOMXPath: org/jaxen/jdom/JDOMXPath -->
-    <dependency>
-      <groupId>org.jdom</groupId>
-      <artifactId>jaxen-jdom</artifactId>
-      <version>1.0-FCS</version>
-    </dependency>
-    <!-- JDom's XPath needs this - XPath.newInstance("/testsuite/testcase") -> CNFEx org.saxpath.SAXPathException -->
-    <dependency>
-      <groupId>org.jdom</groupId>
-      <artifactId>saxpath</artifactId>
-      <version>1.0-FCS</version>
-    </dependency>
+    <dependencies>
+
+        <!-- Commons -->
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.1</version>
+        </dependency>
+
+
+        <!-- JDom -->
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>1.1.3</version>
+        </dependency>
+        <!-- JDom's XPath needs this - XPath.newInstance("/testsuite/testcase") -> CNFEx org.jaxen.NamespaceContext -->
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jaxen-core</artifactId>
+            <version>1.0-FCS</version>
+        </dependency>
+        <!-- JDom's XPath needs this - XPath.newInstance("/testsuite/testcase") -> NoClassDefFoundError: org/jaxen/jdom/JDOMXPath: org/jaxen/jdom/JDOMXPath -->
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jaxen-jdom</artifactId>
+            <version>1.0-FCS</version>
+        </dependency>
+        <!-- JDom's XPath needs this - XPath.newInstance("/testsuite/testcase") -> CNFEx org.saxpath.SAXPathException -->
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>saxpath</artifactId>
+            <version>1.0-FCS</version>
+        </dependency>
 
 
 
-    <!-- Slf4j -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.5.11</version>
-    </dependency>
+        <!-- Slf4j -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.5.11</version>
+        </dependency>
 
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.10</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-  <pluginRepositories>
-    <pluginRepository>
-      <id>codehaus</id>
-      <name>Codehaus Release Repo</name>
-      <url>http://repository.codehaus.org</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>codehaus-snapshot</id>
-      <name>Codehaus Snapshot Repo</name>
-      <url>http://snapshots.repository.codehaus.org</url>
-    </pluginRepository>
-  </pluginRepositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>codehaus</id>
+            <name>Codehaus Release Repo</name>
+            <url>http://repository.codehaus.org</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>codehaus-snapshot</id>
+            <name>Codehaus Snapshot Repo</name>
+            <url>http://snapshots.repository.codehaus.org</url>
+        </pluginRepository>
+    </pluginRepositories>
 
-  <distributionManagement>
-    <snapshotRepository>
-      <id>jboss-snapshots-repository</id>
-      <name>JBoss Snapshots Repository</name>
-      <url>https://repository.jboss.org/nexus/content/repositories/snapshots</url>
-    </snapshotRepository>
-  </distributionManagement>  
+    <distributionManagement>
+        <snapshotRepository>
+            <id>jboss-snapshots-repository</id>
+            <name>JBoss Snapshots Repository</name>
+            <url>https://repository.jboss.org/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>  
 
 </project>
