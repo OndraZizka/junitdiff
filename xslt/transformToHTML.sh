@@ -8,4 +8,4 @@ if [ "" == "$1" ] ; then
 fi
 
 
-$DIRNAME/xslt $1 $DIRNAME/JUnitDiff-to-HTML.xsl $1.html
+$DIRNAME/xslt.sh $1 $DIRNAME/JUnitDiff-to-HTML.xsl $1.html
