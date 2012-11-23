@@ -141,9 +141,9 @@ public class InputPreparation
 
 
 
-		/**
-		 *  Reads a list of paths from a text file, one per line. Not recursive.
-		 */
+    /**
+     *  Reads a list of paths from a text file, one per line. Not recursive.
+     */
     private static List<File> readListOfPaths( File path ) {
 
         try {
