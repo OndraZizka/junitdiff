@@ -1,8 +1,6 @@
 package org.jboss.qa.junitdiff;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -22,6 +20,7 @@ import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.qa.junitdiff.util.FileUtil;
 import org.jboss.qa.junitdiff.util.ZipUtil;
+import org.jboss.qa.junitdiff.util.ZipUtil.OverwriteMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,8 +48,13 @@ public class InputPreparation
             isFile:
             if( path.isFile() ){
                 if( path.getName().endsWith(".zip") ){
-                    // Unzip & continue with the dir.
-                    // TODO ZipUtil.unzipFileToDir(path, new File(path.getPath() + "-unzip"), OverwriteMode.DELETE_FIRST);
+                    try {
+                        // Unzip & continue with the dir.
+                        path = ZipUtil.unzipFileToTempDir(path, OverwriteMode.DELETE_FIRST);
+                    } catch( IOException ex ) {
+                        log.error("Can't unzip " + path + ": " + ex.toString());
+                    }
+                    break isFile;
                 }
                 if( path.getName().endsWith(".xml") ){
                     expandedPaths.add( path );
@@ -75,7 +79,7 @@ public class InputPreparation
 
 
     /**
-     * Handle URLs: If the path starts with http://, it downlads the file and unzips if it ends with .zip.
+     * Handle URLs: If the path starts with http://, it downloads the file and unzips if it ends with .zip.
      * Paths will be replaced in-place in the array.
      */
     static void handleURLs( String[] paths ) {
@@ -117,7 +121,7 @@ public class InputPreparation
         File tmpFile = downloadUrlToTempFile( urlStr );
 
         // Unzip & return the tmp dir.
-        File dirWithZipContent = ZipUtil.unzipFileToTempDir( tmpFile );
+        File dirWithZipContent = ZipUtil.unzipFileToTempDir( tmpFile, OverwriteMode.DELETE_FIRST );
         tmpFile.delete();
         return dirWithZipContent;
     }
