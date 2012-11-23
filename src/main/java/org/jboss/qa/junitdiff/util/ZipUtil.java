@@ -15,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  *  Should I use Commons Compress instead?
  * 
@@ -84,6 +85,9 @@ public class ZipUtil {
         unzipFileToDir( zipFile, intoDir, (FileFilter)null );
     }
     
+    /**
+     *  Unzip method which can filter files to extract.
+     */
     public final static void unzipFileToDir( File zipFile, File intoDir, FileFilter fileFilter ) throws IOException {
         
         ZipFile zip = new ZipFile( zipFile );
@@ -123,9 +127,12 @@ public class ZipUtil {
     }
 
     
+    /**
+     *  Filters only files TEST-*.xml
+     */
     private final static IOFileFilter TEST_XML_FILTER = FileFilterUtils.and(
             FileFilterUtils.prefixFileFilter("TEST-"),
-            FileFilterUtils.suffixFileFilter("xml")
+            FileFilterUtils.suffixFileFilter(".xml")
     );
     
     public enum OverwriteMode {
