@@ -23,6 +23,8 @@ import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang.StringUtils;
+import org.jboss.qa.junitdiff.util.ZipUtil;
+import org.jboss.qa.junitdiff.util.ZipUtil.OverwriteMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +49,12 @@ public class InputPreparation
 
         for( File path : reportFiles ) {
 
+            isFile:
             if( path.isFile() ){
+                if( path.getName().endsWith(".zip") ){
+                    // Unzip & continue with the dir.
+                    // TODO ZipUtil.unzipFileToDir(path, new File(path.getPath() + "-unzip"), OverwriteMode.DELETE_FIRST);
+                }
                 if( path.getName().endsWith(".xml") ){
                     expandedPaths.add( path );
                 }
