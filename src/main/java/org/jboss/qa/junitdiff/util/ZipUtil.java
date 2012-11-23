@@ -3,6 +3,7 @@ package org.jboss.qa.junitdiff.util;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,20 +26,19 @@ import org.slf4j.LoggerFactory;
 public class ZipUtil {
     private static final Logger log = LoggerFactory.getLogger( ZipUtil.class );
     
+    private static final int BUFFER_SIZE = 1024 * 32;
     
-    private static final int BUFFER_SIZE = 2048;
     
     /**
      *   Unzips a file to a temporary dir.
      */
-    public static File unzipFileToTempDir( File file ) throws IOException {
+    public static File unzipFileToTempDir( File zipFile ) throws IOException {
 
-		String path = file.getPath();
+		String path = zipFile.getPath();
         // foo/bar.zip -> foo/bar/
 		path = path.endsWith(".zip")
             ?	StringUtils.removeEndIgnoreCase( path, ".zip")
             : path + "-";
-
 
 		// Try to keep the original path in the new path for the group naming purposes.
 		//File tmpDir = File.createTempFile( "JUnitDiff-", "");
@@ -48,21 +48,18 @@ public class ZipUtil {
 		tmpDir.mkdir();
 		tmpDir.deleteOnExit();
 
-		byte data[] = new byte[BUFFER_SIZE];
-
+        //unzipFileToDir( zipFile, tmpDir, TEST_XML_FILTER );
+		
+        byte data[] = new byte[BUFFER_SIZE];
 		try {
-			ZipFile zipfile = new ZipFile(file);
+			ZipFile zipfile = new ZipFile(zipFile);
 			Enumeration e = zipfile.entries();
 			while( e.hasMoreElements() ) {
 				ZipEntry entry = (ZipEntry) e.nextElement();
 				if( entry.isDirectory() )	continue;
 				if( entry.getName().contains("..") )  continue;
 
-				IOFileFilter fileFilter = FileFilterUtils.and(
-						FileFilterUtils.prefixFileFilter("TEST-"),
-						FileFilterUtils.suffixFileFilter("xml")
-				);
-				if( ! fileFilter.accept( new File( entry.getName() )) ) continue;
+				if( ! TEST_XML_FILTER.accept( new File( entry.getName() )) ) continue;
 
 				log.trace("  Extracting: " + entry);
 				BufferedInputStream is = new BufferedInputStream(zipfile.getInputStream(entry));
@@ -82,17 +79,14 @@ public class ZipUtil {
 			}
 		}
         catch( Exception ex ) {
-            log.error( " Error when unzipping " + file.getPath() + ": " + ex.getMessage() );
-            tmpDir.delete();
+            log.error( " Error when unzipping " + zipFile.getPath() + ": " + ex.getMessage() );
+            // FileUtils.deleteDirectory( tmpDir ); // TODO: Check for previous existence.
         }
 
         return tmpDir;
     }
-    
-    
-    
-    
-    private static int BUF_SIZE = 1024 * 32;
+
+
 
     /**
      *  Unzip method with overwrite behavior option.
@@ -118,25 +112,33 @@ public class ZipUtil {
      *  Unzip method.
      */
     public final static void unzipFileToDir( File zipFile, File intoDir ) throws IOException {
+        unzipFileToDir( zipFile, intoDir, (FileFilter)null );
+    }
+    
+    public final static void unzipFileToDir( File zipFile, File intoDir, FileFilter fileFilter ) throws IOException {
         
         ZipFile zip = new ZipFile( zipFile );
         Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zip.entries();
         
+        byte[] buf = new byte[BUFFER_SIZE];
+            
         while( entries.hasMoreElements() ) {
             ZipEntry entry = entries.nextElement();
-            java.io.File f = new java.io.File( intoDir, entry.getName() );
-            if( entry.isDirectory() ) { // if its a directory, create it
-                continue;
-            }
-
+            if( entry.isDirectory() )	continue;
+            if( entry.getName().contains("..") )  continue;
+            
+            if( fileFilter != null && ! fileFilter.accept( new File( entry.getName() )) ) continue;
+            
+            log.trace("  Extracting: " + entry);
+            
+            File f = new File( intoDir, entry.getName() );
             if( !f.exists() ) {
                 f.getParentFile().mkdirs();
                 f.createNewFile();
             }
             
-            InputStream is = zip.getInputStream(entry); // get the input stream
+            InputStream is = zip.getInputStream(entry);
             OutputStream os = new java.io.FileOutputStream(f);
-            byte[] buf = new byte[BUF_SIZE];
             int r;
             while ((r = is.read(buf)) != -1) {
               os.write(buf, 0, r);
@@ -146,6 +148,12 @@ public class ZipUtil {
         }
     }
 
+    
+    private final static IOFileFilter TEST_XML_FILTER = FileFilterUtils.and(
+            FileFilterUtils.prefixFileFilter("TEST-"),
+            FileFilterUtils.suffixFileFilter("xml")
+    );
+    
     public enum OverwriteMode {
         ONLY_NEW, WRITE_INTO, DELETE_FIRST
     }
