@@ -32,7 +32,7 @@ public class FileUtil {
             if( b < 0x09 ) return true;
             
             if( b == 0x09 || b == 0x0A || b == 0x0C || b == 0x0D ) ascii++;
-            else if( b > 0x20  &&  b < 0x7E ) ascii++;
+            else if( b >= 0x20  &&  b <= 0x7E ) ascii++;
             else other++;
         }
         
