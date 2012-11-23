@@ -7,8 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
- *
- * @author ondra
+ *  File manipulation utils.
+ *  @author ondra
  */
 public class FileUtil {
     
@@ -41,4 +41,4 @@ public class FileUtil {
         return (ascii + other) * 100 / other > 95;
     }
 
-}
+} // class
