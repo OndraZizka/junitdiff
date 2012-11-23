@@ -34,55 +34,27 @@ public class ZipUtil {
      */
     public static File unzipFileToTempDir( File zipFile ) throws IOException {
 
+		// Try to keep the original path in the new path for the group naming purposes.
+        
 		String path = zipFile.getPath();
         // foo/bar.zip -> foo/bar/
 		path = path.endsWith(".zip")
             ?	StringUtils.removeEndIgnoreCase( path, ".zip")
             : path + "-";
 
-		// Try to keep the original path in the new path for the group naming purposes.
-		//File tmpDir = File.createTempFile( "JUnitDiff-", "");
-		//tmpDir.delete();
-
-		File tmpDir = new File(path);
-		tmpDir.mkdir();
-		tmpDir.deleteOnExit();
-
-        //unzipFileToDir( zipFile, tmpDir, TEST_XML_FILTER );
-		
-        byte data[] = new byte[BUFFER_SIZE];
-		try {
-			ZipFile zipfile = new ZipFile(zipFile);
-			Enumeration e = zipfile.entries();
-			while( e.hasMoreElements() ) {
-				ZipEntry entry = (ZipEntry) e.nextElement();
-				if( entry.isDirectory() )	continue;
-				if( entry.getName().contains("..") )  continue;
-
-				if( ! TEST_XML_FILTER.accept( new File( entry.getName() )) ) continue;
-
-				log.trace("  Extracting: " + entry);
-				BufferedInputStream is = new BufferedInputStream(zipfile.getInputStream(entry));
-
-				File destFile = new File(tmpDir, entry.getName());
-				destFile.getParentFile().mkdirs();
-
-				FileOutputStream fos = new FileOutputStream(destFile);
-				BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER_SIZE);
-				int count;
-				while( (count = is.read(data, 0, BUFFER_SIZE)) != -1 ) {
-					dest.write(data, 0, count);
-				}
-				dest.flush();
-				dest.close();
-				is.close();
-			}
-		}
-        catch( Exception ex ) {
-            log.error( " Error when unzipping " + zipFile.getPath() + ": " + ex.getMessage() );
-            // FileUtils.deleteDirectory( tmpDir ); // TODO: Check for previous existence.
+        File tmpDir = new File(path);
+        if( tmpDir.getParentFile().canWrite() ) { 
+            tmpDir.mkdir();
         }
+        // If we can't write to zip's dir, write to /tmp or such.
+        else {
+            tmpDir = File.createTempFile( "JUnitDiff-", "");
+            tmpDir.delete();
+        }
+        tmpDir.deleteOnExit();
 
+        unzipFileToDir( zipFile, tmpDir, TEST_XML_FILTER );
+		
         return tmpDir;
     }
 
@@ -121,30 +93,35 @@ public class ZipUtil {
         Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zip.entries();
         
         byte[] buf = new byte[BUFFER_SIZE];
-            
-        while( entries.hasMoreElements() ) {
-            ZipEntry entry = entries.nextElement();
-            if( entry.isDirectory() )	continue;
-            if( entry.getName().contains("..") )  continue;
-            
-            if( fileFilter != null && ! fileFilter.accept( new File( entry.getName() )) ) continue;
-            
-            log.trace("  Extracting: " + entry);
-            
-            File f = new File( intoDir, entry.getName() );
-            if( !f.exists() ) {
-                f.getParentFile().mkdirs();
-                f.createNewFile();
+        
+        try {
+            while( entries.hasMoreElements() ) {
+                ZipEntry entry = entries.nextElement();
+                if( entry.isDirectory() )	continue;
+                if( entry.getName().contains("..") )  continue;
+
+                if( fileFilter != null && ! fileFilter.accept( new File( entry.getName() )) ) continue;
+
+                log.trace("  Extracting: " + entry);
+
+                File f = new File( intoDir, entry.getName() );
+                if( !f.exists() ) {
+                    f.getParentFile().mkdirs();
+                    f.createNewFile();
+                }
+
+                InputStream is = zip.getInputStream(entry);
+                OutputStream os = new java.io.FileOutputStream(f);
+                int r;
+                while ((r = is.read(buf)) != -1) {
+                  os.write(buf, 0, r);
+                }
+                os.close();
+                is.close();
             }
-            
-            InputStream is = zip.getInputStream(entry);
-            OutputStream os = new java.io.FileOutputStream(f);
-            int r;
-            while ((r = is.read(buf)) != -1) {
-              os.write(buf, 0, r);
-            }
-            os.close();
-            is.close();
+        }
+        catch( Exception ex ) {
+            log.error( " Error when unzipping " + zipFile.getPath() + ": " + ex.getMessage() );
         }
     }
 
