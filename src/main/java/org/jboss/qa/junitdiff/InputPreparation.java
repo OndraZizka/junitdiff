@@ -1,6 +1,8 @@
 package org.jboss.qa.junitdiff;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -148,6 +150,11 @@ public class InputPreparation
     private static List<File> readListOfPaths( File path ) {
 
         try {
+            if( isBinaryFile( path ) ){
+                log.warn( "  Can't read list of paths from a binary file: " + path.getPath() );
+                return Collections.EMPTY_LIST;
+            }
+            
             List<String> lines = FileUtils.readLines( path );
             List<File> paths = new ArrayList( lines.size() );
 
@@ -239,5 +246,26 @@ public class InputPreparation
         }
 
     }// scanDirForJUnitReports()
+
+    
+    
+    
+    /**
+     *  Guess whether given file is binary. Just checks for anything under 0x09.
+     */
+    private static boolean isBinaryFile( File f ) throws FileNotFoundException, IOException {
+        FileInputStream in = new FileInputStream(f);
+        int size = in.available();
+        if(size > 1000) size = 1000;
+        byte[] data = new byte[size];
+        in.read(data);
+        in.close();
+        
+        for( int i = 0; i < data.length; i++ ) {
+            if( data[i] < 0x09 )
+                return true;
+        }
+        return false;
+    }
 
 }// class
