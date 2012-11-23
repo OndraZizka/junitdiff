@@ -30,7 +30,7 @@ public class ZipUtil {
     /**
      *   Unzips a file to a temporary dir.
      */
-    public static File unzipFileToTempDir( File zipFile ) throws IOException {
+    public static File unzipFileToTempDir( File zipFile, OverwriteMode mode  ) throws IOException {
 
 		// Try to keep the original path in the new path for the group naming purposes.
         
@@ -51,7 +51,7 @@ public class ZipUtil {
         }
         tmpDir.deleteOnExit();
 
-        unzipFileToDir( zipFile, tmpDir, TEST_XML_FILTER );
+        unzipFileToDir( zipFile, tmpDir, TEST_XML_FILTER, mode );
 		
         return tmpDir;
     }
@@ -85,10 +85,14 @@ public class ZipUtil {
         unzipFileToDir( zipFile, intoDir, (FileFilter)null );
     }
     
+    public final static void unzipFileToDir( File zipFile, File intoDir, FileFilter fileFilter ) throws IOException {
+        unzipFileToDir( zipFile, intoDir, fileFilter, OverwriteMode.WRITE_INTO );
+    }
+    
     /**
      *  Unzip method which can filter files to extract.
      */
-    public final static void unzipFileToDir( File zipFile, File intoDir, FileFilter fileFilter ) throws IOException {
+    public final static void unzipFileToDir( File zipFile, File intoDir, FileFilter fileFilter, OverwriteMode mode ) throws IOException {
         
         ZipFile zip = new ZipFile( zipFile );
         Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zip.entries();
