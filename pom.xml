@@ -15,7 +15,13 @@
         <mainClass>org.jboss.qa.junitdiff.JUnitDiffApp</mainClass>
         <distDir>${project.basedir}/../dist</distDir>
     </properties>
-  
+    
+    <scm>
+        <url>https://github.com/OndraZizka/junitdiff</url>
+        <connection         >scm:git:git://github.com/OndraZizka/junitdiff.git</connection>
+        <developerConnection>scm:git:git@github.com:OndraZizka/junitdiff.git</developerConnection>
+    </scm>
+
     <build>
 
         <resources>
