@@ -20,6 +20,7 @@ import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang.StringUtils;
+import org.jboss.qa.junitdiff.util.FileUtil;
 import org.jboss.qa.junitdiff.util.ZipUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,7 +151,7 @@ public class InputPreparation
     private static List<File> readListOfPaths( File path ) {
 
         try {
-            if( isBinaryFile( path ) ){
+            if( FileUtil.isBinaryFile( path ) ){
                 log.warn( "  Can't read list of paths from a binary file: " + path.getPath() );
                 return Collections.EMPTY_LIST;
             }
@@ -249,33 +250,4 @@ public class InputPreparation
 
     
     
-    
-    /**
-     *  Guess whether given file is binary. Just checks for anything under 0x09.
-     */
-    private static boolean isBinaryFile( File f ) throws FileNotFoundException, IOException {
-        FileInputStream in = new FileInputStream(f);
-        int size = in.available();
-        if(size > 1024) size = 1024;
-        byte[] data = new byte[size];
-        in.read(data);
-        in.close();
-        
-        int ascii = 0;
-        int other = 0;
-        
-        for( int i = 0; i < data.length; i++ ) {
-            byte b = data[i];
-            if( b < 0x09 ) return true;
-            
-            if( b == 0x09 || b == 0x0A || b == 0x0C || b == 0x0D ) ascii++;
-            else if( b > 0x20  &&  b < 0x7E ) ascii++;
-            else other++;
-        }
-        
-        if( other == 0 ) return false;
-        
-        return (ascii + other) * 100 / other > 95;
-    }
-
 }// class
