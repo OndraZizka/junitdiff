@@ -11,7 +11,7 @@ Usage:
 
    1) Create the XML file aggregated from several JUnit test runs.
 
-        java -jar JUnitDiff-1.0.jar ( dir | TEST-foo.xml | report-paths-list.txt | http://reports.zip | -o output.file | -xml )+
+        java -jar JUnitDiff.jar ( dir | TEST-foo.xml | report-paths-list.txt | http://reports.zip | -o output.file | -xml )+
 
 
    2) Transform the XML file to HTML

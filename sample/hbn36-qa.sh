@@ -11,7 +11,6 @@ function downloadAndUnzip {
     iNum=$2
 
     URL="http://hudson.qa.jboss.com/hudson/job/hibernate-core-testsuite-branch36/database=$iDB,jdk=java15_default,label=hibernate/lastSuccessfulBuild/artifact/*zip*/archive.zip"
-    URL="http://hudson.qa.jboss.com/hudson/job/hibernate-core-testsuite-branch36/database=$iDB,jdk=java15_default,label=hibernate/lastSuccessfulBuild/artifact/*zip*/archive.zip"
 
     echo " --- Processing $iDB, build $iNum..."
     group="$iDB-$iNum";
