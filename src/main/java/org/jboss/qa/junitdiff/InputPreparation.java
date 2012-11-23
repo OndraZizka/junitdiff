@@ -170,7 +170,7 @@ public class InputPreparation
     }
 
 
-		/**
+    /**
      * Scans a directory for JUnit test reports.
      */
     private static List<File> scanDirForJUnitReports( final File path ) {
