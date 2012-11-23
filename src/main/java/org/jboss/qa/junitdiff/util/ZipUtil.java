@@ -1,7 +1,9 @@
-
 package org.jboss.qa.junitdiff.util;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -9,6 +11,11 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *  Should I use Commons Compress instead?
@@ -16,6 +23,74 @@ import org.apache.commons.io.FileUtils;
  *  @author Ondrej Zizka
  */
 public class ZipUtil {
+    private static final Logger log = LoggerFactory.getLogger( ZipUtil.class );
+    
+    
+    private static final int BUFFER_SIZE = 2048;
+    
+    /**
+     *   Unzips a file to a temporary dir.
+     */
+    public static File unzipFileToTempDir( File file ) throws IOException {
+
+		String path = file.getPath();
+        // foo/bar.zip -> foo/bar/
+		path = path.endsWith(".zip")
+            ?	StringUtils.removeEndIgnoreCase( path, ".zip")
+            : path + "-";
+
+
+		// Try to keep the original path in the new path for the group naming purposes.
+		//File tmpDir = File.createTempFile( "JUnitDiff-", "");
+		//tmpDir.delete();
+
+		File tmpDir = new File(path);
+		tmpDir.mkdir();
+		tmpDir.deleteOnExit();
+
+		byte data[] = new byte[BUFFER_SIZE];
+
+		try {
+			ZipFile zipfile = new ZipFile(file);
+			Enumeration e = zipfile.entries();
+			while( e.hasMoreElements() ) {
+				ZipEntry entry = (ZipEntry) e.nextElement();
+				if( entry.isDirectory() )	continue;
+				if( entry.getName().contains("..") )  continue;
+
+				IOFileFilter fileFilter = FileFilterUtils.and(
+						FileFilterUtils.prefixFileFilter("TEST-"),
+						FileFilterUtils.suffixFileFilter("xml")
+				);
+				if( ! fileFilter.accept( new File( entry.getName() )) ) continue;
+
+				log.trace("  Extracting: " + entry);
+				BufferedInputStream is = new BufferedInputStream(zipfile.getInputStream(entry));
+
+				File destFile = new File(tmpDir, entry.getName());
+				destFile.getParentFile().mkdirs();
+
+				FileOutputStream fos = new FileOutputStream(destFile);
+				BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER_SIZE);
+				int count;
+				while( (count = is.read(data, 0, BUFFER_SIZE)) != -1 ) {
+					dest.write(data, 0, count);
+				}
+				dest.flush();
+				dest.close();
+				is.close();
+			}
+		}
+        catch( Exception ex ) {
+            log.error( " Error when unzipping " + file.getPath() + ": " + ex.getMessage() );
+            tmpDir.delete();
+        }
+
+        return tmpDir;
+    }
+    
+    
+    
     
     private static int BUF_SIZE = 1024 * 32;
 
