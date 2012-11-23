@@ -176,36 +176,40 @@ public class InputPreparation
      */
     private static List<File> scanDirForJUnitReports( final File path ) {
         IOFileFilter filter = FileFilterUtils.or(
-                FileFilterUtils.directoryFileFilter(),
-                FileFilterUtils.and(
+            FileFilterUtils.directoryFileFilter(),
+            FileFilterUtils.and(
                 // Try to filter out as much as possible before opening the file below.
                 FileFilterUtils.notFileFilter(
+                    FileFilterUtils.or(
+                        FileFilterUtils.suffixFileFilter( ".jar", IOCase.INSENSITIVE ),
+                        FileFilterUtils.suffixFileFilter( ".html", IOCase.INSENSITIVE ),
+                        FileFilterUtils.suffixFileFilter( ".zip", IOCase.INSENSITIVE ),
+                        FileFilterUtils.suffixFileFilter( ".txt", IOCase.INSENSITIVE ),
+                        FileFilterUtils.suffixFileFilter( ".log", IOCase.INSENSITIVE ),
+                        FileFilterUtils.suffixFileFilter( ".class", IOCase.INSENSITIVE ),
+                        FileFilterUtils.suffixFileFilter( ".java", IOCase.INSENSITIVE ),
+                        FileFilterUtils.suffixFileFilter( ".", IOCase.INSENSITIVE ) 
+                    ) 
+                ),
                 FileFilterUtils.or(
-                FileFilterUtils.suffixFileFilter( ".jar", IOCase.INSENSITIVE ),
-                FileFilterUtils.suffixFileFilter( ".html", IOCase.INSENSITIVE ),
-                FileFilterUtils.suffixFileFilter( ".zip", IOCase.INSENSITIVE ),
-                FileFilterUtils.suffixFileFilter( ".txt", IOCase.INSENSITIVE ),
-                FileFilterUtils.suffixFileFilter( ".log", IOCase.INSENSITIVE ),
-                FileFilterUtils.suffixFileFilter( ".class", IOCase.INSENSITIVE ),
-                FileFilterUtils.suffixFileFilter( ".java", IOCase.INSENSITIVE ),
-                FileFilterUtils.suffixFileFilter( ".", IOCase.INSENSITIVE ) ) ),
-                FileFilterUtils.or(
-                // Perhaps make this an option - some other filters like content-based etc.
-                FileFilterUtils.suffixFileFilter( ".xml" ),
-                FileFilterUtils.prefixFileFilter( "TEST" ),
-                FileFilterUtils.magicNumberFileFilter( "<?xml" ) ) )// and
-                // Maybe we could simply scan for TEST-*.xml names.
-                );
+                    // Perhaps make this an option - some other filters like content-based etc.
+                    FileFilterUtils.suffixFileFilter( ".xml" ),
+                    FileFilterUtils.prefixFileFilter( "TEST" ),
+                    FileFilterUtils.magicNumberFileFilter( "<?xml" ) 
+                )
+            )// and
+            // Maybe we could simply scan for TEST-*.xml names.
+        );
 
         IOFileFilter rigidFilter = FileFilterUtils.or(
                 FileFilterUtils.directoryFileFilter(),
                 FileFilterUtils.and(
-                // Perhaps make this an option - some other filters like content-based etc.
-                FileFilterUtils.suffixFileFilter( ".xml" ),
-                FileFilterUtils.prefixFileFilter( "TEST" ) //FileFilterUtils.magicNumberFileFilter("<?xml")
+                    // Perhaps make this an option - some other filters like content-based etc.
+                    FileFilterUtils.suffixFileFilter( ".xml" ),
+                    FileFilterUtils.prefixFileFilter( "TEST" ) //FileFilterUtils.magicNumberFileFilter("<?xml")
                 )// and
                 // Maybe we could simply scan for TEST-*.xml names.
-                );
+        );
 
 
         // Walk trough the dir tree...
