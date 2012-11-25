@@ -1,10 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.jboss.qa.junitdiff</groupId>
     <artifactId>JUnitDiff</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.2-SNAPSHOT</version>
+    <version>1.5.1-SNAPSHOT</version>
 
     <name>JUnitDiff</name>
     <url>http://ondra.zizka.cz/stranky/programovani/java/junit-test-results-report-comparison-junitdiff.texy</url>
@@ -17,10 +18,10 @@
     
     <scm>
         <url>https://github.com/OndraZizka/junitdiff</url>
-        <connection>scm:git:git://github.com/OndraZizka/junitdiff.git</connection>
+        <connection         >scm:git:git://github.com/OndraZizka/junitdiff.git</connection>
         <developerConnection>scm:git:git@github.com:OndraZizka/junitdiff.git</developerConnection>
     </scm>
-    
+
     <build>
 
         <resources>
@@ -43,24 +44,22 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
                 <configuration>  <source>1.6</source> <target>1.6</target> </configuration>
             </plugin>
 
-            <!-- Unzip sample test data -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>  <artifactId>maven-antrun-plugin</artifactId> <executions> <execution>
                 <phase>clean</phase>  <goals> <goal>run</goal> </goals>  <configuration> <tasks>
-                    <unzip src="src/test/data/hibernate-ann-run1.zip" dest="target/sample-data/" overwrite="true" />
-                    <unzip src="src/test/data/hibernate-ann-run2.zip" dest="target/sample-data/" overwrite="true" />
-                    <unzip src="src/test/data/hibernate-ann-run3.zip" dest="target/sample-data/" overwrite="true" />
+                    <unzip src="src/test/data/hibernate-ann-run1.zip" dest="target/sample-data/" overwrite="true"/>
+                    <unzip src="src/test/data/hibernate-ann-run2.zip" dest="target/sample-data/" overwrite="true"/>
+                    <unzip src="src/test/data/hibernate-ann-run3.zip" dest="target/sample-data/" overwrite="true"/>
                 </tasks> </configuration> </execution> </executions>
             </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId> 
                 <artifactId>appassembler-maven-plugin</artifactId> 
-                <version>1.3</version>
+                <version>1.1</version>
                 <!--<executions>  <execution>     <phase>package</phase>  <goals><goal>assemble</goal></goals>  </execution>  </executions>-->
                 <configuration>
                     <programs>
@@ -74,7 +73,6 @@
 
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.3</version>
                 <executions>  <execution>     <phase>package</phase>  <goals><goal>single</goal></goals>  </execution>  </executions>
                 <configuration>
                     <appendAssemblyId>false</appendAssemblyId>
@@ -94,15 +92,14 @@
                     </configuration>
             </plugin>
 
-            <!-- Copy distribution to /dist . -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.7</version>
                 <executions> <execution> <id>copy-dist</id> <phase>install</phase> <goals> <goal>run</goal> </goals>
                 <configuration> <target>
-                    <!--<copy file="${project.build.directory}/dist/${project.artifactId}.${project.packaging}" todir="${project.build.directory}/dist/${project.version}" verbose="true" />-->
-                    <copy file="${project.build.directory}/dist/${project.artifactId}.${project.packaging}" todir="${distDir}/${project.version}" verbose="true" />
+                    <!--<copy file="${project.build.directory}/dist/${project.artifactId}.${project.packaging}" todir="${project.build.directory}/dist/${project.version}" verbose="true"/>-->
+                    <copy file="${project.build.directory}/dist/${project.artifactId}.${project.packaging}" todir="${distDir}/${project.version}" verbose="true"/>
                 </target> </configuration> </execution> </executions>
             </plugin>
 
@@ -122,48 +119,14 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.7</version>
-            </plugin>
-
         </plugins>
-        
-        <extensions>
-            <extension>
-                <groupId>org.jvnet.wagon-svn</groupId>
-                <artifactId>wagon-svn</artifactId>
-                <version>1.12</version>
-            </extension>
-            <extension>
-                <groupId>ar.com.synergian</groupId>
-                <artifactId>wagon-git</artifactId>
-                <version>0.1.4</version>
-            </extension>
-        </extensions>
 
     </build>
 
 
     <repositories>
         <repository><id>ondrazizka-googlecode</id><url>http://ondrazizka.googlecode.com/svn/maven</url></repository>
-        <repository><id>synergian-repo</id><url>https://raw.github.com/synergian/wagon-git/releases</url></repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>synergian-repo</id><url>https://raw.github.com/synergian/wagon-git/releases</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>codehaus</id>
-            <name>Codehaus Release Repo</name>
-            <url>http://repository.codehaus.org</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>codehaus-snapshot</id>
-            <name>Codehaus Snapshot Repo</name>
-            <url>http://snapshots.repository.codehaus.org</url>
-        </pluginRepository>
-    </pluginRepositories>
 
 
     <dependencies>
@@ -225,41 +188,25 @@
         </dependency>
     </dependencies>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>codehaus</id>
+            <name>Codehaus Release Repo</name>
+            <url>http://repository.codehaus.org</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>codehaus-snapshot</id>
+            <name>Codehaus Snapshot Repo</name>
+            <url>http://snapshots.repository.codehaus.org</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <distributionManagement>
-        <downloadUrl>http://code.google.com/p/junitdiff/downloads/list</downloadUrl>
-
-        <!-- SVN:
-        <repository>
-            <id>maven-config-processor-plugin-repo-releases</id>
-            <url>svn:https://maven-config-processor-plugin.googlecode.com/svn/maven-repo/releases</url>
-            <uniqueVersion>false</uniqueVersion>
-        </repository>
         <snapshotRepository>
-            <id>maven-config-processor-plugin-repo-releases</id>
-            <name>Maven Repository for Config Processor Plugin (snapshots)</name>
-            <url>svn:https://maven-config-processor-plugin.googlecode.com/svn/maven-repo/snapshots</url>
-            <uniqueVersion>false</uniqueVersion>
+            <id>jboss-snapshots-repository</id>
+            <name>JBoss Snapshots Repository</name>
+            <url>https://repository.jboss.org/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
-        -->
-        
-        <repository>
-            <id>gc-junitdiff</id>
-            <url>git:releases://git@github.com:OndraZizka/junitdiff.git</url>
-        </repository>        
-        
-        <!-- Local:
-        <repository>
-            <id>local-hack-repo</id>
-            <name>LocalDir</name>
-            <url>file://${project.basedir}/../dist-maven</url>
-        </repository>
-        <snapshotRepository>
-            <id>local-hack-repo-snap</id>
-            <name>LocalDir</name>
-            <url>file://${project.basedir}/../dist-maven</url>
-        </snapshotRepository>
-        -->
-    </distributionManagement>
+    </distributionManagement>  
 
 </project>
