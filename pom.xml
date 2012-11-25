@@ -4,7 +4,7 @@
     <groupId>org.jboss.qa.junitdiff</groupId>
     <artifactId>JUnitDiff</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.4</version>
+    <version>1.5.5-SNAPSHOT</version>
 
     <name>JUnitDiff</name>
     <url>http://ondra.zizka.cz/stranky/programovani/java/junit-test-results-report-comparison-junitdiff.texy</url>
