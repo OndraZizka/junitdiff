@@ -1,10 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.jboss.qa.junitdiff</groupId>
     <artifactId>JUnitDiff</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.3-SNAPSHOT</version>
+    <version>1.5.1-SNAPSHOT</version>
 
     <name>JUnitDiff</name>
     <url>http://ondra.zizka.cz/stranky/programovani/java/junit-test-results-report-comparison-junitdiff.texy</url>
@@ -17,7 +18,7 @@
     
     <scm>
         <url>https://github.com/OndraZizka/junitdiff</url>
-        <connection>scm:git:git://github.com/OndraZizka/junitdiff.git</connection>
+        <connection         >scm:git:git://github.com/OndraZizka/junitdiff.git</connection>
         <developerConnection>scm:git:git@github.com:OndraZizka/junitdiff.git</developerConnection>
     </scm>
 
@@ -49,9 +50,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>  <artifactId>maven-antrun-plugin</artifactId> <executions> <execution>
                 <phase>clean</phase>  <goals> <goal>run</goal> </goals>  <configuration> <tasks>
-                    <unzip src="src/test/data/hibernate-ann-run1.zip" dest="target/sample-data/" overwrite="true" />
-                    <unzip src="src/test/data/hibernate-ann-run2.zip" dest="target/sample-data/" overwrite="true" />
-                    <unzip src="src/test/data/hibernate-ann-run3.zip" dest="target/sample-data/" overwrite="true" />
+                    <unzip src="src/test/data/hibernate-ann-run1.zip" dest="target/sample-data/" overwrite="true"/>
+                    <unzip src="src/test/data/hibernate-ann-run2.zip" dest="target/sample-data/" overwrite="true"/>
+                    <unzip src="src/test/data/hibernate-ann-run3.zip" dest="target/sample-data/" overwrite="true"/>
                 </tasks> </configuration> </execution> </executions>
             </plugin>
 
@@ -97,8 +98,8 @@
                 <version>1.7</version>
                 <executions> <execution> <id>copy-dist</id> <phase>install</phase> <goals> <goal>run</goal> </goals>
                 <configuration> <target>
-                    <!--<copy file="${project.build.directory}/dist/${project.artifactId}.${project.packaging}" todir="${project.build.directory}/dist/${project.version}" verbose="true" />-->
-                    <copy file="${project.build.directory}/dist/${project.artifactId}.${project.packaging}" todir="${distDir}/${project.version}" verbose="true" />
+                    <!--<copy file="${project.build.directory}/dist/${project.artifactId}.${project.packaging}" todir="${project.build.directory}/dist/${project.version}" verbose="true"/>-->
+                    <copy file="${project.build.directory}/dist/${project.artifactId}.${project.packaging}" todir="${distDir}/${project.version}" verbose="true"/>
                 </target> </configuration> </execution> </executions>
             </plugin>
 
