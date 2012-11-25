@@ -202,11 +202,41 @@
     </pluginRepositories>
 
     <distributionManagement>
+        <downloadUrl>http://code.google.com/p/junitdiff/downloads/list</downloadUrl>
+        <repository>
+            <id>gc-junitdiff</id>
+            <url>git:releases://git@github.com:OndraZizka/junitdiff.git</url>
+        </repository>        
         <snapshotRepository>
             <id>jboss-snapshots-repository</id>
             <name>JBoss Snapshots Repository</name>
             <url>https://repository.jboss.org/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
+        <!-- SVN:
+        <repository>
+            <id>maven-config-processor-plugin-repo-releases</id>
+            <url>svn:https://maven-config-processor-plugin.googlecode.com/svn/maven-repo/releases</url>
+            <uniqueVersion>false</uniqueVersion>
+        </repository>
+        <snapshotRepository>
+            <id>maven-config-processor-plugin-repo-releases</id>
+            <name>Maven Repository for Config Processor Plugin (snapshots)</name>
+            <url>svn:https://maven-config-processor-plugin.googlecode.com/svn/maven-repo/snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+        -->        
+        <!-- Local:
+        <repository>
+            <id>local-hack-repo</id>
+            <name>LocalDir</name>
+            <url>file://${project.basedir}/../dist-maven</url>
+        </repository>
+        <snapshotRepository>
+            <id>local-hack-repo-snap</id>
+            <name>LocalDir</name>
+            <url>file://${project.basedir}/../dist-maven</url>
+        </snapshotRepository>
+        -->
     </distributionManagement>  
 
 </project>
