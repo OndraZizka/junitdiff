@@ -202,6 +202,7 @@
 
     <distributionManagement>
         <downloadUrl>http://code.google.com/p/junitdiff/downloads/list</downloadUrl>
+        <!-- SVN:
         <repository>
             <id>gc-junitdiff</id>
             <url>git:releases://git@github.com:OndraZizka/junitdiff.git</url>
@@ -211,6 +212,7 @@
             <name>JBoss Snapshots Repository</name>
             <url>https://repository.jboss.org/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
+        -->        
         <!-- SVN:
         <repository>
             <id>maven-config-processor-plugin-repo-releases</id>
@@ -225,6 +227,7 @@
         </snapshotRepository>
         -->        
         <!-- Local:
+        -->
         <repository>
             <id>local-hack-repo</id>
             <name>LocalDir</name>
@@ -235,7 +238,6 @@
             <name>LocalDir</name>
             <url>file://${project.basedir}/../dist-maven</url>
         </snapshotRepository>
-        -->
     </distributionManagement>  
 
 </project>
