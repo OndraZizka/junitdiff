@@ -18,6 +18,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.jboss.qa.junitdiff.JUnitDiffApp;
 import org.jboss.qa.junitdiff.ex.JUnitDiffException;
 import org.jboss.qa.junitdiff.model.AggregatedData;
+import org.jboss.qa.junitdiff.model.Group;
 import org.jboss.qa.junitdiff.model.TestInfo;
 import org.jboss.qa.junitdiff.model.TestSuite;
 import org.slf4j.Logger;
@@ -82,17 +83,15 @@ public class XmlExporter
 
 		// Groups.
 		out.println("\t<groups>");
-		List<String> groups = atr.getGroups();
-		List<String> groupDiffNames = atr.getGroupNamesDifferingParts();
+		atr.createGroupNamesDifferingParts();
+		List<Group> groups = atr.getGroups();
 
 		/*for (String group : groups) {
 				out.append("\t\t<group name=\"").append(x( group )).append("\" path=\"").append(x( group )).append("\"/>\n");
 		}*/
 
-		for( int i = 0; i < groups.size(); i++ ) {
-			String groupName = groups.get(i);
-			String groupNameDifferingPart = groupDiffNames.get(i);
-			out.append("\t\t<group name=\"").append(x( groupNameDifferingPart )).append("\" path=\"").append(x( groupName )).append("\"/>\n");
+		for(Group g : groups){
+			out.append("\t\t<group name=\"").append(x( g.getName() )).append("\" path=\"").append(x( g.getPath() )).append("\"/>\n");
 		}
 
 		out.println("\t</groups>\n");
@@ -107,7 +106,7 @@ public class XmlExporter
 			for( TestInfo ti : ati.getTestInfos() ){
 				out.append("\t\t<testrun result=\"").append(x( ti.getResult().name() ))
 					 .append("\" time=\"").append(x( ti.getTime() ))
-					 .append("\" group=\"").append(x( ti.getGroup() )) // TODO: JBQA-4131
+					 .append("\" group=\"").append(x( ti.getGroup().getName() )) // TODO: JBQA-4131
 					 .append("\">\n");
 
 				// <failure message="Exception message" type="java.lang.Exception">

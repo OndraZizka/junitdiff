@@ -28,7 +28,8 @@ public class AggregatedTestResults
 
 
 	// Groups.
-	private List<String> groups = new ArrayList();
+	//private List<String> groups = new ArrayList();
+	private List<Group> groups = new ArrayList<Group>();
 
 
 
@@ -74,7 +75,8 @@ public class AggregatedTestResults
     public void merge( List<TestRunResultsList> reportsLists, String groupName ) {
         final boolean trace = log.isTraceEnabled();
 
-		this.groups.add( groupName );
+		Group group = new Group(groupName);
+		this.groups.add(group);
 
 		// For all reports...
 		for( TestRunResultsList testResultsList : reportsLists ){
@@ -90,7 +92,7 @@ public class AggregatedTestResults
 					aggTest = new AggregatedTestInfo( curTest );
 					this.add(aggTest);
 				}
-				curTest.setGroup( groupName );
+				curTest.setGroup( group );
 				aggTest.add( curTest );
 			}
 
@@ -138,8 +140,47 @@ public class AggregatedTestResults
 		return Collections.unmodifiableList(testInfos);
 	}
 
-	public List<String> getGroups() {
+	/*public List<String> getGroups() {
 		return Collections.unmodifiableList(groups);
+	}*/
+
+	public List<Group> getGroups() {
+		return Collections.unmodifiableList(groups);
+	}
+
+	/**
+	 * Set the differing parts of group paths as name.
+	 *   {abcfoo1234, abcbarbar1234} => {foo, barbar}
+	 */
+	public void createGroupNamesDifferingParts(){
+		String[] allPaths = new String[groups.size()];
+		String[] allPathsRev = new String[groups.size()];
+		int i=0;
+		for(Group g : groups){
+			allPaths[i]=g.getPath();
+			allPathsRev[i]=StringUtils.reverse(g.getPath());
+			i++;
+		}
+
+		// Get the common prefix and sufix
+		String commonPrefix = StringUtils.getCommonPrefix(allPaths); // abc
+		String commonSufix = StringUtils.getCommonPrefix(allPathsRev); // 1234
+
+		// Get the common prefix and sufix lengths
+		int prefixLength = commonPrefix.length(); // 3
+		int sufixLength = commonSufix.length(); // 4
+
+		// Cut off the common prefix and sufix
+		if( prefixLength + sufixLength != 0 ){ // 7
+			for(Group g : groups){
+				int nameLength = g.getPath().length(); // abcfoo1234 = 10; abcbarbar1234 = 13
+				//  abc|foo|1234      ->  foo          3             10  - 4 = 6
+				//  abc|bar bar|1234  ->  barbar       3             13  - 4 = 9
+				//  012|345|678|9012
+				g.setName(g.getPath().substring(prefixLength, nameLength - sufixLength));
+			}
+		}
+
 	}
 
 
@@ -147,7 +188,7 @@ public class AggregatedTestResults
 	 * Returns the differing parts of group names.
 	 *   {abcfoo123, abcbar123} => {foo, bar}
 	 */
-	public List<String> getGroupNamesDifferingParts() {
+	/*public List<String> getGroupNamesDifferingParts() {
 
 		// Get the common prefix.
 		String commonPrefix = StringUtils.getCommonPrefix( groups.toArray( new String[groups.size()] ));
@@ -176,7 +217,7 @@ public class AggregatedTestResults
 		}
 
 		return Collections.unmodifiableList( shortNames );
-	}
+	}*/
 
 
 
