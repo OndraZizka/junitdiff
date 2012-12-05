@@ -252,8 +252,7 @@
                     <xsl:for-each select="groups/group">
                         <th>
                             <xsl:attribute name="class">
-                                <!-- TODO: JBQA-4131, then replace @path with @name -->
-                                <xsl:if test="not( /aggregate/testcase/testrun[ @group = current()/@path and @result != 'OK' ] )">okRun </xsl:if>
+                                <xsl:if test="not( /aggregate/testcase/testrun[ @group = current()/@id and @result != 'OK' ] )">okRun </xsl:if>
                             </xsl:attribute>
                             <xsl:value-of select="substring(@name, string-length(@name) - 15)" />
                         </th>
@@ -355,13 +354,13 @@
             <xsl:variable name="testMethodName" select="@name" />
             <!-- Remember! One byte here may mean ~40 kB in the result file!! -->
             <xsl:for-each select="/aggregate/groups/group">
-                <xsl:variable name="groupname" select="@path" />
-                <xsl:variable name="curTestRun" select="$testcase/testrun[@group=$groupname]" />
+                <xsl:variable name="groupid" select="@id" />
+                <xsl:variable name="curTestRun" select="$testcase/testrun[@group=$groupid]" />
 
                 <td class="run">
                   <xsl:attribute name="class">run result_<xsl:value-of select="$curTestRun/@result"/></xsl:attribute>
 
-                    <xsl:apply-templates  mode="link" select="$testcase/testrun[@group=$groupname]">
+                    <xsl:apply-templates  mode="link" select="$testcase/testrun[@group=$groupid]">
                       <xsl:with-param name="testCaseFullNameEscaped" select="string($nameEscaped)"/>
                       <xsl:with-param name="testClassName" select="$testClassName"/>  <!-- string($testcase/@classname) doesn't work -->
                       <xsl:with-param name="testMethodName" select="$testMethodName"/>  <!-- string($testcase/@classname) doesn't work -->
