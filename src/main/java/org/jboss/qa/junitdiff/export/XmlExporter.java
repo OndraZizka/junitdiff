@@ -83,7 +83,7 @@ public class XmlExporter
 
 		// Groups.
 		out.println("\t<groups>");
-		atr.createGroupNamesDifferingParts();
+		atr.shortenGroupsNames();
 		List<Group> groups = atr.getGroups();
 
 		/*for (String group : groups) {
@@ -91,7 +91,10 @@ public class XmlExporter
 		}*/
 
 		for(Group g : groups){
-			out.append("\t\t<group name=\"").append(x( g.getName() )).append("\" path=\"").append(x( g.getPath() )).append("\"/>\n");
+			out.append("\t\t<group name=\"").append(x( g.getName() ))
+					   .append("\" path=\"").append(x( g.getPath() ))
+					   .append("\" id=\"").append(x( g.getId().toString() ))
+					   .append("\"/>\n");
 		}
 
 		out.println("\t</groups>\n");
@@ -106,7 +109,7 @@ public class XmlExporter
 			for( TestInfo ti : ati.getTestInfos() ){
 				out.append("\t\t<testrun result=\"").append(x( ti.getResult().name() ))
 					 .append("\" time=\"").append(x( ti.getTime() ))
-					 .append("\" group=\"").append(x( ti.getGroup().getName() )) // TODO: JBQA-4131
+					 .append("\" group=\"").append(x( ti.getGroup().getId().toString() ))
 					 .append("\">\n");
 
 				// <failure message="Exception message" type="java.lang.Exception">
