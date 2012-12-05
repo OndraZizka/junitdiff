@@ -5,6 +5,8 @@
 >
     <xsl:output method="html" encoding="UTF-8" omit-xml-declaration="yes" indent="yes"/>
 
+    <xsl:key name="isOkRow" match="/aggregate/testcase/testrun[@result != 'OK']" use="@group"/>
+
     <!-- HTML sauce. -->
     <xsl:template match="/">
        <!-- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> -->
@@ -44,7 +46,8 @@
                   table.results .run .time       { font-size: 65%; margin-right: 1ex; font-weight: normal; font-style: normal; }
 
                   table.results tbody.hideOkTests tr.okTest { display: none; }
-                  table.results tbody.hideOkRuns  td.or     { display: none; }
+                  table.hideOkRuns  td.or     { display: none; }
+                  table.hideOkRuns  th.okRun     { display: none; }
 
                   /* Popup for the test run details. */
                   .popup               { 
@@ -213,7 +216,7 @@
                 // TODO: Not working now... the .or class is not being added yet.
                 // Anyway, I'd rather do this by hiding specific columns, using .r1 class where 1 is the group index.
                 function toggleShowOnlyNonOkRuns( bShowOnlyNonOK ){
-                  document.getElementById("results-table").getElementsByTagName("tbody")[0].className = ( bShowOnlyNonOK ? "hideOkRuns" : "" );
+                  document.getElementById("results-table").className = ( bShowOnlyNonOK ? "hideOkRuns results" : "results" );
                 }
 
                 function jira( elmAnchor ){
@@ -252,8 +255,7 @@
                     <xsl:for-each select="groups/group">
                         <th>
                             <xsl:attribute name="class">
-                                <!-- TODO: JBQA-4131, then replace @path with @name -->
-                                <xsl:if test="not( /aggregate/testcase/testrun[ @group = current()/@path and @result != 'OK' ] )">okRun </xsl:if>
+                                <xsl:if test="not( /aggregate/testcase/testrun[ @group = current()/@id and @result != 'OK' ] )">okRun </xsl:if>
                             </xsl:attribute>
                             <xsl:value-of select="substring(@name, string-length(@name) - 15)" />
                         </th>
@@ -287,9 +289,7 @@
         <h2>Tests \ test runs:</h2>
 
         <div><input type="checkbox" id="cbShowOnlyNonOkTests" onchange="toggleShowOnlyNonOkTests(this.checked);"/> <label for="cbShowOnlyNonOkTests">Show only non-OK tests (rows)</label></div>
-        <!-- TODO: See cbShowOnlyNonOkRuns().
         <div><input type="checkbox" id="cbShowOnlyNonOkRuns"  onchange="toggleShowOnlyNonOkRuns (this.checked);"/> <label for="cbShowOnlyNonOkRuns" >Show only non-OK runs (cols)</label></div>
-        -->
         
         <table class="results" id="results-table">
             <thead>
@@ -324,9 +324,9 @@
     <xsl:template match="/aggregate/testcase">
         <tr class="testcase">
             <xsl:attribute name="class">
-                <xsl:text>testcase </xsl:text>
-                <xsl:if test="preceding-sibling::testcase[1]/@classname != @classname">first </xsl:if>
-                <xsl:if test="not( testrun[@result != 'OK'] )">okTest </xsl:if>
+                <xsl:text>testcase</xsl:text>
+                <xsl:if test="preceding-sibling::testcase[1]/@classname != @classname"> first</xsl:if>
+                <xsl:if test="not( testrun[@result != 'OK'] )"> okTest</xsl:if>
             </xsl:attribute>
             <!--<xsl:if test="preceding-sibling::testcase[1]/@classname != @classname"><xsl:attribute name="class">testcase first</xsl:attribute></xsl:if>-->
           
@@ -355,13 +355,17 @@
             <xsl:variable name="testMethodName" select="@name" />
             <!-- Remember! One byte here may mean ~40 kB in the result file!! -->
             <xsl:for-each select="/aggregate/groups/group">
-                <xsl:variable name="groupname" select="@path" />
-                <xsl:variable name="curTestRun" select="$testcase/testrun[@group=$groupname]" />
+                <xsl:variable name="groupid" select="@id" />
+                <xsl:variable name="curTestRun" select="$testcase/testrun[@group=$groupid]" />
 
                 <td class="run">
-                  <xsl:attribute name="class">run result_<xsl:value-of select="$curTestRun/@result"/></xsl:attribute>
+                  <xsl:attribute name="class">
+                      <xsl:text>run</xsl:text>
+                      <xsl:if test="not( key('isOkRow',@id) )"> or</xsl:if>
+                      <xsl:text> result_</xsl:text><xsl:value-of select="$curTestRun/@result"/>
+				  </xsl:attribute>
 
-                    <xsl:apply-templates  mode="link" select="$testcase/testrun[@group=$groupname]">
+                    <xsl:apply-templates  mode="link" select="$testcase/testrun[@group=$groupid]">
                       <xsl:with-param name="testCaseFullNameEscaped" select="string($nameEscaped)"/>
                       <xsl:with-param name="testClassName" select="$testClassName"/>  <!-- string($testcase/@classname) doesn't work -->
                       <xsl:with-param name="testMethodName" select="$testMethodName"/>  <!-- string($testcase/@classname) doesn't work -->
