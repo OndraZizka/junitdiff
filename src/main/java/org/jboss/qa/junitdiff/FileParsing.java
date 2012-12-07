@@ -233,6 +233,12 @@ public class FileParsing
 								info.setFailure(fail);
 						}
 
+						// Skipped.
+						child = elm.getChild("skipped");
+						if( null != child ){
+								info.setResult(TestInfo.Result.SKIPPED);
+						}
+
 
 						resultsList.add( info );
 				}

@@ -37,6 +37,7 @@
                   table.results td.result_OK a { color: green; }
                   table.results td.result_FAIL a { color: red; }
                   table.results td.result_ERROR a { color: orange; }
+                  table.results td.result_SKIPPED a { color: blue }
 
                   table.results tr       td { border-top: 1px dotted silver; }
                   table.results tr.first td { border-top: 1px solid gray;   padding-top: 1ex; }

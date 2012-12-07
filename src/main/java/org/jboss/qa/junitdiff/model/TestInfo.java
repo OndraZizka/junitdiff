@@ -9,7 +9,7 @@ package org.jboss.qa.junitdiff.model;
 public class TestInfo {
 
 		public enum Result {
-				OK, FAIL, ERROR;
+				OK, FAIL, ERROR, SKIPPED;
 		}
 
 
