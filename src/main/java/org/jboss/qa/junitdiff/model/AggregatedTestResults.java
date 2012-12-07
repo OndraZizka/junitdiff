@@ -28,7 +28,10 @@ public class AggregatedTestResults
 
 
 	// Groups.
-	private List<String> groups = new ArrayList();
+	//private List<String> groups = new ArrayList();
+	private List<Group> groups = new ArrayList<Group>();
+
+	private Groups groupsFactory = new Groups();
 
 
 
@@ -74,7 +77,8 @@ public class AggregatedTestResults
     public void merge( List<TestRunResultsList> reportsLists, String groupName ) {
         final boolean trace = log.isTraceEnabled();
 
-		this.groups.add( groupName );
+		Group group = groupsFactory.getGroup(groupName);
+		this.groups.add(group);
 
 		// For all reports...
 		for( TestRunResultsList testResultsList : reportsLists ){
@@ -90,7 +94,7 @@ public class AggregatedTestResults
 					aggTest = new AggregatedTestInfo( curTest );
 					this.add(aggTest);
 				}
-				curTest.setGroup( groupName );
+				curTest.setGroup( group );
 				aggTest.add( curTest );
 			}
 
@@ -138,16 +142,23 @@ public class AggregatedTestResults
 		return Collections.unmodifiableList(testInfos);
 	}
 
-	public List<String> getGroups() {
+	/*public List<String> getGroups() {
+		return Collections.unmodifiableList(groups);
+	}*/
+
+	public List<Group> getGroups() {
 		return Collections.unmodifiableList(groups);
 	}
 
+	public void shortenGroupsNames() {
+		groupsFactory.shortenNames();
+	}
 
 	/**
 	 * Returns the differing parts of group names.
 	 *   {abcfoo123, abcbar123} => {foo, bar}
 	 */
-	public List<String> getGroupNamesDifferingParts() {
+	/*public List<String> getGroupNamesDifferingParts() {
 
 		// Get the common prefix.
 		String commonPrefix = StringUtils.getCommonPrefix( groups.toArray( new String[groups.size()] ));
@@ -176,7 +187,7 @@ public class AggregatedTestResults
 		}
 
 		return Collections.unmodifiableList( shortNames );
-	}
+	}*/
 
 
 
