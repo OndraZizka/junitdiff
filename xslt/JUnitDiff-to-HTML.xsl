@@ -24,7 +24,7 @@
               <title><xsl:value-of select="count(/aggregate/groups/group)"/> runs - JUnitDiff</title>
               <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"><!-- --></script>
               <link rel="shortcut icon" href="http://static.jquery.com/favicon.ico" type="image/x-icon"/>
-              <style type="text/css">
+              <style type="text/css" id="style">
                   * { font-family: Verdana; }
                   h1 { font-size: 20pt; }
                   h2 { font-size: 14pt; }
@@ -151,6 +151,8 @@
                  *  @param elmFailureDiv  See the failure-content template. May be null.
                  */
                 function out( testClass, testMethod, group, result, elmFailureDiv ){
+                    newwindow=window.open()
+                    newdocument=newwindow.document;
 
                     //                  "org.ClassName.method|group"
                     var testRunName   = testClass + '.' + testMethod + '|' + group;
@@ -203,11 +205,14 @@
                         elmLocalFail.innerHTML = "";
                         elmLocalFail.style.display = "none";
                     }
+                    newdocument.write('<style>' + document.getElementById( 'style' ).innerHTML + '</style>');
+                    newdocument.write('<div class="run popup">' + this.ePopup.innerHTML + '</div>');
+                    newdocument.close();
 
-                    this.ePopup.style.top = (window.scrollY + 15) + "px";
+                    //this.ePopup.style.top = (window.scrollY + 15) + "px";
 
-                    this.ePopup.onclick = function(){ this.style.display = null; }
-                    this.ePopup.style.display = "block";
+                    //this.ePopup.onclick = function(){ this.style.display = null; }
+                    //this.ePopup.style.display = "block";
                   
                 } // out()
 
