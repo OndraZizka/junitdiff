@@ -256,7 +256,11 @@
                                 <!-- TODO: JBQA-4131, then replace @path with @name -->
                                 <xsl:if test="not( /aggregate/testcase/testrun[ @group = current()/@path and @result != 'OK' ] )">okRun </xsl:if>
                             </xsl:attribute>
-                            <xsl:value-of select="substring(@name, string-length(@name) - 15)" />
+                            <xsl:value-of select="substring(@name, string-length(@name) - 15)" /><br/>
+                            <xsl:value-of select="count(/aggregate/testcase/testrun[ @group = current()/@id and @result = 'OK' ])" /> /
+                            <xsl:value-of select="count(/aggregate/testcase/testrun[ @group = current()/@id and @result = 'SKIPPED' ])" /> /
+                            <xsl:value-of select="count(/aggregate/testcase/testrun[ @group = current()/@id and @result = 'ERROR' ])" /> /
+                            <xsl:value-of select="count(/aggregate/testcase/testrun[ @group = current()/@id and @result = 'FAIL' ])" />
                         </th>
                     </xsl:for-each>
                 </tr>
