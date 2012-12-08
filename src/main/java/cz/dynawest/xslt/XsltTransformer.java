@@ -4,6 +4,8 @@ package cz.dynawest.xslt;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.Map;
 import java.util.logging.*;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Transformer;
@@ -73,6 +75,12 @@ public class XsltTransformer
     public static void transform( InputStream in, InputStream xsl, File out )
                 throws TransformerConfigurationException, TransformerException
     {
+        transform( in, xsl, out, Collections.EMPTY_MAP );
+    }
+
+    public static void transform( InputStream in, InputStream xsl, File out, Map<String, Object> params )
+                throws TransformerConfigurationException, TransformerException
+    {
         TransformerFactory factory = TransformerFactory.newInstance();
 
         StreamSource xslStream = new StreamSource( xsl );
@@ -81,6 +89,11 @@ public class XsltTransformer
 
         StreamSource inSource = new StreamSource( in );
         StreamResult outResult = new StreamResult( out );
+
+        for( Map.Entry<String, Object> entry : params.entrySet() ) {
+            if( null == entry.getKey() ) continue;
+            transformer.setParameter( entry.getKey(), entry.getValue() );
+        }
         transformer.transform( inSource, outResult );
     }
     

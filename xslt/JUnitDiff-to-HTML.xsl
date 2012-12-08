@@ -7,6 +7,14 @@
 
     <xsl:key name="isOkRow" match="/aggregate/testcase/testrun[@result != 'OK']" use="@group"/>
 
+    <xsl:param name="title" select="''"/>
+    <xsl:variable name="titleToUse">
+        <xsl:if test=" $title  = '' ">JUnitDiff - JUnit test reports aggregator</xsl:if>
+        <xsl:if test=" $title != '' ">
+            <xsl:value-of select="$title"/> (JUnitDiff report)
+        </xsl:if>
+    </xsl:variable>
+
     <!-- HTML sauce. -->
     <xsl:template match="/">
        <!-- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> -->
@@ -273,7 +281,7 @@
     <!-- Content and table. -->
     <xsl:template match="/aggregate">
 
-        <h1>JUnitDiff</h1>
+        <h1><xsl:value-of select="$titleToUse"/></h1>
 
         <h2>Runs:</h2>
         <div class="groups" id="groups">

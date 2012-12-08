@@ -37,9 +37,12 @@ public class JUnitDiffApp
 			//log.info(" Usage: junitdiff  ( dir | TEST-foo.xml | list-of-paths.txt )+");
 			System.out.println("  Aggregates multiple JUnit XML reports into one comprehensible page.");
 			System.out.println("  Usage:");
-			System.out.println("    java -jar JUnitDiff.jar -o ('-' | outputPath) ( dir | TEST-foo.xml | list-of-paths.txt | http://host/reports.zip )+");
+			System.out.println("    java -jar JUnitDiff.jar [options] ( dir | TEST-foo.xml | list-of-paths.txt | http://host/reports.zip )+");
 			System.out.println("");
-			System.out.println("    -o      Output file. '-' dumps the result to the stdout. Logging output always goes to the stderr.");
+			System.out.println("  Options:");
+			System.out.println("    -o ('-' | outputPath)   Output file. '-' dumps the result to the stdout. Logging output always goes to the stderr.");
+			System.out.println("    -xml                    XML output (default is HTML).");
+			System.out.println("    --title <title>         Title and heading for the HTML report.");
 			System.out.println("");
 			System.out.println("  Examples:");
 			System.out.println("    java -jar JUnitDiff.jar -o - > aggregated-test-report.html");
@@ -49,10 +52,12 @@ public class JUnitDiffApp
 		}
 
 		String outFile = null;
+		String title   = null;
 		boolean htmlOutput = true;
 		boolean stdOut = false;
 
 		// Process arguments...
+        // TODO: Some options data holder class...
 		for( int i = 0; i < args.length; i++ ) {
 			if( "-xml".equals(args[i]) ) {
 				htmlOutput = false;
@@ -61,6 +66,13 @@ public class JUnitDiffApp
 				args[i] = null;
 				if( args.length > i ) {
 					outFile = args[i + 1];
+					args[i + 1] = null;
+					i++;
+				}
+			} else if( "--title".equals(args[i]) ) {
+				args[i] = null;
+				if( args.length > i ) {
+					title = args[i + 1];
 					args[i + 1] = null;
 					i++;
 				}
@@ -76,14 +88,14 @@ public class JUnitDiffApp
 			outFile = DEFAULT_OUT_FILE + (htmlOutput ? ".html" : ".xml");
 		}
 
-		new JUnitDiffApp().runApp(args, outFile, htmlOutput, stdOut);
+		new JUnitDiffApp().runApp(args, outFile, htmlOutput, stdOut, title);
 
 	}
 
 	/**
 	 *  runApp()
 	 */
-	private void runApp(final String[] paths, final String outPath, boolean htmlOutput, boolean toStdOut) {
+	private void runApp(final String[] paths, final String outPath, boolean htmlOutput, boolean toStdOut, String title) {
 
 		List<File> reportFiles = new ArrayList(paths.length);
 
@@ -170,7 +182,7 @@ public class JUnitDiffApp
 		} else {
             // HTML
 			try {
-				XmlExporter.exportToHtmlFile(aggregatedData, outFile);
+				XmlExporter.exportToHtmlFile(aggregatedData, outFile, title);
 			} catch( JUnitDiffException ex ) {
 				log.error(ex.getMessage(), ex);
 				System.exit(6);

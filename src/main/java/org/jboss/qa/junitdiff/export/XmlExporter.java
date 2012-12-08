@@ -10,7 +10,9 @@ import org.jboss.qa.junitdiff.model.AggregatedTestResults;
 import org.jboss.qa.junitdiff.model.AggregatedTestInfo;
 import java.io.PrintStream;
 import java.io.StringReader;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.transform.TransformerException;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -39,7 +41,7 @@ public class XmlExporter
 	/**
 	 *  Exports given matrix to the given file, as a JUnit-like XML.
 	 */
-	public static void exportToHtmlFile( AggregatedData aggData, File fout ) throws JUnitDiffException
+	public static void exportToHtmlFile( AggregatedData aggData, File fout, String title ) throws JUnitDiffException
     {
         //exportToXML( atr, new PrintStream( fout, "uft8" ) );
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -48,7 +50,9 @@ public class XmlExporter
         try {
           ReaderInputStream ris = new ReaderInputStream( new StringReader(baos.toString("utf8")), "utf8");
           InputStream xslTemplate = XmlExporter.class.getResourceAsStream( XSL_TEMPLATE_PATH );
-          XsltTransformer.transform( ris, xslTemplate, fout );
+          Map<String, Object> params = new HashMap();
+          if( title != null ) params.put( "title", title );
+          XsltTransformer.transform( ris, xslTemplate, fout, params );
         }
         catch( TransformerException ex ){
           throw new JUnitDiffException("Error when creating HTML file: "+ex.getMessage(), ex);
