@@ -10,24 +10,17 @@ import org.slf4j.LoggerFactory;
  *  Aggregated results:  A matrix of joined test results lists, with one "column" for each list.
  *
  * @author Ondrej Zizka
- *
- * TODO: Change List + Map  to OrderedSet or such.
  */
 public class AggregatedTestResults
 {
 	private static final Logger log = LoggerFactory.getLogger(AggregatedTestResults.class);
 
 
-	// List of test with all their runs.
-	private List<AggregatedTestInfo> testInfos = new ArrayList();
-
-
 	// Name -> test results list.
-	private Map<String, AggregatedTestInfo> byFullTestName = new TreeMap();
+	private Map<String, AggregatedTestInfo> byFullTestName = new LinkedHashMap();
 
 
 	// Groups.
-	//private List<String> groups = new ArrayList();
 	private List<IGroup> groups = new ArrayList<IGroup>();
 
 	private Groups groupsFactory = new Groups();
@@ -110,27 +103,27 @@ public class AggregatedTestResults
 
 
 	public int size() {
-		return testInfos.size();
+		return byFullTestName.size();
 	}
 
 	public boolean isEmpty() {
-		return testInfos.isEmpty();
+		return byFullTestName.isEmpty();
 	}
 
 	public AggregatedTestInfo get(int index) {
-		return testInfos.get(index);
+		return byFullTestName.get(index);
 	}
 
 	public boolean add(AggregatedTestInfo e) {
 		byFullTestName.put(e.getFullName(), e);
-		return testInfos.add(e);
+		return true;
 	}
 
 	public boolean addAll(Collection<? extends AggregatedTestInfo> atis) {
 		for( AggregatedTestInfo ati : atis ) {
 			byFullTestName.put(ati.getFullName(), ati);
 		}
-		return testInfos.addAll(atis);
+		return true;
 	}
 
 	public boolean containsByName(String fullName) {
@@ -138,7 +131,7 @@ public class AggregatedTestResults
 	}
 
 	public List<AggregatedTestInfo> getTestInfos() {
-		return Collections.unmodifiableList(testInfos);
+		return Collections.unmodifiableList(new ArrayList(byFullTestName.values()));
 	}
 
 	/*public List<String> getGroups() {
