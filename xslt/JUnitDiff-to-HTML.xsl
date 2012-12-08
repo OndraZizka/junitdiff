@@ -37,6 +37,7 @@
                   table.results td.result_OK a { color: green; }
                   table.results td.result_FAIL a { color: red; }
                   table.results td.result_ERROR a { color: orange; }
+                  table.results td.result_SKIPPED a { color: blue }
 
                   table.results tr       td { border-top: 1px dotted silver; }
                   table.results tr.first td { border-top: 1px solid gray;   padding-top: 1ex; }
@@ -257,7 +258,11 @@
                             <xsl:attribute name="class">
                                 <xsl:if test="not( /aggregate/testcase/testrun[ @group = current()/@id and @result != 'OK' ] )">okRun </xsl:if>
                             </xsl:attribute>
-                            <xsl:value-of select="substring(@name, string-length(@name) - 15)" />
+                            <xsl:value-of select="substring(@name, string-length(@name) - 15)" /><br/>
+                            <xsl:value-of select="count(/aggregate/testcase/testrun[ @group = current()/@id and @result = 'OK' ])" /> /
+                            <xsl:value-of select="count(/aggregate/testcase/testrun[ @group = current()/@id and @result = 'SKIPPED' ])" /> /
+                            <xsl:value-of select="count(/aggregate/testcase/testrun[ @group = current()/@id and @result = 'ERROR' ])" /> /
+                            <xsl:value-of select="count(/aggregate/testcase/testrun[ @group = current()/@id and @result = 'FAIL' ])" />
                         </th>
                     </xsl:for-each>
                 </tr>
