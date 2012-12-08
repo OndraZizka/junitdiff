@@ -9,6 +9,7 @@ import java.util.List;
  * Used to bind multiple groups (collumns) visually.
  *
  * @author Ondrej Zizka
+ * @deprecated  Probably not used anywhere.
  */
 public class SuperGroup {
 

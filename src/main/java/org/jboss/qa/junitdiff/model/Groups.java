@@ -5,20 +5,22 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 /**
+ *  Group of groups, used for logical separation of test runs.
+ *  Can serve e.g. for coloring of columns in HTML output.
  *
- * @author jbrazdil
+ *  @author jbrazdil
  */
 public class Groups {
-	private Map<String,GroupI> groups = new HashMap<String,GroupI>();
+	private Map<String,Group> groups = new HashMap<String,Group>();
 	private int id=1;
 
 
-	public Group getGroup(String path){
-		GroupI group;
+	public IGroup getGroup(String path){
+		Group group;
 		if(groups.containsKey(path)){
 			group = groups.get(path);
 		}else{
-			group = new GroupI(path, id);
+			group = new Group(path, id);
 			id++;
 			groups.put(path, group);
 		}
@@ -34,7 +36,7 @@ public class Groups {
 		String[] allPaths = new String[groups.size()];
 		String[] allPathsRev = new String[groups.size()];
 		int i=0;
-		for(Group g : groups.values()){
+		for(IGroup g : groups.values()){
 			allPaths[i]=g.getPath();
 			allPathsRev[i]=StringUtils.reverse(g.getPath());
 			i++;
@@ -50,7 +52,7 @@ public class Groups {
 
 		// Cut off the common prefix and sufix
 		if( prefixLength + sufixLength != 0 ){ // 7
-			for(GroupI g : groups.values()){
+			for(Group g : groups.values()){
 				int nameLength = g.getPath().length(); // abcfoo1234 = 10; abcbarbar1234 = 13
 				//  abc|foo|1234      ->  foo          3             10  - 4 = 6
 				//  abc|bar bar|1234  ->  barbar       3             13  - 4 = 9
@@ -62,13 +64,13 @@ public class Groups {
 		}
 	}
 
-	private static class GroupI implements Group {
+	private static class Group implements IGroup {
 
 		private String path;
 		private String name;
 		private int id;
 
-		GroupI(String path, int id) {
+		Group(String path, int id) {
 			this.path = path;
 			this.name = path;
 			this.id = id;
@@ -90,7 +92,7 @@ public class Groups {
 
 		@Override
 		public String toString() {
-			return "GroupPrecept{" + "name=" + name + '}';
+			return "Groups{" + "name=" + name + '}';
 		}
 	}
 }

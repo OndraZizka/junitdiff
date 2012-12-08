@@ -2,7 +2,6 @@
 package org.jboss.qa.junitdiff.model;
 
 import java.util.*;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +28,7 @@ public class AggregatedTestResults
 
 	// Groups.
 	//private List<String> groups = new ArrayList();
-	private List<Group> groups = new ArrayList<Group>();
+	private List<IGroup> groups = new ArrayList<IGroup>();
 
 	private Groups groupsFactory = new Groups();
 
@@ -77,7 +76,7 @@ public class AggregatedTestResults
     public void merge( List<TestRunResultsList> reportsLists, String groupName ) {
         final boolean trace = log.isTraceEnabled();
 
-		Group group = groupsFactory.getGroup(groupName);
+		IGroup group = groupsFactory.getGroup(groupName);
 		this.groups.add(group);
 
 		// For all reports...
@@ -146,7 +145,7 @@ public class AggregatedTestResults
 		return Collections.unmodifiableList(groups);
 	}*/
 
-	public List<Group> getGroups() {
+	public List<IGroup> getGroups() {
 		return Collections.unmodifiableList(groups);
 	}
 

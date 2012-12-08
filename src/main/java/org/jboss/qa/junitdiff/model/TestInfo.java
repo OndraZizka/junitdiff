@@ -19,7 +19,7 @@ public class TestInfo {
 		private Result result;
 		private String time;
 		private Failure failure;
-		private Group group;
+		private IGroup group;
 
 
 		public TestInfo(String classname, String name, Result result, String time) {
@@ -48,11 +48,11 @@ public class TestInfo {
 		public Failure getFailure() {				return failure;		}
 		public void setFailure(Failure failure) {				this.failure = failure;		}
 
-		public Group getGroup() {
+		public IGroup getGroup() {
 				return group;
 		}
 
-		public void setGroup(Group group) {
+		public void setGroup(IGroup group) {
 				this.group = group;
 		}
 		// </editor-fold>

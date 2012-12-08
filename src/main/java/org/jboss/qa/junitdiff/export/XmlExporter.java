@@ -18,7 +18,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.jboss.qa.junitdiff.JUnitDiffApp;
 import org.jboss.qa.junitdiff.ex.JUnitDiffException;
 import org.jboss.qa.junitdiff.model.AggregatedData;
-import org.jboss.qa.junitdiff.model.Group;
+import org.jboss.qa.junitdiff.model.IGroup;
 import org.jboss.qa.junitdiff.model.TestInfo;
 import org.jboss.qa.junitdiff.model.TestSuite;
 import org.slf4j.Logger;
@@ -84,13 +84,13 @@ public class XmlExporter
 		// Groups.
 		out.println("\t<groups>");
 		atr.shortenGroupsNames();
-		List<Group> groups = atr.getGroups();
+		List<IGroup> groups = atr.getGroups();
 
 		/*for (String group : groups) {
 				out.append("\t\t<group name=\"").append(x( group )).append("\" path=\"").append(x( group )).append("\"/>\n");
 		}*/
 
-		for(Group g : groups){
+		for(IGroup g : groups){
 			out.append("\t\t<group name=\"").append(x( g.getName() ))
 					   .append("\" path=\"").append(x( g.getPath() ))
 					   .append("\" id=\"").append(x( g.getId().toString() ))
