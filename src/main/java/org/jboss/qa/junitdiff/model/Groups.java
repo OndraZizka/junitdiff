@@ -44,26 +44,27 @@ public class Groups {
 
 		// Get the common prefix and sufix
 		String commonPrefix = StringUtils.getCommonPrefix(allPaths); // abc
-		String commonSufix = StringUtils.getCommonPrefix(allPathsRev); // 1234
+		String commonSuffix = StringUtils.getCommonPrefix(allPathsRev); // 1234
 
 		// Get the common prefix and sufix lengths
 		int prefixLength = commonPrefix.length(); // 3
-		int sufixLength = commonSufix.length(); // 4
+		int suffixLength = commonSuffix.length(); // 4
 
 		// Cut off the common prefix and sufix
-		if( prefixLength + sufixLength != 0 ){ // 7
-			for(Group g : groups.values()){
-				int nameLength = g.getPath().length(); // abcfoo1234 = 10; abcbarbar1234 = 13
-				//  abc|foo|1234      ->  foo          3             10  - 4 = 6
-				//  abc|bar bar|1234  ->  barbar       3             13  - 4 = 9
-				//  012|345|678|9012
-				int end = nameLength - sufixLength;
-				if(prefixLength >= end) end = nameLength;
-				g.name = g.path.substring(prefixLength, end);
-			}
-		}
+		if( prefixLength + suffixLength == 0 )  return;
+
+        for(Group g : groups.values()){
+            int nameLength = g.getPath().length(); // abcfoo1234 = 10; abcbarbar1234 = 13
+            //  abc|foo|1234      ->  foo          3             10  - 4 = 6
+            //  abc|bar bar|1234  ->  barbar       3             13  - 4 = 9
+            //  012|345|678|9012
+            int end = nameLength - suffixLength;
+            if(prefixLength >= end) end = nameLength;
+            g.name = g.path.substring(prefixLength, end);
+        }
 	}
 
+    
 	private static class Group implements IGroup {
 
 		private String path;
