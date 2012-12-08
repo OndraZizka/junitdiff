@@ -22,7 +22,7 @@ public class JUnitDiffApp
 {
 
 	private static final Logger log = LoggerFactory.getLogger(JUnitDiffApp.class);
-	private static final String DEFAULT_OUT_FILE = "AGGREGATED_TEST.xml";
+	private static final String DEFAULT_OUT_FILE = "JUnitDiff"; // Suffix appened according to output type.
 
 	/**
 	 *  main ()
@@ -71,7 +71,7 @@ public class JUnitDiffApp
 		}
 
 		if( null == outFile ) {
-			outFile = DEFAULT_OUT_FILE + (htmlOutput ? ".html" : "");
+			outFile = DEFAULT_OUT_FILE + (htmlOutput ? ".html" : ".xml");
 		}
 
 		new JUnitDiffApp().runApp(args, outFile, htmlOutput, stdOut);
