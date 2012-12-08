@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jboss.qa.junitdiff.ex.JUnitDiffException;
 import org.jboss.qa.junitdiff.export.XmlExporter;
 import org.jboss.qa.junitdiff.model.AggregatedData;
@@ -81,7 +83,7 @@ public class JUnitDiffApp
 	/**
 	 *  runApp()
 	 */
-	private void runApp(final String[] paths, final String outFile, boolean htmlOutput, boolean toStdOut) {
+	private void runApp(final String[] paths, final String outPath, boolean htmlOutput, boolean toStdOut) {
 
 		List<File> reportFiles = new ArrayList(paths.length);
 
@@ -151,19 +153,24 @@ public class JUnitDiffApp
 		}
 
 
-		// Export the aggregated matrix to a XML file.
+		// Export the aggregated matrix to a file.
 		// TODO: Use a Writer.
-		log.info("Exporting to " + outFile);
+		log.info("Exporting to " + outPath);
+
+        File outFile = new File(outPath);
+
 		if( !htmlOutput ) {
+            // XML
 			try {
-				XmlExporter.exportToXML(aggregatedData, new File(outFile));
+				XmlExporter.exportToXML(aggregatedData, outFile);
 			} catch( FileNotFoundException ex ) {
-				log.error("Can't write to file '" + outFile + "': " + ex.getMessage());
+				log.error("Can't write to file '" + outPath + "': " + ex.getMessage());
 				System.exit(5);
 			}
 		} else {
+            // HTML
 			try {
-				XmlExporter.exportToHtmlFile(aggregatedData, new File(outFile));
+				XmlExporter.exportToHtmlFile(aggregatedData, outFile);
 			} catch( JUnitDiffException ex ) {
 				log.error(ex.getMessage(), ex);
 				System.exit(6);
@@ -176,7 +183,7 @@ public class JUnitDiffApp
 			log.debug("Output goes to stdout.");
 			FileReader fileReader = null;
 			try {
-				fileReader = new FileReader(outFile);
+				fileReader = new FileReader(outPath);
 				IOUtils.copy(fileReader, System.out);
 			} catch( FileNotFoundException ex ) {
 				log.error(ex.toString());
