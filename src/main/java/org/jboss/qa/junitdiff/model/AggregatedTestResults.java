@@ -16,8 +16,8 @@ public class AggregatedTestResults
 	private static final Logger log = LoggerFactory.getLogger(AggregatedTestResults.class);
 
 
-	// Name -> test results list.
-	private Map<String, AggregatedTestInfo> byFullTestName = new LinkedHashMap();
+	// ClassName -> test results list.
+	private Map<String, TestClassInfo> byTestClassName = new LinkedHashMap<String, TestClassInfo>();
 
 
 	// Groups.
@@ -25,20 +25,8 @@ public class AggregatedTestResults
 
 	private Groups groupsFactory = new Groups();
 
-
-
-	/**
-	 *  Finds a test by it's full name, i.e. "org.jboss.ClassName.testMethodName".
-	 * @param fullName
-	 * @return
-	 */
-	public AggregatedTestInfo findTestByFullName( String fullName ) {
-			return byFullTestName.get( fullName );
-	}
-
-
 	public List<TestRunResultsList> mergeTestSuites( List<TestSuite> testSuites, String groupName ) {
-		List<TestRunResultsList> reportsLists = new ArrayList( testSuites.size() );
+		List<TestRunResultsList> reportsLists = new ArrayList<TestRunResultsList>( testSuites.size() );
 		for( TestSuite testSuite : testSuites ) {
 			reportsLists.add( testSuite.getTestRunResultsList() );
 		}
@@ -78,16 +66,15 @@ public class AggregatedTestResults
 			if( trace )  log.trace("  Aggregating {}", testResultsList);///
 
 			// Add all their tests, grouped by full name, to the aggregated matrix.
-			for( TestInfo curTest : testResultsList.getTestResults() )
+			for( TestRunInfo curTest : testResultsList.getTestResults() )
 			{
-				String fullName = curTest.getFullName();
-				AggregatedTestInfo aggTest = this.findTestByFullName(fullName);
-				if( aggTest == null ){
-					aggTest = new AggregatedTestInfo( curTest );
-					this.add(aggTest);
+				TestClassInfo testclass = this.findTestsByClassName(curTest.getClassname());
+				if( testclass == null ){
+					testclass = new TestClassInfo( curTest.getClassname() );
+					this.add(testclass);
 				}
 				curTest.setGroup( group );
-				aggTest.add( curTest );
+				testclass.add(curTest);
 			}
 
 		}
@@ -101,87 +88,38 @@ public class AggregatedTestResults
 		return "Group"+nextGroupNum++;
 	}
 
-
-	public int size() {
-		return byFullTestName.size();
-	}
-
-	public boolean isEmpty() {
-		return byFullTestName.isEmpty();
-	}
-
-	public AggregatedTestInfo get(int index) {
-		return byFullTestName.get(index);
-	}
-
-	public boolean add(AggregatedTestInfo e) {
-		byFullTestName.put(e.getFullName(), e);
+	public boolean add(TestClassInfo testClass) {
+		byTestClassName.put(testClass.getClassName(), testClass);
 		return true;
 	}
 
-	public boolean addAll(Collection<? extends AggregatedTestInfo> atis) {
-		for( AggregatedTestInfo ati : atis ) {
-			byFullTestName.put(ati.getFullName(), ati);
+	public boolean containsByClassName(String className) {
+		return byTestClassName.containsKey(className);
+	}
+
+	public List<TestCaseInfo> getTestCases() {
+		List<TestCaseInfo> ret = new ArrayList<TestCaseInfo>();
+		for(TestClassInfo testclass : byTestClassName.values()){
+			testclass.generatePseudoRuns(); // TODO this methot can't be used twice
+			ret.addAll(testclass.getTestCases());
 		}
-		return true;
+		return ret;
 	}
-
-	public boolean containsByName(String fullName) {
-		return byFullTestName.containsKey(fullName);
-	}
-
-	public List<AggregatedTestInfo> getTestInfos() {
-		return Collections.unmodifiableList(new ArrayList(byFullTestName.values()));
-	}
-
-	/*public List<String> getGroups() {
-		return Collections.unmodifiableList(groups);
-	}*/
 
 	public List<IGroup> getGroups() {
 		return Collections.unmodifiableList(groups);
 	}
 
+	/**
+	 *  Finds a test by it's class name, i.e. "org.jboss.ClassName".
+	 * @param className
+	 * @return
+	 */
+	public TestClassInfo findTestsByClassName( String className ) {
+		return byTestClassName.get( className );
+	}
+
 	public void shortenGroupsNames() {
 		groupsFactory.shortenNames();
 	}
-
-	/**
-	 * Returns the differing parts of group names.
-	 *   {abcfoo123, abcbar123} => {foo, bar}
-	 */
-	/*public List<String> getGroupNamesDifferingParts() {
-
-		// Get the common prefix.
-		String commonPrefix = StringUtils.getCommonPrefix( groups.toArray( new String[groups.size()] ));
-		if( commonPrefix.length() == 0 )
-			return Collections.unmodifiableList(groups);
-
-		// Cut off the common prefix.
-		List<String> shortNames = new ArrayList<String>( groups.size() );
-		List<String> revertedShortNames = new ArrayList( groups.size() );
-
-		for( String string : groups ) {
-			String differingPart = string.substring(commonPrefix.length());
-			shortNames.add( differingPart );
-			revertedShortNames.add( StringUtils.reverse(differingPart) );
-		}
-
-		// Get the common suffix.
-		String commonSuffix = StringUtils.getCommonPrefix( revertedShortNames.toArray( new String[revertedShortNames.size()] ));
-		if( commonSuffix.length() == 0 )
-			return Collections.unmodifiableList( shortNames );
-
-		// Cut off the common suffix.
-		shortNames.clear();
-		for( String revertedName : revertedShortNames ) {
-			shortNames.add( StringUtils.reverse( revertedName.substring( commonSuffix.length()) ) );
-		}
-
-		return Collections.unmodifiableList( shortNames );
-	}*/
-
-
-
-
 }// class
