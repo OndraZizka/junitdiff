@@ -6,6 +6,7 @@
     <xsl:output method="html" encoding="UTF-8" omit-xml-declaration="yes" indent="yes"/>
 
     <xsl:key name="isOkRow" match="/aggregate/testcase/testrun[@result != 'OK']" use="@group"/>
+	<xsl:variable name="groupCount" select="count(/aggregate/groups/group)"/>
 
     <xsl:param name="title" select="''"/>
     <xsl:variable name="titleToUse">
@@ -55,21 +56,22 @@
                   table.results .run .time       { font-size: 65%; margin-right: 1ex; font-weight: normal; font-style: normal; }
 
                   table.results tbody.hideOkTests tr.okTest { display: none; }
+                  table.results tbody.hideNodiffTests tr.nodiffTest { display: none; }
                   table.hideOkRuns  td.or     { display: none; }
                   table.hideOkRuns  th.okRun     { display: none; }
 
                   /* Popup for the test run details. */
-                  .popup               { 
-                    position: absolute; top: 20; left: 20; 
+                  .popup               {
+                    position: absolute; top: 20; left: 20;
                     min-width: 600px; min-height: 200px;
-                    border: 1px solid green; 
+                    border: 1px solid green;
                     background-color: white;
                     padding: 1ex 1ex;
                   }
-                  .popup.hidden        { display: none; }     
+                  .popup.hidden        { display: none; }
                   .data.hidden         { display: none; }     /* Bottom of the page. */
                   .failure.hidden         { display: none; }  /* Inside test run cells. */
-                  
+
                   .run.popup .label { font-weight: bold; }
                   .run.popup .text {
                     white-space: pre; font-size: 75%; font-family: Courier New, monospaced;
@@ -144,7 +146,7 @@
                     return { class: sClass, method: sMethod };
                 }
 
-                
+
                 /**
                  *  Displays a popup with details of the test - stdout, stderr, failure message etc.
                  *  FIXME:  Failure message not being passed here since oskutka's change (r13950).
@@ -208,7 +210,7 @@
 
                     this.ePopup.onclick = function(){ this.style.display = null; }
                     this.ePopup.style.display = "block";
-                  
+
                 } // out()
 
                 /*window.onscroll = function(){
@@ -219,7 +221,13 @@
                 function toggleShowOnlyNonOkTests( bShowOnlyNonOK ){
                   //alert( "className: "+ document.getElementById("results-table").getElementsByTagName("tbody")[0].className );
                   //alert( "classname: " + ( bShowOnlyNonOK ? "hideOkTests" : "" ) );
+                  document.getElementById("cbShowOnlyDiffTests").checked=false;
                   document.getElementById("results-table").getElementsByTagName("tbody")[0].className = ( bShowOnlyNonOK ? "hideOkTests" : "" );
+                }
+
+                function toggleShowOnlyDiffTests( bShowOnlyNonOK ){
+                  document.getElementById("cbShowOnlyNonOkTests").checked=false;
+                  document.getElementById("results-table").getElementsByTagName("tbody")[0].className = ( bShowOnlyNonOK ? "hideNodiffTests" : "" );
                 }
 
                 // TODO: Not working now... the .or class is not being added yet.
@@ -237,7 +245,7 @@
           </head>
           <body>
             <xsl:apply-templates select="/aggregate" />
-            
+
             <!-- Hidden popup content -->
                 <div class="run popup hidden" id="popup-div">
                   <div class="result"><span class="label">Result: </span> <span id="popup-result">Still loading...</span></div>
@@ -247,10 +255,10 @@
                   <div class="testsuite out"><span class="label">Stdout:</span> <div class="text">Still loading...</div></div>
                   <div class="testsuite err"><span class="label">Stderr:</span> <div class="text">Still loading...</div></div>
                 </div>
-            
+
             <!-- TODO: Hidden popup content - testsuites' stdout, strerr - TODO -->
             <xsl:apply-templates mode="content" select="/aggregate/testsuites/testsuite" />
-            
+
           </body>
        </html>
     </xsl:template>
@@ -302,8 +310,9 @@
         <h2>Tests \ test runs:</h2>
 
         <div><input type="checkbox" id="cbShowOnlyNonOkTests" onchange="toggleShowOnlyNonOkTests(this.checked);"/> <label for="cbShowOnlyNonOkTests">Show only non-OK tests (rows)</label></div>
+        <div><input type="checkbox" id="cbShowOnlyDiffTests" onchange="toggleShowOnlyDiffTests(this.checked);"/> <label for="cbShowOnlyDiffTests">Show only tests with differing results (rows)</label></div>
         <div><input type="checkbox" id="cbShowOnlyNonOkRuns"  onchange="toggleShowOnlyNonOkRuns (this.checked);"/> <label for="cbShowOnlyNonOkRuns" >Show only non-OK runs (cols)</label></div>
-        
+
         <table class="results" id="results-table">
             <thead>
                 <xsl:apply-templates select="." mode="table-header" />
@@ -336,10 +345,12 @@
     <!-- Test case (table row). -->
     <xsl:template match="/aggregate/testcase">
         <tr class="testcase">
+			<xsl:variable name="first_run_result" select="./testrun[1]/@result"/>
             <xsl:attribute name="class">
                 <xsl:text>testcase</xsl:text>
                 <xsl:if test="preceding-sibling::testcase[1]/@classname != @classname"> first</xsl:if>
                 <xsl:if test="not( testrun[@result != 'OK'] )"> okTest</xsl:if>
+                <xsl:if test="not( testrun[@result != $first_run_result] ) and count(./testrun) = $groupCount"> nodiffTest</xsl:if>
             </xsl:attribute>
             <!--<xsl:if test="preceding-sibling::testcase[1]/@classname != @classname"><xsl:attribute name="class">testcase first</xsl:attribute></xsl:if>-->
           
