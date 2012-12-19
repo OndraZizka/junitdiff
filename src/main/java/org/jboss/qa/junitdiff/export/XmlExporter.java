@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import org.jboss.qa.junitdiff.model.AggregatedTestResults;
-import org.jboss.qa.junitdiff.model.AggregatedTestInfo;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.HashMap;
@@ -21,7 +20,8 @@ import org.jboss.qa.junitdiff.JUnitDiffApp;
 import org.jboss.qa.junitdiff.ex.JUnitDiffException;
 import org.jboss.qa.junitdiff.model.AggregatedData;
 import org.jboss.qa.junitdiff.model.IGroup;
-import org.jboss.qa.junitdiff.model.TestInfo;
+import org.jboss.qa.junitdiff.model.TestCaseInfo;
+import org.jboss.qa.junitdiff.model.TestRunInfo;
 import org.jboss.qa.junitdiff.model.TestSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,21 +106,21 @@ public class XmlExporter
 
 
 		// Test cases.
-		for( AggregatedTestInfo ati : atr.getTestInfos() ) {
-			out.append("\t<testcase classname=\"").append(x( ati.getClassName() ))
-				 .append("\" name=\"").append(x( ati.getName() )) .append("\">\n");
+		for( TestCaseInfo testcase : atr.getTestCases() ) {
+			out.append("\t<testcase classname=\"").append(x( testcase.getClassName() ))
+			   .append("\" name=\"").append(x( testcase.getName() )) .append("\">\n");
 
-			for( TestInfo ti : ati.getTestInfos() ){
-				out.append("\t\t<testrun result=\"").append(x( ti.getResult().name() ))
-					 .append("\" time=\"").append(x( ti.getTime() ))
-					 .append("\" group=\"").append(x( ti.getGroup().getId().toString() ))
-					 .append("\">\n");
+			for( TestRunInfo testrun : testcase.getTestRuns() ){
+				out.append("\t\t<testrun result=\"").append(x( testrun.getResult().name() ))
+				   .append("\" time=\"").append(x( testrun.getTime() ))
+				   .append("\" group=\"").append(x( testrun.getGroupID() ))
+				   .append("\">\n");
 
 				// <failure message="Exception message" type="java.lang.Exception">
-				if( null != ti.getFailure() ){
-					out.append("\t\t\t<failure message=\"").append(x( ti.getFailure().getMessage() ))
-					   .append("\" type=\"").append(x( ti.getFailure().getType() )).append("\">\n");
-					out.print(x( ti.getFailure().getTrace() ));
+				if( null != testrun.getFailure() ){
+					out.append("\t\t\t<failure message=\"").append(x( testrun.getFailure().getMessage() ))
+					   .append("\" type=\"").append(x( testrun.getFailure().getType() )).append("\">\n");
+					out.print(x( testrun.getFailure().getTrace() ));
 					out.println("</failure>");
 				}
 

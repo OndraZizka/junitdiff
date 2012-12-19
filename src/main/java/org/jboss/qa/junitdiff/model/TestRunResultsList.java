@@ -19,7 +19,7 @@ public class TestRunResultsList implements Serializable {
 
 		private String group;
 
-		private List<TestInfo> testResults = new ArrayList();
+		private List<TestRunInfo> testResults = new ArrayList<TestRunInfo>();
 
 
 
@@ -32,7 +32,7 @@ public class TestRunResultsList implements Serializable {
 		public TestRunResultsList() {
 		}
 
-		public TestRunResultsList( List<TestInfo> testResults ) {
+		public TestRunResultsList( List<TestRunInfo> testResults ) {
 				this.testResults = testResults;
 		}
 
@@ -44,7 +44,7 @@ public class TestRunResultsList implements Serializable {
 				return testResults.isEmpty();
 		}
 
-		public TestInfo get(int index) {
+		public TestRunInfo get(int index) {
 				return testResults.get(index);
 		}
 
@@ -52,11 +52,11 @@ public class TestRunResultsList implements Serializable {
 				return testResults.contains(o);
 		}
 
-		public boolean addAll(Collection<? extends TestInfo> c) {
+		public boolean addAll(Collection<? extends TestRunInfo> c) {
 				return testResults.addAll(c);
 		}
 
-		public boolean add(TestInfo e) {
+		public boolean add(TestRunInfo e) {
 				return testResults.add(e);
 		}// </editor-fold>
 
@@ -75,7 +75,7 @@ public class TestRunResultsList implements Serializable {
 				}
 
 				// Concatenate multiple report files to one.
-				List<TestInfo> results = new ArrayList( totalTests );
+				List<TestRunInfo> results = new ArrayList<TestRunInfo>( totalTests );
 				for (TestRunResultsList trl : trls) {
 						results.addAll( trl.getTestResults() );
 				}
@@ -96,7 +96,7 @@ public class TestRunResultsList implements Serializable {
 
 
 		// <editor-fold defaultstate="collapsed" desc="get / set">
-		public List<TestInfo> getTestResults() {
+		public List<TestRunInfo> getTestResults() {
 				return testResults;
 		}
 

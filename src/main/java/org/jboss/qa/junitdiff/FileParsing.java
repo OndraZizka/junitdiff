@@ -13,7 +13,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.qa.junitdiff.ex.JUnitDiffException;
-import org.jboss.qa.junitdiff.model.TestInfo;
+import org.jboss.qa.junitdiff.model.TestRunInfo;
 import org.jboss.qa.junitdiff.model.TestSuite;
 import org.jdom.JDOMException;
 import org.slf4j.Logger;
@@ -204,7 +204,7 @@ public class FileParsing
 						String name = elm.getAttributeValue("name");
 						String classname = elm.getAttributeValue("classname");
 
-						TestInfo info = new TestInfo(classname, name, TestInfo.Result.OK, time);
+						TestRunInfo info = new TestRunInfo(classname, name, TestRunInfo.Result.OK, time);
 
 
 						// Failure.
@@ -216,7 +216,7 @@ public class FileParsing
 								trace = StringUtils.substringAfter(trace, "\n");
 								Failure fail = new Failure(message, type, trace);
 
-								info.setResult(TestInfo.Result.FAIL);
+								info.setResult(TestRunInfo.Result.FAIL);
 								info.setFailure(fail);
 						}
 
@@ -229,14 +229,14 @@ public class FileParsing
 								trace = StringUtils.substringAfter(trace, "\n");
 								Failure fail = new Failure(message, type, trace);
 
-								info.setResult(TestInfo.Result.ERROR);
+								info.setResult(TestRunInfo.Result.ERROR);
 								info.setFailure(fail);
 						}
 
 						// Skipped.
 						child = elm.getChild("skipped");
 						if( null != child ){
-								info.setResult(TestInfo.Result.SKIPPED);
+								info.setResult(TestRunInfo.Result.SKIPPED);
 						}
 
 

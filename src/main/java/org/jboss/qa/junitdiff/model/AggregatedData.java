@@ -15,10 +15,10 @@ public class AggregatedData implements Serializable
   
   private final AggregatedTestResults aggregatedTestResults = new AggregatedTestResults();;
   
-  private final List<TestSuite> testSuites = new LinkedList();
+  private final List<TestSuite> testSuites = new LinkedList<TestSuite>();
   
   // map "groupname|test-class name" -> testsuite?
-  private final Map<String, TestSuite> testSuiteByGroupAndClassName = new TreeMap();
+  private final Map<String, TestSuite> testSuiteByGroupAndClassName = new TreeMap<String, TestSuite>();
   
   
 

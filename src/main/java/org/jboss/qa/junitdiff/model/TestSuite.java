@@ -1,10 +1,6 @@
-
 package org.jboss.qa.junitdiff.model;
 
-
 import java.io.Serializable;
-
-
 
 /**
  *  
@@ -12,8 +8,7 @@ import java.io.Serializable;
  */
 public class TestSuite implements Serializable
 {
-  
-  
+
 		/**
 		 *  Where did this results collection come from (e.g. a filename).
 		 */
