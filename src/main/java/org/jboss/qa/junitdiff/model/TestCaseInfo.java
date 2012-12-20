@@ -29,6 +29,12 @@ public class TestCaseInfo {
 		this.className = test.getClassname();
 	}
 
+	TestCaseInfo(TestCaseInfo testCase){
+		this.className = testCase.className;
+		this.name = testCase.name;
+		this.testInfos.addAll(testCase.testInfos);
+	}
+
 	// <editor-fold defaultstate="collapsed" desc="List overrides">
 	public int size() {
 		return testInfos.size();

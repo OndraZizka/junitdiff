@@ -100,8 +100,7 @@ public class AggregatedTestResults
 	public List<TestCaseInfo> getTestCases() {
 		List<TestCaseInfo> ret = new ArrayList<TestCaseInfo>();
 		for(TestClassInfo testclass : byTestClassName.values()){
-			testclass.generatePseudoRuns(); // TODO this methot can't be used twice
-			ret.addAll(testclass.getTestCases());
+			ret.addAll(testclass.getTestCasesWithPseudoRuns());
 		}
 		return ret;
 	}
