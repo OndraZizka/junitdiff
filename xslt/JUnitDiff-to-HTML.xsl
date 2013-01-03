@@ -21,7 +21,7 @@
        <!-- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> -->
        <html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
           <head>
-              <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+              <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
               <title><xsl:value-of select="count(/aggregate/groups/group)"/> runs - JUnitDiff</title>
               <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"><!-- --></script>
               <link rel="shortcut icon" href="http://static.jquery.com/favicon.ico" type="image/x-icon"/>
