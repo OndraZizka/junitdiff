@@ -92,10 +92,10 @@
                     var shortName = parts[parts.length-1];
 
                     var windowProps = "menubar=no,resizable=yes,scrollbars=yes,status=yes,modal=yes,alwaysRaised=yes";
-                    //window.open("https://jira.jboss.org/secure/QuickSearch.jspa?searchString="+shortName,  fullTestName, windowProps);
-                    window.open("https://issues.jboss.org/issues/?jql=text%20~%20%22" + shortName + "%22",  "jboss-"+fullTestName,  windowProps);
-                    //window.open("http://opensource.atlassian.com/projects/hibernate/secure/QuickSearch.jspa?searchString="+shortName,  "hbn-"+fullTestName, windowProps);
-                    window.open("http://www.google.com/search?q="+shortName,  "google-"+fullTestName, windowProps);
+                    //window.open("https://jira.jboss.org/secure/QuickSearch.jspa?searchString=" + shortName,  "jboss-" + fullTestName, windowProps);
+                    window.open("https://issues.jboss.org/issues/?jql=text%20~%20%22" + shortName + "%22",  "jboss-" + fullTestName,  windowProps);
+                    //window.open("http://opensource.atlassian.com/projects/hibernate/secure/QuickSearch.jspa?searchString=" + shortName,  "hbn-" + fullTestName, windowProps);
+                    window.open("http://www.google.com/search?q=" + shortName,  "google-" + fullTestName, windowProps);
                 }
 
                 function ki2( kiHref ) {
@@ -156,8 +156,10 @@
                  *  @param elmFailureDiv  See the failure-content template. May be null.
                  */
                 function out( testClass, testMethod, group, result, elmFailureDiv ){
-                    newwindow=window.open()
-                    newdocument=newwindow.document;
+
+                    var windowProps = "menubar=no,resizable=yes,scrollbars=yes,status=yes,modal=yes,alwaysRaised=yes";
+                    var win = window.open("", "failure", windowProps);
+                    var doc = win.document;
 
                     //                  "org.ClassName.method|group"
                     var testRunName   = testClass + '.' + testMethod + '|' + group;
@@ -210,9 +212,9 @@
                         elmLocalFail.innerHTML = "";
                         elmLocalFail.style.display = "none";
                     }
-                    newdocument.write('<style>' + document.getElementById( 'style' ).innerHTML + '</style>');
-                    newdocument.write('<div class="run popup">' + this.ePopup.innerHTML + '</div>');
-                    newdocument.close();
+                    doc.write('<style>' + document.getElementById('style').innerHTML + '</style>');
+                    doc.write('<div class="run popup">' + this.ePopup.innerHTML + '</div>');
+                    doc.close();
 
                     //this.ePopup.style.top = (window.scrollY + 15) + "px";
 
