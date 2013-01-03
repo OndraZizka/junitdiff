@@ -43,10 +43,10 @@
                   table.results th.okRun { background-color: #A4F294; }
                   table.results td { white-space: nowrap; font-size: 95%; }
                   table.results td a { cursor: pointer; }
-                  table.results td.result_OK a { color: green; }
-                  table.results td.result_FAIL a { color: red; }
-                  table.results td.result_ERROR a { color: orange; }
-                  table.results td.result_SKIPPED a { color: blue }
+                  table.results td.result_OK a,      table.results tr.header span.OK      { color: green; }
+                  table.results td.result_FAIL a,    table.results tr.header span.FAIL    { color: red; }
+                  table.results td.result_ERROR a,   table.results tr.header span.ERROR   { color: orange; }
+                  table.results td.result_SKIPPED a, table.results tr.header span.SKIPPED { color: blue }
 
                   table.results tr       td { border-top: 1px dotted silver; }
                   table.results tr.first td { border-top: 1px solid gray;   padding-top: 1ex; }
@@ -272,7 +272,7 @@
 
     <!-- Table header. -->
     <xsl:template match="/aggregate" mode="table-header">
-                <tr>
+                <tr class="header">
                     <th></th>
                     <xsl:for-each select="groups/group">
                         <th>
@@ -280,10 +280,18 @@
                                 <xsl:if test="not( /aggregate/testcase/testrun[ @group = current()/@id and @result != 'OK' ] )">okRun </xsl:if>
                             </xsl:attribute>
                             <xsl:value-of select="substring(@name, string-length(@name) - 15)" /><br/>
-                            <xsl:value-of select="count(/aggregate/testcase/testrun[ @group = current()/@id and @result = 'OK' ])" /> /
-                            <xsl:value-of select="count(/aggregate/testcase/testrun[ @group = current()/@id and @result = 'SKIPPED' ])" /> /
-                            <xsl:value-of select="count(/aggregate/testcase/testrun[ @group = current()/@id and @result = 'ERROR' ])" /> /
-                            <xsl:value-of select="count(/aggregate/testcase/testrun[ @group = current()/@id and @result = 'FAIL' ])" />
+                            <span class="OK">
+                                <xsl:value-of select="count(/aggregate/testcase/testrun[ @group = current()/@id and @result = 'OK' ])" />
+                            </span> /
+                            <span class="FAIL">
+                                <xsl:value-of select="count(/aggregate/testcase/testrun[ @group = current()/@id and @result = 'FAIL' ])" />
+                            </span> /
+                            <span class="ERROR">
+                                <xsl:value-of select="count(/aggregate/testcase/testrun[ @group = current()/@id and @result = 'ERROR' ])" />
+                            </span> /
+                            <span class="SKIPPED">
+                                <xsl:value-of select="count(/aggregate/testcase/testrun[ @group = current()/@id and @result = 'SKIPPED' ])" />
+                            </span>
                         </th>
                     </xsl:for-each>
                 </tr>
