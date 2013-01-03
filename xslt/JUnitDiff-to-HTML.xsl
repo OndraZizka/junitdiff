@@ -91,8 +91,11 @@
                     // org.jboss.package.ShortName -> ShortName
                     var shortName = parts[parts.length-1];
 
-                    window.open("https://jira.jboss.org/secure/QuickSearch.jspa?searchString="+shortName,  "jira",  "menubar=no,resizable=yes,scrollbars=yes,status=yes");
-                    window.open("http://opensource.atlassian.com/projects/hibernate/secure/QuickSearch.jspa?searchString="+shortName,  "hbn",  "menubar=no,resizable=yes,scrollbars=yes,status=yes");
+                    var windowProps = "menubar=no,resizable=yes,scrollbars=yes,status=yes,modal=yes,alwaysRaised=yes";
+                    //window.open("https://jira.jboss.org/secure/QuickSearch.jspa?searchString="+shortName,  fullTestName, windowProps);
+                    window.open("https://issues.jboss.org/issues/?jql=text%20~%20%22" + shortName + "%22",  "jboss-"+fullTestName,  windowProps);
+                    //window.open("http://opensource.atlassian.com/projects/hibernate/secure/QuickSearch.jspa?searchString="+shortName,  "hbn-"+fullTestName, windowProps);
+                    window.open("http://www.google.com/search?q="+shortName,  "google-"+fullTestName, windowProps);
                 }
 
                 function ki2( kiHref ) {
