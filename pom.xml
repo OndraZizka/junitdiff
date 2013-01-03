@@ -13,6 +13,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mainClass>org.jboss.qa.junitdiff.JUnitDiffApp</mainClass>
         <distDir>${project.basedir}/../dist</distDir>
+        <jvm.args.debug></jvm.args.debug>
     </properties>
     
     <scm>
@@ -123,11 +124,23 @@
 
     </build>
 
+    <profiles>
+
+        <!-- Debug. -->
+        <profile>
+            <id>debug</id>
+            <activation><property><name>debug</name></property></activation>
+            <properties>
+                <jvm.args.debug>-Xrunjdwp:transport=dt_socket,address=4000,server=y,suspend=y</jvm.args.debug>
+            </properties>
+        </profile>
+
+    </profiles>
+
 
     <repositories>
         <repository><id>ondrazizka-googlecode</id><url>http://ondrazizka.googlecode.com/svn/maven</url></repository>
     </repositories>
-
 
     <dependencies>
 
