@@ -193,7 +193,7 @@ public class FileParsing
 
         
         // For all testcases...
-				XPath xPath = XPath.newInstance("/testsuite/testcase");
+				XPath xPath = XPath.newInstance("//testsuite/testcase");
 				List<Element> testcaseElements = xPath.selectNodes(doc);
 
 
@@ -255,13 +255,13 @@ public class FileParsing
        */
 
         // System output
-        String systemOut = (String) XPath.selectSingleNode( doc, "string(/testsuite/system-out)" );
+        String systemOut = (String) XPath.selectSingleNode( doc, "string(//testsuite/system-out)" );
        
         // System error
-        String systemErr = (String) XPath.selectSingleNode( doc, "string(/testsuite/system-err)" );
+        String systemErr = (String) XPath.selectSingleNode( doc, "string(//testsuite/system-err)" );
         
         // Class name
-        String tsName = (String) XPath.selectSingleNode( doc, "string(/testsuite/@name)" );
+        String tsName = (String) XPath.selectSingleNode( doc, "string(//testsuite/@name)" );
     
         
         // Testsuite
