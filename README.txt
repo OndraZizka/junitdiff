@@ -19,5 +19,5 @@ Usage:
         ./transformToHTML.sh AGG-TEST.xml
 
 
-See https://svn.devel.redhat.com/repos/jboss-qa/tools/JUnitDiff/xslt/AGG-TEST.xml.html 
+See http://www.qa.jboss.com/~ozizka/projects/junitdiff/AGG_TEST.xml.html 
 for the expected result.
