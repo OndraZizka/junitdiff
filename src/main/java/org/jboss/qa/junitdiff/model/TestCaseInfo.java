@@ -64,7 +64,12 @@ public class TestCaseInfo {
 	public List<TestRunInfo> getTestRuns() {		return Collections.unmodifiableList(testInfos);	}
 
 	public String getFullName() {
-		return this.getClassName() + "." + this.getName();
+
+		if(this.getClassName()!=null) {
+			return this.getClassName() + "." + this.getName();
+		}
+
+		return this.getName();
 	}
 
 }// class

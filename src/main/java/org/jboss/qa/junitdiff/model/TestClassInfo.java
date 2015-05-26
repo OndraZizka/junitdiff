@@ -28,7 +28,8 @@ public class TestClassInfo {
 	}
 
 	void add(TestRunInfo testrun){
-		if(testrun.getClassname().equals(testrun.getName())){
+		// FIXME hard to figure out what is the reason of this call
+		if(testrun.getClassname()!=null && testrun.getClassname().equals(testrun.getName())){
 			classRuns.add(testrun);
 			return;
 		}
