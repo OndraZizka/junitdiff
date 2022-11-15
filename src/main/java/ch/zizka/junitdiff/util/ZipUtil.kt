@@ -1,144 +1,111 @@
-package ch.zizka.junitdiff.util;
+package ch.zizka.junitdiff.util
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
+import org.apache.commons.io.FileUtils
+import org.apache.commons.io.filefilter.FileFilterUtils
+import org.apache.commons.lang3.StringUtils
+import org.slf4j.LoggerFactory
+import java.io.*
+import java.nio.file.Files
+import java.util.*
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
 
 /**
- *  Should I use Commons Compress instead?
- * 
- *  @author Ondrej Zizka
+ * Should I use Commons Compress instead?
+ *
+ * @author Ondrej Zizka
  */
-public class ZipUtil {
-    private static final Logger log = LoggerFactory.getLogger( ZipUtil.class );
-    
-    private static final int BUFFER_SIZE = 1024 * 32;
-    
-    
-    /**
-     *   Unzips a file to a temporary dir.
-     */
-    public static File unzipFileToTempDir( File zipFile, OverwriteMode mode  ) throws IOException {
+object ZipUtil {
+    private val log = LoggerFactory.getLogger(ZipUtil::class.java)
+    private const val BUFFER_SIZE = 1024 * 32
 
-		// Try to keep the original path in the new path for the group naming purposes.
-        
-		String path = zipFile.getPath();
+    /**
+     * Unzips a file to a temporary dir.
+     */
+    @Throws(IOException::class)
+    fun unzipFileToTempDir(zipFile: File?, mode: OverwriteMode?): File {
+
+        // Try to keep the original path in the new path for the group naming purposes.
+        var path = zipFile!!.path
         // foo/bar.zip -> foo/bar/
-		path = path.endsWith(".zip")
-            ?	StringUtils.removeEndIgnoreCase( path, ".zip")
-            : path + "-";
-
-        File tmpDir = new File(path);
-        if( tmpDir.getParentFile().canWrite() ) { 
-            tmpDir.mkdir();
+        path = if (path.endsWith(".zip")) StringUtils.removeEndIgnoreCase(path, ".zip") else "$path-"
+        var tmpDir = File(path)
+        if (tmpDir.parentFile.canWrite()) {
+            tmpDir.mkdir()
+        } else {
+            tmpDir = File.createTempFile("JUnitDiff-", "")
+            tmpDir.delete()
         }
-        // If we can't write to zip's dir, write to /tmp or such.
-        else {
-            tmpDir = File.createTempFile( "JUnitDiff-", "");
-            tmpDir.delete();
-        }
-        tmpDir.deleteOnExit();
-
-        unzipFileToDir( zipFile, tmpDir, TEST_XML_FILTER, mode );
-		
-        return tmpDir;
+        tmpDir.deleteOnExit()
+        unzipFileToDir(zipFile, tmpDir, TEST_XML_FILTER, mode)
+        return tmpDir
     }
 
-
-
     /**
-     *  Unzip method with overwrite behavior option.
-     *  @param mode ONLY_NEW, WRITE_INTO or DELETE_FIRST.
-     *              If ONLY_NEW and the dir exists, returns false and does nothing.
-     *  @return true if the zip was unzipped to the given dir.
+     * Unzip method with overwrite behavior option.
+     * @param mode ONLY_NEW, WRITE_INTO or DELETE_FIRST.
+     * If ONLY_NEW and the dir exists, returns false and does nothing.
+     * @return true if the zip was unzipped to the given dir.
      */
-    public static boolean unzipFileToDir( File zip, File intoDir, OverwriteMode mode ) throws IOException {
-        if( intoDir.exists() ){
-            if( mode == OverwriteMode.ONLY_NEW ){
-                return false;
-            }
-            else if( mode == OverwriteMode.DELETE_FIRST ){
-                FileUtils.deleteDirectory( intoDir );
+    @Throws(IOException::class)
+    fun unzipFileToDir(zip: File?, intoDir: File, mode: OverwriteMode): Boolean {
+        if (intoDir.exists()) {
+            if (mode == OverwriteMode.ONLY_NEW) {
+                return false
+            } else if (mode == OverwriteMode.DELETE_FIRST) {
+                FileUtils.deleteDirectory(intoDir)
             }
         }
-        unzipFileToDir( zip, intoDir );
-        return true;
+        unzipFileToDir(zip, intoDir)
+        return true
     }
-    
-    
     /**
-     *  Unzip method.
+     * Unzip method which can filter files to extract.
      */
-    public static void unzipFileToDir( File zipFile, File intoDir ) throws IOException {
-        unzipFileToDir( zipFile, intoDir, (FileFilter)null );
-    }
-    
-    public static void unzipFileToDir( File zipFile, File intoDir, FileFilter fileFilter ) throws IOException {
-        unzipFileToDir( zipFile, intoDir, fileFilter, OverwriteMode.WRITE_INTO );
-    }
-    
     /**
-     *  Unzip method which can filter files to extract.
+     * Unzip method.
      */
-    public static void unzipFileToDir( File zipFile, File intoDir, FileFilter fileFilter, OverwriteMode mode ) throws IOException {
-        
-        ZipFile zip = new ZipFile( zipFile );
-        Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zip.entries();
-        
-        byte[] buf = new byte[BUFFER_SIZE];
-        
+    @JvmOverloads
+    @Throws(IOException::class)
+    fun unzipFileToDir(zipFile: File?, intoDir: File?, fileFilter: FileFilter? = null as FileFilter?, mode: OverwriteMode? = OverwriteMode.WRITE_INTO) {
+        val zip = ZipFile(zipFile)
+        val entries = zip.entries() as Enumeration<ZipEntry>
+        val buf = ByteArray(BUFFER_SIZE)
         try {
-            while( entries.hasMoreElements() ) {
-                ZipEntry entry = entries.nextElement();
-                if( entry.isDirectory() )	continue;
-                if( entry.getName().contains("..") )  continue;
-
-                if( fileFilter != null && ! fileFilter.accept( new File( entry.getName() )) ) continue;
-
-                log.trace("  Extracting: " + entry);
-
-                File f = new File( intoDir, entry.getName() );
-                if( !f.exists() ) {
-                    f.getParentFile().mkdirs();
-                    f.createNewFile();
+            while (entries.hasMoreElements()) {
+                val entry = entries.nextElement()
+                if (entry.isDirectory) continue
+                if (entry.name.contains("..")) continue
+                if (fileFilter != null && !fileFilter.accept(File(entry.name))) continue
+                log.trace("  Extracting: $entry")
+                val f = File(intoDir, entry.name)
+                if (!f.exists()) {
+                    f.parentFile.mkdirs()
+                    f.createNewFile()
                 }
-
-                InputStream is = zip.getInputStream(entry);
-                OutputStream os = Files.newOutputStream(f.toPath());
-                int r;
-                while ((r = is.read(buf)) != -1) {
-                  os.write(buf, 0, r);
+                val `is` = zip.getInputStream(entry)
+                val os = Files.newOutputStream(f.toPath())
+                var r: Int
+                while (`is`.read(buf).also { r = it } != -1) {
+                    os.write(buf, 0, r)
                 }
-                os.close();
-                is.close();
+                os.close()
+                `is`.close()
             }
-        }
-        catch( Exception ex ) {
-            log.error( " Error when unzipping " + zipFile.getPath() + ": " + ex.getMessage() );
+        } catch (ex: Exception) {
+            log.error(" Error when unzipping " + zipFile!!.path + ": " + ex.message)
         }
     }
 
-    
     /**
-     *  Filters only files TEST-*.xml
+     * Filters only files TEST-*.xml
      */
-    private static IOFileFilter TEST_XML_FILTER = FileFilterUtils.and(
-            FileFilterUtils.prefixFileFilter("TEST-"),
-            FileFilterUtils.suffixFileFilter(".xml")
-    );
-    
-    public enum OverwriteMode {
+    private val TEST_XML_FILTER = FileFilterUtils.and(
+        FileFilterUtils.prefixFileFilter("TEST-"),
+        FileFilterUtils.suffixFileFilter(".xml")
+    )
+
+    enum class OverwriteMode {
         ONLY_NEW, WRITE_INTO, DELETE_FIRST
     }
-    
-}// class
+}

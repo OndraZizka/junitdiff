@@ -1,78 +1,54 @@
-package ch.zizka.junitdiff.model;
+package ch.zizka.junitdiff.model
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*
 
 /**
  * One test with multiple test infos - one for each "column" (test run)
  *
  * @author Ondrej Zizka
  */
-public class TestCaseInfo {
+class TestCaseInfo {
+    var className: String? = null
+    var name: String?
+    private var testInfos: MutableList<TestRunInfo> = ArrayList()
 
-	private String className;
-	private String name;
+    constructor(className: String?, name: String?) {
+        this.name = name
+        this.className = className
+    }
 
-	private List<TestRunInfo> testInfos = new ArrayList<TestRunInfo>();
+    constructor(name: String?, testInfos: MutableList<TestRunInfo>) {
+        this.name = name
+        this.testInfos = testInfos
+    }
 
-	public TestCaseInfo(String className, String name) {
-		this.name = name;
-		this.className = className;
-	}
+    constructor(test: TestRunInfo) {
+        name = test.name
+        className = test.classname
+    }
 
-	public TestCaseInfo(String name, List<TestRunInfo> testInfos) {
-		this.name = name;
-		this.testInfos = testInfos;
-	}
+    internal constructor(testCase: TestCaseInfo) {
+        className = testCase.className
+        name = testCase.name
+        testInfos.addAll(testCase.testInfos)
+    }
 
-	public TestCaseInfo( TestRunInfo test ) {
-		this.name = test.getName();
-		this.className = test.getClassname();
-	}
+    // <editor-fold defaultstate="collapsed" desc="List overrides">
+    fun size() = testInfos.size
 
-	TestCaseInfo(TestCaseInfo testCase){
-		this.className = testCase.className;
-		this.name = testCase.name;
-		this.testInfos.addAll(testCase.testInfos);
-	}
+    val isEmpty: Boolean
+        get() = testInfos.isEmpty()
 
-	// <editor-fold defaultstate="collapsed" desc="List overrides">
-	public int size() {
-		return testInfos.size();
-	}
+    operator fun get(index: Int) = testInfos[index]
 
-	public boolean isEmpty() {
-		return testInfos.isEmpty();
-	}
+    fun addAll(c: Collection<TestRunInfo>) = testInfos.addAll(c)
 
-	public TestRunInfo get(int index) {
-		return testInfos.get(index);
-	}
+    fun add(e: TestRunInfo) = testInfos.add(e)
+    // </editor-fold>
 
-	public boolean addAll(Collection<? extends TestRunInfo> c) {
-		return testInfos.addAll(c);
-	}
+    val testRuns: List<TestRunInfo>
+        get() = Collections.unmodifiableList(testInfos)
 
-	public boolean add(TestRunInfo e) {
-		return testInfos.add(e);
-	}// </editor-fold>
-
-	public String getClassName() {		return className;	}
-	public void setClassName(String className) {		this.className = className;	}
-	public String getName() {		return name;	}
-	public void setName(String name) {		this.name = name;	}
-
-	public List<TestRunInfo> getTestRuns() {		return Collections.unmodifiableList(testInfos);	}
-
-	public String getFullName() {
-
-		if(this.getClassName()!=null) {
-			return this.getClassName() + "." + this.getName();
-		}
-
-		return this.getName();
-	}
-
-}// class
+    val fullName: String?
+        get() = if (className == null) name else "$className.$name"
+}

@@ -1,45 +1,17 @@
-
-package ch.zizka.junitdiff.model;
-
-import java.util.ArrayList;
-import java.util.List;
+package ch.zizka.junitdiff.model
 
 /**
  * Super-group - to cluster multiple groups.
  * Used to bind multiple groups (collumns) visually.
  *
  * @author Ondrej Zizka
- * @deprecated  Probably not used anywhere.
  */
-public class SuperGroup {
+@Deprecated("Probably not used anywhere.")
+class SuperGroup( // </editor-fold>
+    val name: String
+) {
 
-	private final String name;
-	private String color = null;
-
-	private List<GroupPrecept> groups = new ArrayList();
-
-
-
-	public SuperGroup(String name) {
-		this.name = name;
-	}
-
-
-
-	// <editor-fold defaultstate="collapsed" desc="get/set">
-	public String getColor() {
-		return color;
-	}
-
-	public void setColor(String color) {
-		this.color = color;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	// </editor-fold>
-
-
-}// class
+    // <editor-fold defaultstate="collapsed" desc="get/set">
+    var color: String? = null
+    private val groups: List<GroupPrecept?> = ArrayList()
+}

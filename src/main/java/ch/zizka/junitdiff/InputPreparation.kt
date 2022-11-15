@@ -1,241 +1,204 @@
-package ch.zizka.junitdiff;
+package ch.zizka.junitdiff
 
-import ch.zizka.junitdiff.util.FileUtil;
-import ch.zizka.junitdiff.util.ZipUtil;
-import ch.zizka.junitdiff.util.ZipUtil.OverwriteMode;
-import org.apache.commons.io.DirectoryWalker;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-
+import ch.zizka.junitdiff.util.FileUtil
+import ch.zizka.junitdiff.util.ZipUtil
+import ch.zizka.junitdiff.util.ZipUtil.OverwriteMode
+import org.apache.commons.io.DirectoryWalker
+import org.apache.commons.io.FileUtils
+import org.apache.commons.io.filefilter.FileFilterUtils
+import org.apache.commons.io.filefilter.IOFileFilter
+import org.apache.commons.lang3.StringUtils
+import org.slf4j.LoggerFactory
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.net.URL
+import java.nio.channels.Channels
+import java.nio.charset.StandardCharsets
+import java.util.*
 
 /**
  *
  * @author Ondrej Zizka
  */
-public class InputPreparation
-{
-    private static final Logger log = LoggerFactory.getLogger( InputPreparation.class );
-
-
+object InputPreparation {
+    private val log = LoggerFactory.getLogger(InputPreparation::class.java)
 
     /**
-     *  Takes a list of paths which may be directories, .txt lists of paths, or JUnit XML reports,
-     *  and replaces directories with TEST-*.xml's inside,
-     *  and expands .txt lists of paths.
+     * Takes a list of paths which may be directories, .txt lists of paths, or JUnit XML reports,
+     * and replaces directories with TEST-*.xml's inside,
+     * and expands .txt lists of paths.
      */
-    static List<File> preprocessPaths( List<File> reportFiles ) {
-        List<File> expandedPaths = new LinkedList<>();
+    fun preprocessPaths(reportFiles: List<File>): List<File> {
+        val expandedPaths: MutableList<File> = LinkedList()
+        for (path in reportFiles) {
+            var path2 = path
 
-        for( File path : reportFiles ) {
-
-            isFile:
-            if( path.isFile() ){
-                if( path.getName().endsWith(".zip") ){
+            if (path2!!.isFile) {
+                if (path2.name.endsWith(".zip")) {
                     try {
                         // Unzip & continue with the dir.
-                        path = ZipUtil.unzipFileToTempDir(path, OverwriteMode.DELETE_FIRST);
-                    } catch( IOException ex ) {
-                        log.error("Can't unzip " + path + ": " + ex);
+                        path2 = ZipUtil.unzipFileToTempDir(path2, OverwriteMode.DELETE_FIRST)
+                    } catch (ex: IOException) {
+                        log.error("Can't unzip $path2: $ex")
                     }
-                    break isFile;
-                }
-                if( path.getName().endsWith(".xml") ){
-                    expandedPaths.add( path );
                 }
                 else {
-                    expandedPaths.addAll( readListOfPaths( path ) );
+                    if (path2.name.endsWith(".xml")) {
+                        expandedPaths.add(path2)
+                    } else {
+                        expandedPaths.addAll(readListOfPaths(path2))
+                    }
                 }
             }
-
-            if( path.isDirectory() ){
-                expandedPaths.addAll( scanDirForJUnitReports( path ) );
-                continue;
+            if (path2.isDirectory) {
+                expandedPaths.addAll(scanDirForJUnitReports(path2))
+                continue
             }
-
         }
-
-        return expandedPaths;
+        return expandedPaths
     }
-
-
-
-
 
     /**
      * Handle URLs: If the path starts with http://, it downloads the file and unzips if it ends with .zip.
      * Paths will be replaced in-place in the array.
      */
-    static void handleURLs( String[] paths ) {
-        for( int i = 0; i < paths.length; i++ ) {
-            String path = paths[i];
-            if( path == null ) {
-                continue;
-            }
+    fun handleURLs(paths: MutableList<String>) {
+        for (i in paths.indices) {
+            val path = paths[i] ?: continue
 
             // Only replace URL's.
-            if( !path.startsWith( "http://" ) ) {
-                continue;
+            if (!path.startsWith("http://")) {
+                continue
             }
-
             try {
-                File resultDir;
-                if( path.endsWith( ".zip" ) ) {
-                    resultDir = downloadZipAndExtractToTempDir( path );
-                } else if( path.endsWith( ".xml" ) ) {
-                    resultDir = downloadUrlToTempFile( path );
+                var resultDir: File?
+                resultDir = if (path.endsWith(".zip")) {
+                    downloadZipAndExtractToTempDir(path)
+                } else if (path.endsWith(".xml")) {
+                    downloadUrlToTempFile(path)
                 } else {
-                    log.warn( "  URL is not .zip nor .xml - skipping: " + path );
-                    continue;
+                    log.warn("  URL is not .zip nor .xml - skipping: $path")
+                    continue
                 }
-                paths[i] = resultDir.getPath();
-            } catch( IOException ex ) {
-                log.warn( "  Error when processing URL " + path + ": " + ex.getMessage(), ex );
+                paths[i] = resultDir!!.path
+            } catch (ex: IOException) {
+                log.warn("  Error when processing URL " + path + ": " + ex.message, ex)
             }
-
         }
     }
 
-
     /**
-     * 
+     *
      */
-    private static File downloadZipAndExtractToTempDir( String urlStr ) throws IOException {
+    @Throws(IOException::class)
+    private fun downloadZipAndExtractToTempDir(urlStr: String): File? {
         // Download
-        File tmpFile = downloadUrlToTempFile( urlStr );
+        val tmpFile = downloadUrlToTempFile(urlStr)
 
         // Unzip & return the tmp dir.
-        File dirWithZipContent = ZipUtil.unzipFileToTempDir( tmpFile, OverwriteMode.DELETE_FIRST );
-        tmpFile.delete();
-        return dirWithZipContent;
+        val dirWithZipContent = ZipUtil.unzipFileToTempDir(tmpFile, OverwriteMode.DELETE_FIRST)
+        tmpFile.delete()
+        return dirWithZipContent
     }
 
-    private static File downloadUrlToTempFile( String urlStr ) throws IOException {
-        URL url = new URL( urlStr );
+    @Throws(IOException::class)
+    private fun downloadUrlToTempFile(urlStr: String): File {
+        val url = URL(urlStr)
 
         // Create the directory.
-        String path = url.getPath();
-        path = StringUtils.strip(path, "\\/");
-        path = path.replace('*', '-');
-        path = path.replace('?', '-');
-        File destZipFile = new File( path );
-        destZipFile.getParentFile().mkdirs();
-
-
-        ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+        var path = url.path
+        path = StringUtils.strip(path, "\\/")
+        path = path.replace('*', '-')
+        path = path.replace('?', '-')
+        val destZipFile = File(path)
+        destZipFile.parentFile.mkdirs()
+        val rbc = Channels.newChannel(url.openStream())
         //File tmp = File.createTempFile( "JUnitDiff-tmp-", ".zip" );
-        FileOutputStream fos = new FileOutputStream( destZipFile );
-        fos.getChannel().transferFrom(rbc, 0, 1 << 24);
-        rbc.close();
-        fos.close();
-        return destZipFile;
+        val fos = FileOutputStream(destZipFile)
+        fos.channel.transferFrom(rbc, 0, (1 shl 24).toLong())
+        rbc.close()
+        fos.close()
+        return destZipFile
     }
-
-
 
     /**
-     *  Reads a list of paths from a text file, one per line. Not recursive.
+     * Reads a list of paths from a text file, one per line. Not recursive.
      */
-    private static List<File> readListOfPaths( File path ) {
-
-        try {
-            if( FileUtil.isBinaryFile( path ) ){
-                log.warn( "  Can't read list of paths from a binary file: " + path.getPath() );
-                return Collections.emptyList();
+    private fun readListOfPaths(path: File): List<File> {
+        return try {
+            if (FileUtil.isBinaryFile(path)) {
+                log.warn("  Can't read list of paths from a binary file: " + path!!.path)
+                return emptyList<File>()
             }
-            
-            List<String> lines = FileUtils.readLines( path, StandardCharsets.UTF_8 );
-            List<File> paths = new ArrayList<>( lines.size() );
-
-            for( String line : lines ) {
-                File f = new File( line );
-                if( !f.exists() ) {
-                    log.warn( "  Does not exist: " + f.getPath() );
-                } else if( !f.isFile() ) {
-                    log.warn( "  Not a regular file: " + f.getPath() );
+            val lines = FileUtils.readLines(path, StandardCharsets.UTF_8)
+            val paths: MutableList<File> = ArrayList(lines.size)
+            for (line in lines) {
+                val f = File(line)
+                if (!f.exists()) {
+                    log.warn("  Does not exist: " + f.path)
+                } else if (!f.isFile) {
+                    log.warn("  Not a regular file: " + f.path)
                 } else {
-                    paths.add( f );
+                    paths.add(f)
                 }
             }
-
-            return paths;
-        } catch( IOException ex ) {
-            log.warn( "Error reading " + path.getPath() + " : " + ex.getMessage() );
-            return Collections.emptyList();
+            paths
+        } catch (ex: IOException) {
+            log.warn("Error reading " + path!!.path + " : " + ex.message)
+            emptyList<File>()
         }
-
     }
-
 
     /**
      * Scans a directory for JUnit test reports.
      */
-    private static List<File> scanDirForJUnitReports( final File path ) {
-
-        IOFileFilter rigidFilter = FileFilterUtils.or(
-                FileFilterUtils.directoryFileFilter(),
-                FileFilterUtils.and(
-                    // Perhaps make this an option - some other filters like content-based etc.
-                    FileFilterUtils.suffixFileFilter( ".xml" ),
-                    UpperCasePrefixFilter.INSTANCE,
-                    FileFilterUtils.magicNumberFileFilter("<?xml")
-                )
-                // Maybe we could simply scan for TEST-*.xml names.
-        );
+    private fun scanDirForJUnitReports(path: File?): List<File> {
+        val rigidFilter = FileFilterUtils.or(
+            FileFilterUtils.directoryFileFilter(),
+            FileFilterUtils.and( // Perhaps make this an option - some other filters like content-based etc.
+                FileFilterUtils.suffixFileFilter(".xml"),
+                UpperCasePrefixFilter.INSTANCE,
+                FileFilterUtils.magicNumberFileFilter("<?xml")
+            ) // Maybe we could simply scan for TEST-*.xml names.
+        )
 
 
         // Walk trough the dir tree...
-        try {
-            LinkedList<File> resultList = new LinkedList<>();
-            new DirectoryWalker<File>( rigidFilter, -1 ) {
-                @Override
-                protected void handleFile( File file, int depth, Collection<File> results ) {
+        return try {
+            val resultList = LinkedList<File?>()
+
+            object : DirectoryWalker<File>(rigidFilter, -1) {
+                override fun handleFile(file: File, depth: Int, results: MutableCollection<File>) {
                     //		log.info("  Handling file: " + file.getPath());///
-                    results.add( file );
+                    results.add(file)
                 }
 
-                @Override
-                protected boolean handleDirectory( File directory, int depth, Collection<File> results ) {
+                override fun handleDirectory(directory: File, depth: Int, results: Collection<File>): Boolean {
                     //log.info( "  Handling dir: "+directory.getPath() );
-                    return true;
+                    return true
                 }
 
-                public void doWalk( LinkedList<File> list ) throws IOException {
-                    this.walk( path, list );
+                fun doWalk(list: LinkedList<File?>) {
+                    this.walk(path, list)
                 }
-            }.doWalk( resultList );
+            }.doWalk(resultList)
 
-            return resultList;
-        } catch( IOException ex ) {
-            return Collections.emptyList();
+            resultList.filterNotNull()
+        } catch (ex: IOException) {
+            emptyList<File>()
         }
-
     }
 
-    enum UpperCasePrefixFilter implements IOFileFilter {
+    internal enum class UpperCasePrefixFilter : IOFileFilter {
         INSTANCE;
 
-        @Override
-        public boolean accept(File file) {
-            return file.getName().matches("^\\p{javaUpperCase}+.*$");
+        override fun accept(file: File): Boolean {
+            return file.name.matches("^\\p{javaUpperCase}+.*$".toRegex())
         }
 
-        @Override
-        public boolean accept(File file, String s) {
-            return this.accept(new File(file, s));
+        override fun accept(file: File, s: String): Boolean {
+            return this.accept(File(file, s))
         }
     }
-    
 }

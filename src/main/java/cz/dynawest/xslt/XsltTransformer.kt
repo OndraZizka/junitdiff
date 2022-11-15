@@ -1,133 +1,100 @@
+package cz.dynawest.xslt
 
-package cz.dynawest.xslt;
-
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.Map;
-import java.util.logging.*;
-import javax.xml.transform.ErrorListener;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-
+import java.io.*
+import java.util.*
+import javax.xml.transform.ErrorListener
+import javax.xml.transform.TransformerConfigurationException
+import javax.xml.transform.TransformerException
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.stream.StreamResult
+import javax.xml.transform.stream.StreamSource
 
 /**
  *
  * @author Ondrej Zizka
  */
-public class XsltTransformer
-{
-  private static final Logger log = Logger.getLogger( XsltTransformer.class.getName() );
-  
+object XsltTransformer {
 
-    static public void main(String[] arg) {
-        if(arg.length != 3) {
-            System.err.println("Usage: SimpleXMLTransform " +
-                "<input.xml> <input.xsl> <output>");
-            System.exit(1);
+    @JvmStatic
+    fun main(arg: Array<String>) {
+        if (arg.size != 3) {
+            System.err.println(
+                "Usage: SimpleXMLTransform " +
+                        "<input.xml> <input.xsl> <output>"
+            )
+            System.exit(1)
         }
-        String inXML  = arg[0];
-        String inXSL  = arg[1];
-        String outTXT = arg[2];
+        val inXML = arg[0]
+        val inXSL = arg[1]
+        val outTXT = arg[2]
 
-        XsltTransformer st = new XsltTransformer();
         try {
-            XsltTransformer.transform( inXML, inXSL, outTXT );
-        } catch(TransformerConfigurationException e) {
-            System.err.println("Invalid factory configuration");
-            System.err.println(e);
-        } catch(TransformerException e) {
-            System.err.println("Error during transformation");
-            System.err.println(e);
+            transform(inXML, inXSL, outTXT)
+        } catch (e: TransformerConfigurationException) {
+            System.err.println("Invalid factory configuration")
+            System.err.println(e)
+        } catch (e: TransformerException) {
+            System.err.println("Error during transformation")
+            System.err.println(e)
         }
     }
-    
-    
-    
+
     /**
-     *  Transform from file names.
+     * Transform from file names.
      */
-    public static void transform( String inXML, String inXSL, String outTXT )
-                throws TransformerConfigurationException, TransformerException 
-    {
-        TransformerFactory factory = TransformerFactory.newInstance();
-
-        StreamSource xslStream = new StreamSource(inXSL);
-        Transformer transformer = factory.newTransformer(xslStream);
-        transformer.setErrorListener(new MyErrorListener());
-
-        StreamSource in = new StreamSource(inXML);
-        StreamResult out = new StreamResult(outTXT);
-        transformer.transform(in,out);
-        System.out.println("The generated HTML file is:" + outTXT);
-    }
-    
-
-    
-    /**
-     *  Transform from streams.
-     */
-    public static void transform( InputStream in, InputStream xsl, File out )
-                throws TransformerConfigurationException, TransformerException
-    {
-        transform( in, xsl, out, Collections.EMPTY_MAP );
+    @Throws(TransformerConfigurationException::class, TransformerException::class)
+    fun transform(inXML: String?, inXSL: String?, outTXT: String) {
+        val factory = TransformerFactory.newInstance()
+        val xslStream = StreamSource(inXSL)
+        val transformer = factory.newTransformer(xslStream)
+        transformer.errorListener = MyErrorListener()
+        val `in` = StreamSource(inXML)
+        val out = StreamResult(outTXT)
+        transformer.transform(`in`, out)
+        println("The generated HTML file is:$outTXT")
     }
 
-    public static void transform( InputStream in, InputStream xsl, File out, Map<String, Object> params )
-                throws TransformerConfigurationException, TransformerException
-    {
-        TransformerFactory factory = TransformerFactory.newInstance();
-
-        StreamSource xslStream = new StreamSource( xsl );
-        Transformer transformer = factory.newTransformer(xslStream);
-        transformer.setErrorListener(new MyErrorListener());
-
-        StreamSource inSource = new StreamSource( in );
-        StreamResult outResult = new StreamResult( out );
-
-        for( Map.Entry<String, Object> entry : params.entrySet() ) {
-            if( null == entry.getKey() ) continue;
-            transformer.setParameter( entry.getKey(), entry.getValue() );
+    /**
+     * Transform from streams.
+     */
+    @JvmOverloads
+    @Throws(TransformerConfigurationException::class, TransformerException::class)
+    fun transform(`in`: InputStream?, xsl: InputStream?, out: File?, params: Map<String?, Any?> = Collections.emptyMap()) {
+        val factory = TransformerFactory.newInstance()
+        val xslStream = StreamSource(xsl)
+        val transformer = factory.newTransformer(xslStream)
+        transformer.errorListener = MyErrorListener()
+        val inSource = StreamSource(`in`)
+        val outResult = StreamResult(out)
+        for ((key, value) in params) {
+            if (null == key) continue
+            transformer.setParameter(key, value)
         }
-        transformer.transform( inSource, outResult );
+        transformer.transform(inSource, outResult)
     }
-    
-    
+}
 
-}// class XsltTransformer
-
-
-
-
-
-
-class MyErrorListener implements ErrorListener {
-    @Override
-    public void warning(TransformerException e)
-                throws TransformerException {
-        show("Warning",e);
-        throw(e);
+internal class MyErrorListener : ErrorListener {
+    @Throws(TransformerException::class)
+    override fun warning(e: TransformerException) {
+        show("Warning", e)
+        throw e
     }
-    @Override
-    public void error(TransformerException e)
-                throws TransformerException {
-        show("Error",e);
-        throw(e);
+
+    @Throws(TransformerException::class)
+    override fun error(e: TransformerException) {
+        show("Error", e)
+        throw e
     }
-    @Override
-    public void fatalError(TransformerException e)
-                throws TransformerException {
-        show("Fatal Error",e);
-        throw(e);
+
+    @Throws(TransformerException::class)
+    override fun fatalError(e: TransformerException) {
+        show("Fatal Error", e)
+        throw e
     }
-    private void show(String type,TransformerException e) {
-        System.out.println(type + ": " + e.getMessage());
-        if(e.getLocationAsString() != null)
-            System.out.println(e.getLocationAsString());
+
+    private fun show(type: String, e: TransformerException) {
+        println(type + ": " + e.message)
+        if (e.locationAsString != null) println(e.locationAsString)
     }
-}  
+}

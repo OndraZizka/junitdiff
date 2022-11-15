@@ -1,86 +1,62 @@
-package ch.zizka.junitdiff.model;
-
-import java.util.*;
+package ch.zizka.junitdiff.model
 
 /**
  *
- * @author Honza Brázdil <jbrazdil@redhat.com>
+ * @author Honza Brázdil <jbrazdil></jbrazdil>@redhat.com>
  */
-public class TestClassInfo {
-	private String classname;
-	private Map<String,TestCaseInfo> testsByTestName = new HashMap<String,TestCaseInfo>();
-	private List<TestRunInfo> classRuns = new ArrayList<TestRunInfo>();
+class TestClassInfo(
+    val className: String?
+) {
+    private val testsByTestName: MutableMap<String?, TestCaseInfo> = HashMap()
+    private val classRuns: MutableList<TestRunInfo> = ArrayList()
+    private fun setTests(tests: List<TestCaseInfo>) {
+        testsByTestName.clear()
+        for (test in tests) {
+            testsByTestName[test.name] = test
+        }
+    }
 
-	public TestClassInfo(String classname) {
-		this.classname = classname;
-	}
+    fun add(testRun: TestRunInfo) {
+        // FIXME hard to figure out what is the reason of this call
+        if (testRun.classname != null && testRun.classname == testRun.name) {
+            classRuns.add(testRun)
+            return
+        }
+        var testcase = testsByTestName[testRun.name]
+        if (testcase == null) {
+            testcase = TestCaseInfo(testRun)
+            addTestCase(testcase)
+        }
+        testcase.add(testRun)
+    }
 
-	private void setTests(List<TestCaseInfo> tests){
-		testsByTestName.clear();
-		for(TestCaseInfo test : tests){
-			testsByTestName.put(test.getName(), test);
-		}
-	}
 
-	void add(TestRunInfo testrun){
-		// FIXME hard to figure out what is the reason of this call
-		if(testrun.getClassname()!=null && testrun.getClassname().equals(testrun.getName())){
-			classRuns.add(testrun);
-			return;
-		}
-		TestCaseInfo testcase = testsByTestName.get(testrun.getName());
-		if(testcase == null){
-			testcase = new TestCaseInfo(testrun);
-			addTestCase(testcase);
-		}
-		testcase.add(testrun);
-	}
+    /**
+     * Returns list of testCases with guessed skipped and failed runs.
+     *
+     * If whole test class is skiped, or it's initialization fails,
+     * JUnit generates testcase element which have classname == name.
+     *
+     * This method tries to generate for such testcase new testcases (runs)
+     * (based on other runs of same class) which have result set according to the wohole class result.
+     */
+    val testCasesWithPseudoRuns: List<TestCaseInfo>
+        get() {
+            val testcases: MutableList<TestCaseInfo> = ArrayList()
+            for (tc in testsByTestName.values) {
+                val testcase = TestCaseInfo(tc)
+                for (classRun in classRuns) {
+                    val pseudoTestrun = TestRunInfo(className, testcase.name, classRun.result, classRun.time)
+                    pseudoTestrun.failure = classRun.failure
+                    pseudoTestrun.group = classRun.group
+                    testcase.add(pseudoTestrun)
+                }
+                testcases.add(testcase)
+            }
+            return testcases
+        }
 
-	Collection<TestCaseInfo> getTestCases() {
-		return Collections.unmodifiableCollection(testsByTestName.values());
-	}
-
-	/**
-	 * Returns list of testCases with guessed skipped and failed runs.
-	 * If whole test class is skiped or it's initialization fails, JUnit
-	 * generates testcase element which have classname == name.
-	 * This method tries to generate for such testcase new testcases (runs)
-	 * (based on other runs of same class) which have result set according to
-	 * the wohole class result.
-	 *
-	 * More in: JBQA-5466
-	 */
-	List<TestCaseInfo> getTestCasesWithPseudoRuns() {
-		List<TestCaseInfo> testcases = new ArrayList<TestCaseInfo>();
-		for(TestCaseInfo tc : testsByTestName.values()){
-			TestCaseInfo testcase = new TestCaseInfo(tc);
-			for (TestRunInfo classrun : classRuns) {
-				TestRunInfo pseudoTestrun = new TestRunInfo(classname, testcase.getName(), classrun.getResult(), classrun.getTime());
-				pseudoTestrun.setFailure(classrun.getFailure());
-				pseudoTestrun.setGroup(classrun.getGroup());
-				testcase.add(pseudoTestrun);
-			}
-			testcases.add(testcase);
-		}
-		return testcases;
-	}
-
-	/*void generatePseudoRuns() {
-		for (TestRunInfo classrun : classRuns) {
-			for (TestCaseInfo testcase : testsByTestName.values()) {
-				TestRunInfo pseudoTestrun = new TestRunInfo(classname, testcase.getName(), classrun.getResult(), classrun.getTime());
-				pseudoTestrun.setFailure(classrun.getFailure());
-				pseudoTestrun.setGroup(classrun.getGroup());
-				testcase.add(pseudoTestrun);
-			}
-		}
-	}*/
-
-	String getClassName() {
-		return classname;
-	}
-
-	private void addTestCase(TestCaseInfo testcase) {
-		TestCaseInfo old = this.testsByTestName.put(testcase.getName(), testcase);
-	}
+    private fun addTestCase(testcase: TestCaseInfo) {
+        testsByTestName[testcase.name] = testcase
+    }
 }

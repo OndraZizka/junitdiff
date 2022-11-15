@@ -1,11 +1,11 @@
-package ch.zizka.junitdiff.model;
+package ch.zizka.junitdiff.model
 
 /**
  *
  * @author jbrazdil
  */
-public interface IGroup{
-	String getPath();
-	String getName();
-	Integer getId();
+interface IGroup {
+    val path: String
+    val name: String
+    val id: Int
 }

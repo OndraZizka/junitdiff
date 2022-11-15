@@ -1,124 +1,65 @@
+package ch.zizka.junitdiff.model
 
-package ch.zizka.junitdiff.model;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.io.Serializable
 
 /**
  * A list with tests results data - name, result (OK | FAIL | ERROR), reason.
  *
  * @author Ondrej Zizka
  */
-public class TestRunResultsList implements Serializable {
+class TestRunResultsList(
+    var testResults: MutableList<TestRunInfo> = mutableListOf()
+) : Serializable
+{
+    /**
+     * Where did this results collection come from (e.g. a filename).
+     */
+    var origin: String? = null
 
+    var group: String? = null
 
-		/**
-		 *  Where did this results collection come from (e.g. a filename).
-		 */
-		private String origin;
+    // <editor-fold defaultstate="collapsed" desc="List delegates">
+    val isEmpty: Boolean
+        get() = testResults.isEmpty()
 
-		private String group;
+    operator fun get(index: Int): TestRunInfo {
+        return testResults[index]
+    }
 
-		private List<TestRunInfo> testResults = new ArrayList<TestRunInfo>();
+    operator fun contains(o: Any?): Boolean {
+        return testResults.contains(o)
+    }
 
+    fun addAll(c: Collection<TestRunInfo>?): Boolean {
+        return testResults.addAll(c!!)
+    }
 
+    fun add(e: TestRunInfo): Boolean {
+        return testResults.add(e)
+    } // </editor-fold>
 
+    override fun toString(): String {
+        return "TestResultsList{ [" + testResults.size + "], origin: " + origin + '}'
+    }
 
+    companion object {
+        /**
+         * Concatenates the given list of other instances.
+         */
+        fun fromList(trls: List<TestRunResultsList?>): TestRunResultsList {
 
-		public TestRunResultsList(String origin) {
-				this.origin = origin;
-		}
-		
-		public TestRunResultsList() {
-		}
+            // Count the total size...
+            var totalTests = 0
+            for (trl in trls) {
+                totalTests += trl!!.testResults.size
+            }
 
-		public TestRunResultsList( List<TestRunInfo> testResults ) {
-				this.testResults = testResults;
-		}
-
-
-
-
-		// <editor-fold defaultstate="collapsed" desc="List delegates">
-		public boolean isEmpty() {
-				return testResults.isEmpty();
-		}
-
-		public TestRunInfo get(int index) {
-				return testResults.get(index);
-		}
-
-		public boolean contains(Object o) {
-				return testResults.contains(o);
-		}
-
-		public boolean addAll(Collection<? extends TestRunInfo> c) {
-				return testResults.addAll(c);
-		}
-
-		public boolean add(TestRunInfo e) {
-				return testResults.add(e);
-		}// </editor-fold>
-
-
-
-
-		/**
-		 * Concatenates the given list of other instances.
-		 */
-		public static TestRunResultsList fromList(List<TestRunResultsList> trls) {
-
-				// Count the total size...
-				int totalTests = 0;
-				for (TestRunResultsList trl : trls) {
-						totalTests += trl.testResults.size();
-				}
-
-				// Concatenate multiple report files to one.
-				List<TestRunInfo> results = new ArrayList<TestRunInfo>( totalTests );
-				for (TestRunResultsList trl : trls) {
-						results.addAll( trl.getTestResults() );
-				}
-
-				return new TestRunResultsList( results );
-				
-		}
-
-
-
-		@Override
-		public String toString() {
-				return "TestResultsList{ [" + testResults.size() + "], origin: " + origin + '}';
-		}
-
-
-
-
-
-		// <editor-fold defaultstate="collapsed" desc="get / set">
-		public List<TestRunInfo> getTestResults() {
-				return testResults;
-		}
-
-		public String getOrigin() {
-				return origin;
-		}
-
-		public void setOrigin(String origin) {
-				this.origin = origin;
-		}
-
-		public String getGroup() {
-				return group;
-		}
-
-		public void setGroup(String group) {
-				this.group = group;
-		}
-		// </editor-fold>
-
-
-
-}// class
+            // Concatenate multiple report files to one.
+            val results: MutableList<TestRunInfo> = ArrayList(totalTests)
+            for (trl in trls) {
+                results.addAll(trl!!.testResults)
+            }
+            return TestRunResultsList(results)
+        }
+    }
+}

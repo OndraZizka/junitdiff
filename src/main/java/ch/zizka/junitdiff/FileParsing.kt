@@ -1,250 +1,202 @@
+package ch.zizka.junitdiff
 
-package ch.zizka.junitdiff;
-
-
-import ch.zizka.junitdiff.ex.JUnitDiffException;
-import ch.zizka.junitdiff.model.Failure;
-import ch.zizka.junitdiff.model.TestRunInfo;
-import ch.zizka.junitdiff.model.TestRunResultsList;
-import ch.zizka.junitdiff.model.TestSuite;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.xpath.XPath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-
+import ch.zizka.junitdiff.ex.JUnitDiffException
+import ch.zizka.junitdiff.model.*
+import org.apache.commons.io.FileUtils
+import org.apache.commons.lang3.StringUtils
+import org.jdom.Document
+import org.jdom.Element
+import org.jdom.JDOMException
+import org.jdom.input.SAXBuilder
+import org.jdom.xpath.XPath
+import org.slf4j.LoggerFactory
+import java.io.File
+import java.io.FileInputStream
+import java.io.IOException
+import java.util.*
 
 /**
  *
  * @author Ondrej Zizka
  */
-public class FileParsing
-{
-		private static final Logger log = LoggerFactory.getLogger( FileParsing.class );
+object FileParsing {
 
-		private static final int MAX_LIST_FILE_SIZE_KB = 512;
+    private val log = LoggerFactory.getLogger(FileParsing::class.java)
+    private const val MAX_LIST_FILE_SIZE_KB = 512
 
+    /**
+     * Get the test result lists - one for each XML file or a ".txt" list of XML files.
+     */
+    @Throws(JUnitDiffException::class)
+    fun getSeparatedResultsLists(reportFiles: List<File>): List<TestSuite> {
+        val reportsLists: MutableList<TestSuite> = LinkedList()
+        val errors: MutableList<JUnitDiffException> = ArrayList()
+        for (file in reportFiles) {
+            if (!file.isFile) {
+                log.warn("  Not a regular file: " + file.path)
+                continue
+            }
+            if (file.length() == 0L) {
+                log.warn("  File is empty: " + file.path)
+                continue
+            }
+            try {
+                val ts = parseFile(file)
+                reportsLists.add(ts)
+            } catch (ex: JUnitDiffException) {
+                val msg = "  Error processing '" + file.path + "': " + ex.message
+                log.error(msg)
+                errors.add(JUnitDiffException(msg, ex))
+                continue
+            }
+        }
+        if (errors.isNotEmpty()) {
+            throw JUnitDiffException("Errors (" + errors.size + ") when processing files.", errors)
+        }
+        return reportsLists
+    }
 
-
-
-
-		/**
-		 *  Get the test result lists - one for each XML file or a ".txt" list of XML files.
-		 */
-		public static List<TestSuite> getSeparatedResultsLists(List<File> reportFiles) throws JUnitDiffException {
-
-				List<TestSuite>  reportsLists = new LinkedList();
-				List<JUnitDiffException> errors = new ArrayList();
-
-				for( File file : reportFiles ) {
-
-						if( ! file.isFile()  ){
-								log.warn("  Not a regular file: "+file.getPath());
-								continue;
-						}
-						if( file.length() == 0  ){
-								log.warn("  File is empty: "+file.getPath());
-								continue;
-						}
-						try {
-								TestSuite ts = parseFile(file);
-								reportsLists.add( ts );
-						} catch (JUnitDiffException ex) {
-								String msg = "  Error processing '"+file.getPath()+"': "+ ex.getMessage();
-								log.error( msg );
-								errors.add( new JUnitDiffException(msg, ex) );
-								continue;
-						}
-
-				}
-
-				if( ! errors.isEmpty() ){
-						throw new JUnitDiffException("Errors ("+errors.size()+") when processing files.", errors);
-				}
-
-				return reportsLists;
-		}
-
-
-
-		/**
-		 * Parses test results from a file.
-		 *
-		 * @param file May be a text file with a list of files to parse, or a JUnit .xml report.
-		 */
-		private static TestSuite parseFile( File file ) throws JUnitDiffException {
-				// Determine whether a file is a list of .xml files or a .xml file (report)
-				boolean isXml = file.getName().endsWith(".xml");
+    /**
+     * Parses test results from a file.
+     *
+     * @param file May be a text file with a list of files to parse, or a JUnit .xml report.
+     */
+    @Throws(JUnitDiffException::class)
+    private fun parseFile(file: File?): TestSuite {
+        // Determine whether a file is a list of .xml files or a .xml file (report)
+        val isXml = file!!.name.endsWith(".xml")
 
 
-				// Try to parse as XML.
-				try {
-						TestSuite ts = tryParsingAsXml( file );
-						return ts;
-				}
-				catch( JDOMException ex ) {
-						// 		 *  @deprecated  List expanding is handled in FileParsing#preprocessPaths();
-						//log.debug("  Failed parsing as XML JUnit test report: "+file.getPath());
-						throw new JUnitDiffException("  Failed parsing '"+file.getPath()+"' as XML JUnit test report: "+ex.getMessage());
-				}
-				catch( IOException ex ) {
-						throw new JUnitDiffException("  Error reading from file '"+file.getPath()+"': "+ex.getMessage());
-				}
+        // Try to parse as XML.
+        return try {
+            tryParsingAsXml(file)
+        } catch (ex: JDOMException) {
+            // 		 *  @deprecated  List expanding is handled in FileParsing#preprocessPaths();
+            //log.debug("  Failed parsing as XML JUnit test report: "+file.getPath());
+            throw JUnitDiffException("  Failed parsing '" + file.path + "' as XML JUnit test report: " + ex.message)
+        } catch (ex: IOException) {
+            throw JUnitDiffException("  Error reading from file '" + file.path + "': " + ex.message)
+        }
 
 
-				// XML parsing failed, so we try to treat it as a list of files.
-				//TestResultsList ar = parseAsListOfFiles( file );
-				//return ar;
+        // XML parsing failed, so we try to treat it as a list of files.
+        //TestResultsList ar = parseAsListOfFiles( file );
+        //return ar;
+    }
 
-		}
-
-
-		/**
-		 *  Assumes the file contains a list of paths to JUnit XML reports.
-		 *  Returns test data aggregated from all of them.
-		 *  @deprecated  List expanding is handled in FileParsing#preprocessPaths();
-		 */
-		private static TestRunResultsList parseAsListOfFiles( File file ) throws JUnitDiffException {
-
-				if( file.length() > MAX_LIST_FILE_SIZE_KB * 1024 )
-						log.warn("  File is too big (" + file.length() / 1024 +" kb) : "+file.getPath());
+    /**
+     * Assumes the file contains a list of paths to JUnit XML reports.
+     * Returns test data aggregated from all of them.
+     */
+    @Deprecated("List expanding is handled in FileParsing#preprocessPaths();")
+    @Throws(JUnitDiffException::class)
+    private fun parseAsListOfFiles(file: File): TestRunResultsList {
+        if (file.length() > MAX_LIST_FILE_SIZE_KB * 1024) log.warn("  File is too big (" + file.length() / 1024 + " kb) : " + file.path)
 
 
-				// Read lines and treat as XML files.
-				List<String> readLines;
-				try {
-						readLines = FileUtils.readLines(file);
-				} catch (IOException ex) {
-						throw new JUnitDiffException("  Error reading from file '"+file.getPath()+"': "+ex.getMessage());
-				}
+        // Read lines and treat as XML files.
+        val readLines: List<String>
+        readLines = try {
+            FileUtils.readLines(file)
+        } catch (ex: IOException) {
+            throw JUnitDiffException("  Error reading from file '" + file.path + "': " + ex.message)
+        }
+        val trls: MutableList<TestRunResultsList?> = ArrayList()
+        val errors: MutableList<Exception?> = ArrayList()
+        for (line in readLines) {
+            val line2 = line.trim { it <= ' ' }
+            try {
+                val ts = tryParsingAsXml(File(line2))
+                trls.add(ts.testRunResultsList)
+            } catch (ex: JDOMException) {
+                val msg = "  Error parsing '" + file.path + "': " + ex.message
+                log.error(msg)
+                errors.add(ex)
+                continue
+            } catch (ex: IOException) {
+                val msg = "  Error reading from file '" + file.path + "': " + ex.message
+                log.error(msg)
+                errors.add(IOException(msg))
+                continue
+            }
+        }
+        if (!errors.isEmpty()) {
+            throw JUnitDiffException("  Errors (" + errors.size + ") occured when parsing the list of files", errors)
+        }
+        return TestRunResultsList.fromList(trls)
+    }
+
+    /**
+     * Tries parsing as XML.
+     */
+    @Throws(JDOMException::class, IOException::class)
+    private fun tryParsingAsXml(`is`: FileInputStream): TestSuite {
+        val builder = SAXBuilder()
+        val doc = builder.build(`is`)
+        return parseJUnitXmlReport(doc)
+    }
+
+    @Throws(JDOMException::class, IOException::class)
+    private fun tryParsingAsXml(file: File?): TestSuite {
+        val builder = SAXBuilder()
+        val doc = builder.build(file)
+        val parseJUnitXmlReport = parseJUnitXmlReport(doc)
+        parseJUnitXmlReport.origin = file!!.path
+        return parseJUnitXmlReport
+    }
+
+    /**
+     * Parses test results from a JUnit .xml report.
+     */
+    @Throws(JDOMException::class)
+    private fun parseJUnitXmlReport(doc: Document): TestSuite {
 
 
-				List<TestRunResultsList> trls = new ArrayList();
-				List<Exception> errors = new ArrayList();
-
-				for( String line : readLines ) {
-						line = line.trim();
-						try {
-								TestSuite ts = tryParsingAsXml(new File(line));
-								trls.add( ts.getTestRunResultsList() );
-						}
-						catch (JDOMException ex) {
-								String msg = "  Error parsing '"+file.getPath()+"': "+ ex.getMessage();
-								log.error( msg );
-								errors.add(ex); continue;
-						}
-						catch (IOException ex) {
-								String msg = "  Error reading from file '"+file.getPath()+"': "+ex.getMessage();
-								log.error( msg );
-								errors.add( new IOException(msg) );
-								continue;
-						}
-				}
-
-				if( ! errors.isEmpty() ){
-						throw new JUnitDiffException( "  Errors ("+errors.size()+") occured when parsing the list of files", errors );
-				}
-
-
-				TestRunResultsList concatenatedResults = TestRunResultsList.fromList( trls );
-				return concatenatedResults;
-
-		}
-
-
-		/**
-		 *   Tries parsing as XML.
-		 */
-		private static TestSuite tryParsingAsXml( FileInputStream is ) throws JDOMException, IOException {
-
-				SAXBuilder builder = new SAXBuilder();
-				Document doc = builder.build( is );
-				return parseJUnitXmlReport( doc );
-
-		}
-		private static TestSuite tryParsingAsXml( File file ) throws JDOMException, IOException {
-
-				SAXBuilder builder = new SAXBuilder();
-				Document doc = builder.build( file );
-				TestSuite parseJUnitXmlReport = parseJUnitXmlReport( doc );
-				parseJUnitXmlReport.setOrigin( file.getPath() );
-				return parseJUnitXmlReport;
-
-		}
-
-
-		/**
-		 * Parses test results from a JUnit .xml report.
-		 */
-		private static TestSuite parseJUnitXmlReport( Document doc ) throws JDOMException {
-
-        
         // For all testcases...
-				XPath xPath = XPath.newInstance("//testsuite/testcase");
-				List<Element> testcaseElements = xPath.selectNodes(doc);
+        val xPath = XPath.newInstance("//testsuite/testcase")
+        val testcaseElements: List<Element> = xPath.selectNodes(doc) as List<Element>
+        val resultsList = TestRunResultsList()
+        for (elm in testcaseElements) {
+            val time = elm.getAttributeValue("time")
+            val name = elm.getAttributeValue("name")
+            val classname = elm.getAttributeValue("classname")
+            val info = TestRunInfo(classname, name, TestRunInfo.Result.OK, time)
 
 
-				TestRunResultsList resultsList = new TestRunResultsList();
+            // Failure.
+            var child = elm.getChild("failure")
+            if (null != child) {
+                val message = child.getAttributeValue("message")
+                val type = child.getAttributeValue("type")
+                var trace = child.textNormalize
+                trace = StringUtils.substringAfter(trace, "\n")
+                val fail = Failure(message, type, trace)
+                info.result = TestRunInfo.Result.FAIL
+                info.failure = fail
+            }
 
-				for( Element elm : testcaseElements ) {
-						String time = elm.getAttributeValue("time");
-						String name = elm.getAttributeValue("name");
-						String classname = elm.getAttributeValue("classname");
+            // Error.
+            child = elm.getChild("error")
+            if (null != child) {
+                val message = child.getAttributeValue("message")
+                val type = child.getAttributeValue("type")
+                var trace = child.textNormalize
+                trace = StringUtils.substringAfter(trace, "\n")
+                val fail = Failure(message, type, trace)
+                info.result = TestRunInfo.Result.ERROR
+                info.failure = fail
+            }
 
-						TestRunInfo info = new TestRunInfo(classname, name, TestRunInfo.Result.OK, time);
-
-
-						// Failure.
-						Element child = elm.getChild("failure");
-						if( null != child ){
-								String message = child.getAttributeValue("message");
-								String type = child.getAttributeValue("type");
-								String trace = child.getTextNormalize();
-								trace = StringUtils.substringAfter(trace, "\n");
-								Failure fail = new Failure(message, type, trace);
-
-								info.setResult(TestRunInfo.Result.FAIL);
-								info.setFailure(fail);
-						}
-
-						// Error.
-						child = elm.getChild("error");
-						if( null != child ){
-								String message = child.getAttributeValue("message");
-								String type = child.getAttributeValue("type");
-								String trace = child.getTextNormalize();
-								trace = StringUtils.substringAfter(trace, "\n");
-								Failure fail = new Failure(message, type, trace);
-
-								info.setResult(TestRunInfo.Result.ERROR);
-								info.setFailure(fail);
-						}
-
-						// Skipped.
-						child = elm.getChild("skipped");
-						if( null != child ){
-								info.setResult(TestRunInfo.Result.SKIPPED);
-						}
+            // Skipped.
+            child = elm.getChild("skipped")
+            if (null != child) {
+                info.result = TestRunInfo.Result.SKIPPED
+            }
+            resultsList.add(info)
+        }
 
 
-						resultsList.add( info );
-				}
-
-
-        
-      /*
+        /*
        * <testsuite errors="0" failures="0" 
        * hostname="mm18-3.mm.atl2.redhat.com" 
        * name="org.hibernate.test.annotations.access.AccessTest" 
@@ -254,24 +206,16 @@ public class FileParsing
        */
 
         // System output
-        String systemOut = (String) XPath.selectSingleNode( doc, "string(//testsuite/system-out)" );
-       
+        val systemOut = XPath.selectSingleNode(doc, "string(//testsuite/system-out)") as String
+
         // System error
-        String systemErr = (String) XPath.selectSingleNode( doc, "string(//testsuite/system-err)" );
-        
+        val systemErr = XPath.selectSingleNode(doc, "string(//testsuite/system-err)") as String
+
         // Class name
-        String tsName = (String) XPath.selectSingleNode( doc, "string(//testsuite/@name)" );
-    
-        
+        val tsName = XPath.selectSingleNode(doc, "string(//testsuite/@name)") as String
+
+
         // Testsuite
-        TestSuite testSuite = new TestSuite( tsName, resultsList, systemOut, systemErr );
-        
-        
-				return testSuite;
-
-		}
-
-
-
-
-}// class
+        return TestSuite(tsName, resultsList, systemOut, systemErr)
+    }
+}

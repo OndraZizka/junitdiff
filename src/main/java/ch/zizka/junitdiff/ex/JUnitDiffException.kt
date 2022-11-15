@@ -1,41 +1,16 @@
-
-package ch.zizka.junitdiff.ex;
-
-import java.util.List;
+package ch.zizka.junitdiff.ex
 
 /**
  *
  * @author Ondrej Zizka
  */
-public class JUnitDiffException extends Exception {
+class JUnitDiffException : Exception {
+    val errors: List<Exception>? = null
 
-		private List<Exception> errors;
-
-		public JUnitDiffException(Throwable cause) {
-				super(cause);
-		}
-
-		public JUnitDiffException(String message, Throwable cause) {
-				super(message, cause);
-		}
-
-		public JUnitDiffException(String message) {
-				super(message);
-		}
-
-		public JUnitDiffException() {
-		}
-
-		public JUnitDiffException(List<Exception> errors) {
-		}
-
-		public JUnitDiffException(String string, List< ? extends Exception> errors) {
-				this(string);
-		}
-
-		public List<Exception> getErrors() {
-				return errors;
-		}
-
-
-}// class
+    constructor(cause: Throwable?) : super(cause) {}
+    constructor(message: String?, cause: Throwable?) : super(message, cause) {}
+    constructor(message: String?) : super(message) {}
+    constructor() {}
+    constructor(errors: List<Exception?>?) {}
+    constructor(string: String?, errors: List<Exception?>?) : this(string) {}
+}
