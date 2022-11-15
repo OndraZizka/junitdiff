@@ -11,8 +11,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.java>11</version.java>
         <mainClass>ch.zizka.junitdiff.JUnitDiffApp</mainClass>
-        <distDir>${project.basedir}/../dist</distDir>
+        <distDir>${project.basedir}/./dist</distDir>
         <jvm.args.debug/>
         <kotlin.version>1.8.0-Beta</kotlin.version>
     </properties>
@@ -49,7 +50,7 @@
                     <execution><id>test-compile</id><phase>test-compile</phase><goals><goal>test-compile</goal></goals></execution>
                 </executions>
                 <configuration>
-                    <jvmTarget>1.8</jvmTarget>
+                    <jvmTarget>${version.java}</jvmTarget>
                 </configuration>
             </plugin>
             <plugin>
@@ -58,7 +59,7 @@
                     <execution><id>compile</id><phase>compile</phase><goals><goal>compile</goal></goals></execution>
                     <execution><id>testCompile</id><phase>test-compile</phase><goals><goal>testCompile</goal></goals></execution>
                 </executions>
-                <configuration>  <source>1.8</source> <target>1.8</target> </configuration>
+                <configuration><source>${version.java}</source><target>${version.java}</target></configuration>
             </plugin>
 
             <plugin>
@@ -121,7 +122,6 @@
                     <workingDirectory>target/</workingDirectory>
                     <systemPropertyVariables>
                         <junitdiff.test.data.dir>${basedir}/src/test/data</junitdiff.test.data.dir>
-                        <moje>AaA</moje>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
