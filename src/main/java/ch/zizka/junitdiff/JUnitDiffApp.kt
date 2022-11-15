@@ -8,28 +8,36 @@ import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
 import java.io.*
 import java.nio.charset.StandardCharsets
+import java.nio.file.Path
+import java.nio.file.StandardOpenOption.CREATE
+import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+import kotlin.io.path.isDirectory
+import kotlin.io.path.outputStream
+import kotlin.system.exitProcess
 
 class JUnitDiffApp {
 
-    private fun runApp(inputPaths: MutableList<String>, outPath: String, htmlOutput: Boolean, toStdOut: Boolean, title: String?) {
-        val reportFiles: MutableList<File?> = ArrayList(inputPaths.size)
+    data class InvocationParams(
+        val inputPaths: MutableList<String>,
+        val outPath: String,
+        val htmlOutput: Boolean,
+        val toStdOut: Boolean,
+        val title: String?
+    )
+
+    private fun runApp(p: InvocationParams) {
+        val reportFiles: MutableList<File?> = ArrayList(p.inputPaths.size)
 
         // Handle URLs
-        InputPreparation.handleURLs(inputPaths)
+        InputPreparation.downloadAndUnzipUrls(p.inputPaths)
 
         // Check files...
-        for (path in inputPaths) {
+        for (path in p.inputPaths) {
             val reportFile = File(path)
             require(reportFile.exists()) { "  File ${reportFile.path} does not exist." }
             reportFiles.add(reportFile)
         }
 
-        // Preprocess files - scan directories, expand .txt lists of paths.
-        //reportFiles = InputPreparation.preprocessPaths( reportFiles );
-        // No no. That would stack everything on a pile. Instead,
-
-
-        // CONSIDER:  Hide atr under aggregatedData, or keep it separated?  TestSuite lists, + map group+name -> testsuite?
         // The top-level result structure.
         val aggregatedData = AggregatedData()
 
@@ -69,33 +77,35 @@ class JUnitDiffApp {
 
         // Export the aggregated matrix to a file.
         // TODO: Use a Writer.
-        log.info("Exporting to $outPath")
-        val outFile = File(outPath)
-        if (!htmlOutput) {
+        log.info("Exporting to $p.outPath")
+        val outFile = File(p.outPath)
+        if (!p.htmlOutput) {
             // XML
             try {
                 XmlExporter.exportToXML(aggregatedData, outFile)
             } catch (ex: FileNotFoundException) {
-                log.error("Can't write to file '" + outPath + "': " + ex.message)
+                log.error("Can't write to file '" + p.outPath + "': " + ex.message)
                 System.exit(5)
             }
         } else {
             // HTML
             try {
-                XmlExporter.exportToHtmlFile(aggregatedData, outFile, title)
+                XmlExporter.exportToHtmlFile(aggregatedData, outFile, p.title)
             } catch (ex: JUnitDiffException) {
                 log.error(ex.message, ex)
                 System.exit(6)
             }
         }
 
+        putJavascriptFunctionsFileToDir(Path.of(p.outPath).parent)
+
         // Dump to stdout.
         // TODO: Rewrite whole these two parts.
-        if (toStdOut) {
+        if (p.toStdOut) {
             log.debug("Output goes to stdout.")
             var fileReader: FileReader? = null
             try {
-                fileReader = FileReader(outPath)
+                fileReader = FileReader(p.outPath)
                 IOUtils.copy(fileReader, System.out as OutputStream, StandardCharsets.UTF_8)
             } catch (ex: FileNotFoundException) {
                 log.error(ex.toString())
@@ -113,6 +123,13 @@ class JUnitDiffApp {
         }
     } // runApp
 
+    private fun putJavascriptFunctionsFileToDir(dir: Path) {
+        dir.isDirectory() || throw JUnitDiffException("Not a directory: $dir")
+        dir.resolve("functions.js").outputStream(CREATE, TRUNCATE_EXISTING).use { os ->
+            javaClass.classLoader.getResource("functions.js")?.openStream()?.use { it.transferTo(os) }
+        }
+    }
+
     companion object {
         private val log = LoggerFactory.getLogger(JUnitDiffApp::class.java)
         private const val DEFAULT_OUT_FILE = "JUnitDiff" // Suffix appened according to output type.
@@ -122,24 +139,18 @@ class JUnitDiffApp {
          */
 		@JvmStatic
         fun main(args: Array<String?>) {
-
-            log.debug("Starting JUnitDiff - multiple test runs results comparison.")
+            log.debug("Starting JUnitDiff - multiple JUnit test runs comparing tool.")
             if (args.isEmpty()) {
-                //log.info(" Usage: junitdiff  ( dir | TEST-foo.xml | list-of-paths.txt )+");
-                println("  Aggregates multiple JUnit XML reports into one comprehensible page.")
-                println("  Usage:")
-                println("    java -jar JUnitDiff.jar [options] ( dir | TEST-foo.xml | list-of-paths.txt | http://host/reports.zip )+")
-                println("")
-                println("  Options:")
-                println("    -o ('-' | outputPath)   Output file. '-' dumps the result to the stdout. Logging output always goes to the stderr.")
-                println("    -xml                    XML output (default is HTML).")
-                println("    --title <title>         Title and heading for the HTML report.")
-                println("")
-                println("  Examples:")
-                println("    java -jar JUnitDiff.jar -o - > aggregated-test-report.html")
-                println("    java -jar JUnitDiff.jar -xml -o aggregated-test-report.xml")
-                System.exit(1)
+                printUsage()
+                exitProcess(1)
             }
+
+            val invocationParams = parseArguments(args)
+            JUnitDiffApp().runApp(invocationParams)
+        }
+
+
+        private fun parseArguments(args: Array<String?>): InvocationParams {
             var outFile: String? = null
             var title: String? = null
             var htmlOutput = true
@@ -177,7 +188,8 @@ class JUnitDiffApp {
                 outFile = DEFAULT_OUT_FILE + if (htmlOutput) ".html" else ".xml"
             }
 
-            JUnitDiffApp().runApp(args.filterNotNull().toMutableList(), outFile, htmlOutput, stdOut, title)
+            val invocationParams = InvocationParams(args.filterNotNull().toMutableList(), outFile, htmlOutput, stdOut, title)
+            return invocationParams
         }
 
         /**
@@ -205,5 +217,22 @@ class JUnitDiffApp {
             }
             return testSuites
         }
+
+        private fun printUsage() {
+            println("  Aggregates multiple JUnit XML reports into one comprehensible page.")
+            println("  Usage:")
+            println("    java -jar JUnitDiff.jar [options] ( dir | TEST-foo.xml | list-of-paths.txt | http://host/reports.zip )+")
+            println("")
+            println("  Options:")
+            println("    -o ('-' | outputPath)   Output file. '-' dumps the result to the stdout. Logging output always goes to the stderr.")
+            println("    -xml                    XML output (default is HTML).")
+            println("    --title <title>         Title and heading for the HTML report.")
+            println("")
+            println("  Examples:")
+            println("    java -jar JUnitDiff.jar -o - > aggregated-test-report.html")
+            println("    java -jar JUnitDiff.jar -xml -o aggregated-test-report.xml")
+        }
+
     }
+
 }

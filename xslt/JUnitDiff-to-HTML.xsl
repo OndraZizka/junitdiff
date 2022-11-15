@@ -21,7 +21,7 @@
        <!-- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> -->
        <html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
           <head>
-              <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+              <meta http-equiv="content-type" content="text/html; charset=utf-8" />
               <title><xsl:value-of select="count(/aggregate/groups/group)"/> runs - JUnitDiff</title>
               <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"><!-- --></script>
               <link rel="shortcut icon" href="http://static.jquery.com/favicon.ico" type="image/x-icon"/>
@@ -62,7 +62,7 @@
 
                   /* Popup for the test run details. */
                   .popup               {
-                    position: absolute; top: 20; left: 20;
+                    position: absolute; top: 20px; left: 20px;
                     min-width: 600px; min-height: 200px;
                     border: 1px solid green;
                     background-color: white;
@@ -104,7 +104,7 @@
                     ki( fullTestName );
                 }
 
-                <![CDATA[ function kiA(){ document.write('<a class="known" href="#" onclick="ki2(event.target)">Known issues</a>'); } ]]> // IE: srcElement
+                function kiA(){ document.write('&lt;a class="known" href="#" onclick="ki2(event.target)">Known issues&lt;/a&gt;'); }
 
                 function kb_ki( elmKnownIssuesLink ){
                     // td { script, span @class="classname" {"..."}, "test" }, td { a, a @href= | }
@@ -251,7 +251,7 @@
                   window.open( "https://jira.jboss.org/secure/QuickSearch.jspa?searchString=" + elmAnchor.innerHTML, "jiraJBoss", "" );
                 }
               </script>
-              <script type="text/javascript" src="debug.js"><!-- --></script>
+              <script type="text/javascript" src="functions.js"/>
           </head>
           <body>
             <xsl:apply-templates select="/aggregate" />
