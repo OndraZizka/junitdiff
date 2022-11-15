@@ -24,9 +24,6 @@ class JUnitDiffApp {
 
         // Check files...
         for (path in paths) {
-            if (path == null) {
-                continue
-            }
             val reportFile = File(path)
             require(reportFile.exists()) { "  File " + reportFile.path + " does not exist." }
             reportFiles.add(reportFile)
@@ -52,7 +49,7 @@ class JUnitDiffApp {
                 continue
             }
             val testSuites = processGroup(groupName, filesToProcess)
-            if (testSuites!!.isEmpty()) {
+            if (testSuites.isEmpty()) {
                 log.warn("No testsuites to process from source '$groupName'.")
                 continue
             }
@@ -202,7 +199,8 @@ class JUnitDiffApp {
             val testSuites: List<TestSuite>
             testSuites = try {
                 FileParsing.getSeparatedResultsLists(reportFiles)
-            } catch (ex: JUnitDiffException) {
+            }
+            catch (ex: JUnitDiffException) {
                 log.error(ex.message, ex)
                 return emptyList<TestSuite>()
             }

@@ -34,7 +34,7 @@ object InputPreparation {
         for (path in reportFiles) {
             var path2 = path
 
-            if (path2!!.isFile) {
+            if (path2.isFile) {
                 if (path2.name.endsWith(".zip")) {
                     try {
                         // Unzip & continue with the dir.
@@ -65,7 +65,7 @@ object InputPreparation {
      */
     fun handleURLs(paths: MutableList<String>) {
         for (i in paths.indices) {
-            val path = paths[i] ?: continue
+            val path = paths[i]
 
             // Only replace URL's.
             if (!path.startsWith("http://")) {
@@ -128,7 +128,7 @@ object InputPreparation {
     private fun readListOfPaths(path: File): List<File> {
         return try {
             if (FileUtil.isBinaryFile(path)) {
-                log.warn("  Can't read list of paths from a binary file: " + path!!.path)
+                log.warn("  Can't read list of paths from a binary file: " + path.path)
                 return emptyList<File>()
             }
             val lines = FileUtils.readLines(path, StandardCharsets.UTF_8)
@@ -145,7 +145,7 @@ object InputPreparation {
             }
             paths
         } catch (ex: IOException) {
-            log.warn("Error reading " + path!!.path + " : " + ex.message)
+            log.warn("Error reading " + path.path + " : " + ex.message)
             emptyList<File>()
         }
     }
