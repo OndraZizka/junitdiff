@@ -1,29 +1,36 @@
 package ch.zizka.junitdiff
 
+import ch.zizka.junitdiff.JUnitDiffApp.InvocationParams.OutputFormat.HTML
+import ch.zizka.junitdiff.JUnitDiffApp.InvocationParams.OutputFormat.XML
 import ch.zizka.junitdiff.ex.JUnitDiffException
 import ch.zizka.junitdiff.export.XmlExporter
 import ch.zizka.junitdiff.model.AggregatedData
 import ch.zizka.junitdiff.model.TestSuite
 import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
-import java.io.*
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.OutputStream
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption.CREATE
 import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 import kotlin.io.path.isDirectory
 import kotlin.io.path.outputStream
+import kotlin.io.path.reader
 import kotlin.system.exitProcess
 
 class JUnitDiffApp {
 
     data class InvocationParams(
         val inputPaths: MutableList<String>,
-        val outPath: String,
-        val htmlOutput: Boolean,
+        val outPath: Path,
+        val outputFormat: OutputFormat,
         val toStdOut: Boolean,
         val title: String?
-    )
+    ) {
+        enum class OutputFormat(val suffix: String) { HTML(".html"), XML(".xml") }
+    }
 
     private fun runApp(p: InvocationParams) {
         val reportFiles: MutableList<File?> = ArrayList(p.inputPaths.size)
@@ -76,49 +83,32 @@ class JUnitDiffApp {
 
 
         // Export the aggregated matrix to a file.
-        // TODO: Use a Writer.
         log.info("Exporting to $p.outPath")
-        val outFile = File(p.outPath)
-        if (!p.htmlOutput) {
-            // XML
-            try {
-                XmlExporter.exportToXML(aggregatedData, outFile)
+        when (p.outputFormat) {
+            XML -> try {
+                XmlExporter.exportToXML(aggregatedData, p.outPath.toFile())
             } catch (ex: FileNotFoundException) {
                 log.error("Can't write to file '" + p.outPath + "': " + ex.message)
-                System.exit(5)
+                exitProcess(5)
             }
-        } else {
-            // HTML
-            try {
-                XmlExporter.exportToHtmlFile(aggregatedData, outFile, p.title)
+
+            HTML -> try {
+                XmlExporter.exportToHtmlFile(aggregatedData, p.outPath.toFile(), p.title)
             } catch (ex: JUnitDiffException) {
                 log.error(ex.message, ex)
-                System.exit(6)
+                exitProcess(6)
             }
         }
 
-        putJavascriptFunctionsFileToDir(Path.of(p.outPath).parent)
+        putJavascriptFunctionsFileToDir(p.outPath.parent)
 
         // Dump to stdout.
         // TODO: Rewrite whole these two parts.
         if (p.toStdOut) {
             log.debug("Output goes to stdout.")
-            var fileReader: FileReader? = null
-            try {
-                fileReader = FileReader(p.outPath)
-                IOUtils.copy(fileReader, System.out as OutputStream, StandardCharsets.UTF_8)
-            } catch (ex: FileNotFoundException) {
-                log.error(ex.toString())
-            } catch (ex: IOException) {
-                log.error(ex.toString())
-            } finally {
-                if (fileReader != null) {
-                    try {
-                        fileReader.close()
-                    } catch (ex: IOException) {
-                        log.error(ex.toString())
-                    }
-                }
+
+            p.outPath.reader().use {
+                IOUtils.copy(it, System.out as OutputStream, StandardCharsets.UTF_8)
             }
         }
     } // runApp
@@ -134,9 +124,6 @@ class JUnitDiffApp {
         private val log = LoggerFactory.getLogger(JUnitDiffApp::class.java)
         private const val DEFAULT_OUT_FILE = "JUnitDiff" // Suffix appened according to output type.
 
-        /**
-         * main ()
-         */
 		@JvmStatic
         fun main(args: Array<String?>) {
             log.debug("Starting JUnitDiff - multiple JUnit test runs comparing tool.")
@@ -153,26 +140,24 @@ class JUnitDiffApp {
         private fun parseArguments(args: Array<String?>): InvocationParams {
             var outFile: String? = null
             var title: String? = null
-            var htmlOutput = true
+            var outputFormat = HTML
             var stdOut = false
 
-            // Process arguments...
-            // TODO: Some options data holder class...
             var i = 0
             while (i < args.size) {
                 if ("-xml" == args[i]) {
-                    htmlOutput = false
+                    outputFormat = XML
                     args[i] = null
                 } else if ("-o" == args[i]) {
                     args[i] = null
-                    if (args.size > i) {
+                    if (i < args.size - 1) {
                         outFile = args[i + 1]
                         args[i + 1] = null
                         i++
                     }
                 } else if ("--title" == args[i]) {
                     args[i] = null
-                    if (args.size > i) {
+                    if (i < args.size - 1) {
                         title = args[i + 1]
                         args[i + 1] = null
                         i++
@@ -185,11 +170,10 @@ class JUnitDiffApp {
                 outFile = null
             }
             if (null == outFile) {
-                outFile = DEFAULT_OUT_FILE + if (htmlOutput) ".html" else ".xml"
+                outFile = DEFAULT_OUT_FILE + outputFormat.suffix
             }
 
-            val invocationParams = InvocationParams(args.filterNotNull().toMutableList(), outFile, htmlOutput, stdOut, title)
-            return invocationParams
+            return InvocationParams(args.filterNotNull().toMutableList(), Path.of(outFile), outputFormat, stdOut, title)
         }
 
         /**
