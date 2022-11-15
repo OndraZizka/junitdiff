@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<xsl:stylesheet version="1.0" 
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
->
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="html" encoding="UTF-8" omit-xml-declaration="yes" indent="yes"/>
 
     <xsl:key name="isOkRow" match="/aggregate/testcase/testrun[@result != 'OK']" use="@group"/>
@@ -31,10 +29,8 @@
                   h2 { font-size: 14pt; }
 
                   div.groups div.group span.stats { font-size: 75%; }
-                  div.groups div.group span.name {}
+                  div.groups div.group span.name { margin: 0 1ex; }
                   div.groups div.group span.path { font-size: 75%; }
-                  div.groups div.group span.path:before { content: " ("; }
-                  div.groups div.group span.path:after  { content: ")"; }
                   div.groups div.group span.index { display: none; }
 
                   table.results { border-collapse:collapse; }
@@ -84,173 +80,6 @@
                   .run.popup .testsuite.out .text { border-left: 2px solid green; }
                   .run.popup .testsuite.err .text { border-left: 2px solid red; }
               </style>
-              <script>
-                function ki( fullTestName ) {
-                    var parts = fullTestName.split(".");
-
-                    // org.jboss.package.ShortName -> ShortName
-                    var shortName = parts[parts.length-1];
-
-                    var windowProps = "menubar=no,resizable=yes,scrollbars=yes,status=yes,modal=yes,alwaysRaised=yes";
-                    //window.open("https://jira.jboss.org/secure/QuickSearch.jspa?searchString=" + shortName,  "jboss-" + fullTestName, windowProps);
-                    window.open("https://issues.jboss.org/issues/?jql=text%20~%20%22" + shortName + "%22",  "jboss-" + fullTestName,  windowProps);
-                    //window.open("http://opensource.atlassian.com/projects/hibernate/secure/QuickSearch.jspa?searchString=" + shortName,  "hbn-" + fullTestName, windowProps);
-                    window.open("http://www.google.com/search?q=" + shortName,  "google-" + fullTestName, windowProps);
-                }
-
-                function ki2( kiHref ) {
-                    var eTD = kiHref.parentNode;
-                    var fullTestName = eTD.children[1].textContent + '.' + eTD.children[2].textContent; // FF only!
-                    ki( fullTestName );
-                }
-
-                function kiA(){ document.write('&lt;a class="known" href="#" onclick="ki2(event.target)">Known issues&lt;/a&gt;'); }
-
-                function kb_ki( elmKnownIssuesLink ){
-                    // td { script, span @class="classname" {"..."}, "test" }, td { a, a @href= | }
-                    var elmTD = elmResultLink.parentNode.parentNode.children[0];
-                    var testIdent = getTestIdentFrom1stColTd( elmTD );
-                    alert('This will show known issues for '+testIdent.class+'.'+testIdent.method+'.');
-                }
-
-
-                /**
-                 *  Based on the test run link element, gets the classname and testname,
-                 *  and calls out(). Purpose: Reduces size of the document.
-                 *
-                 *  TODO: Replace sGroup with group index (will significantly reduce output size).
-                 */
-                function out2( elmResultLink, sGroup ){
-                    // td { script, span @class="classname" {"..."}, "test" }, td { a | @href=... {"OK"} , a }
-                    var elm1stTD = elmResultLink.parentNode.parentNode.children[0];
-                    var testIdent = getTestIdentFrom1stColTd( elm1stTD );
-
-                    var elmThisTD = elmResultLink.parentNode;
-                    var elmFailureDiv = elmThisTD.getElementsByClassName("failure");
-                    if( elmFailureDiv.size == 0 )
-                        elmFailureDiv = null;
-                    else
-                        elmFailureDiv = elmFailureDiv[0];
-
-                    // TODO: Change group references to indexes everywhere.
-                    sGroup = document.getElementById("groups").children[sGroup-1].getElementsByClassName("path")[0].textContent;
-                    sResult = elmResultLink.textContent;
-
-                    out( testIdent.class, testIdent.method, sGroup, sResult, elmFailureDiv );
-                }
-
-                /**
-                 *  Gets the classname and testname from the row's first TD. Reduces size.
-                 */
-                function getTestIdentFrom1stColTd( elmTD ){
-                    var elmClassSpan = elmTD.getElementsByClassName("classname")[0];
-                    var sClass  = elmClassSpan.textContent;
-                    var sMethod = elmClassSpan.nextSibling.textContent;
-                    return { class: sClass, method: sMethod };
-                }
-
-
-                /**
-                 *  Displays a popup with details of the test - stdout, stderr, failure message etc.
-                 *  FIXME:  Failure message not being passed here since oskutka's change (r13950).
-                 *  @param elmFailureDiv  See the failure-content template. May be null.
-                 */
-                function out( testClass, testMethod, group, result, elmFailureDiv ){
-
-                    var windowProps = "menubar=no,resizable=yes,scrollbars=yes,status=yes,modal=yes,alwaysRaised=yes";
-                    var win = window.open("", "failure", windowProps);
-                    var doc = win.document;
-
-                    //                  "org.ClassName.method|group"
-                    var testRunName   = testClass + '.' + testMethod + '|' + group;
-
-                    //                  "org.ClassName|group"
-                    var testSuiteName = testClass + '|' + group;
-
-                    if( this.ePopup ){
-                        this.ePopup.style.display = null;
-                    }
-
-                    //this.ePopup = document.getElementById( testRunName );
-                    this.ePopup = document.getElementById("popup-div");
-
-                    document.getElementById("popup-result").innerHTML = result;
-
-                    /*
-                    var elmData = jQuery(document.getElementById(name));
-                    var out = elmData.first(".out").html();
-                    var err = elmData.first(".err").html();
-                    alert(out);
-                    jQuery(this.ePopup).first(".out .text").empty().append(out);
-                    jQuery(this.ePopup).first(".err .text").empty().append(err);
-                    */
-
-                    // Testsuite data from the bottom of the page.
-                    var elmTSData = document.getElementById( testSuiteName );
-
-                    // div class="out">...
-                    // div class="err">...
-                    var ori = elmTSData.getElementsByTagName("div")[0].innerHTML;
-                    var out = elmTSData.getElementsByTagName("div")[1].innerHTML;
-                    var err = elmTSData.getElementsByTagName("div")[2].innerHTML;
-                    //alert(out);
-                    //alert(this.ePopup.getElementsByTagName("div")[2].className);
-                    //alert(this.ePopup.getElementsByTagName("div")[2].getElementsByTagName("div").length);
-                    //alert(this.ePopup.getElementsByTagName("div")[2].getElementsByTagName("div")[0]);
-                    //this.ePopup.getElementsByTagName("div")[1].getElementsByTagName("div")[0].innerHTML = out;
-                    //this.ePopup.getElementsByTagName("div")[2].getElementsByTagName("div")[0].innerHTML = err;
-                    this.ePopup.children[1].children[1].innerHTML = ori;
-                    this.ePopup.children[this.ePopup.children.length-2].children[1].innerHTML = out; //2
-                    this.ePopup.children[this.ePopup.children.length-1].children[1].innerHTML = err; //3
-
-
-                    elmLocalFail = this.ePopup.getElementsByClassName("failure")[0];
-                    if ( elmFailureDiv != null ){
-                        elmLocalFail.innerHTML = elmFailureDiv.innerHTML;
-                        elmLocalFail.style.display = "block";
-                    }else{
-                        elmLocalFail.innerHTML = "";
-                        elmLocalFail.style.display = "none";
-                    }
-                    doc.write('<style>' + document.getElementById('style').innerHTML + '</style>');
-                    doc.write('<div class="run popup">' + this.ePopup.innerHTML + '</div>');
-                    doc.close();
-
-                    //this.ePopup.style.top = (window.scrollY + 15) + "px";
-
-                    //this.ePopup.onclick = function(){ this.style.display = null; }
-                    //this.ePopup.style.display = "block";
-                  
-                } // out()
-
-                /*window.onscroll = function(){
-                  if( window.ePopup == null ) return;
-                  window.ePopup.style.top = (window.scrollY + 15) + "px";
-                }*/
-
-                function toggleShowOnlyNonOkTests( bShowOnlyNonOK ){
-                  //alert( "className: "+ document.getElementById("results-table").getElementsByTagName("tbody")[0].className );
-                  //alert( "classname: " + ( bShowOnlyNonOK ? "hideOkTests" : "" ) );
-                  document.getElementById("cbShowOnlyDiffTests").checked=false;
-                  document.getElementById("results-table").getElementsByTagName("tbody")[0].className = ( bShowOnlyNonOK ? "hideOkTests" : "" );
-                }
-
-                function toggleShowOnlyDiffTests( bShowOnlyNonOK ){
-                  document.getElementById("cbShowOnlyNonOkTests").checked=false;
-                  document.getElementById("results-table").getElementsByTagName("tbody")[0].className = ( bShowOnlyNonOK ? "hideNodiffTests" : "" );
-                }
-
-                // TODO: Not working now... the .or class is not being added yet.
-                // Anyway, I'd rather do this by hiding specific columns, using .r1 class where 1 is the group index.
-                function toggleShowOnlyNonOkRuns( bShowOnlyNonOK ){
-                  document.getElementById("results-table").className = ( bShowOnlyNonOK ? "hideOkRuns results" : "results" );
-                }
-
-                function jira( elmAnchor ){
-                  alert( elmAnchor );
-                  window.open( "https://jira.jboss.org/secure/QuickSearch.jspa?searchString=" + elmAnchor.innerHTML, "jiraJBoss", "" );
-                }
-              </script>
               <script type="text/javascript" src="functions.js"/>
           </head>
           <body>
@@ -312,14 +141,14 @@
         <h2>Runs:</h2>
         <div class="groups" id="groups">
             <xsl:for-each select="groups/group">
-                <div class="group g01">
+                <div class="group g01 this-will-be-replaced">
                     <xsl:attribute name="class">group g<xsl:number format="01" value="position()"/></xsl:attribute>
+                    <xsl:variable name="position" select="position()"/>
                     <span class="stats">
-                        <!--<span class="testClasses"><xsl:value-of select="count(/aggregate/testcase[testrun[@group = current()/@path]])" /></span>, I'd have to do grouping for this.-->
-                        [<span class="tests"><xsl:value-of select="count(/aggregate/testcase/testrun[@group = current()/@path])" /></span>]
+                        (<span class="tests"><xsl:value-of select="count(/aggregate/testcase/testrun[@group = $position])" /> tests</span>)
                     </span>
-                    <span class="name"><xsl:value-of select="@name" /></span>
-                    <span class="path"><xsl:value-of select="@path" /></span>
+                    <span class="name">Test run "<xsl:value-of select="@name" />"</span>
+                    <span class="path">from <xsl:value-of select="@path" /></span>
                     <span class="index"><xsl:value-of select="position()" /></span>
                 </div>
             </xsl:for-each>
@@ -329,7 +158,7 @@
 
         <div><input type="checkbox" id="cbShowOnlyNonOkTests" onchange="toggleShowOnlyNonOkTests(this.checked);"/> <label for="cbShowOnlyNonOkTests">Show only non-OK tests (rows)</label></div>
         <div><input type="checkbox" id="cbShowOnlyDiffTests" onchange="toggleShowOnlyDiffTests(this.checked);"/> <label for="cbShowOnlyDiffTests">Show only tests with differing results (rows)</label></div>
-        <div><input type="checkbox" id="cbShowOnlyNonOkRuns"  onchange="toggleShowOnlyNonOkRuns (this.checked);"/> <label for="cbShowOnlyNonOkRuns" >Show only non-OK runs (cols)</label></div>
+        <div><input type="checkbox" id="cbShowOnlyNonOkRuns"  onchange="toggleShowOnlyNonOkRuns (this.checked);"/> <label for="cbShowOnlyNonOkRuns" >Show only non-OK runs (columns)</label></div>
 
         <table class="results" id="results-table">
             <thead>
@@ -343,17 +172,12 @@
             </tbody>
         </table>
 
-        <p class="footer">Created by <a href="https://docspace.corp.redhat.com/docs/DOC-55386">JUnitDiff</a> ${project.version}.</p>
+        <p class="footer">Created by <a href="${project.scm.url}">JUnitDiff</a> ${project.version}.</p>
         <div class="footer">TODO:
           <ul> <li> Known issues - the service is not ready yet.
           </li><li> Links to Jira's in popup.
           </li><li> Links to test source if -srcUrl is provided.
           </li><li> Fix popup to appear to the scrolled view, or change it to a browser popup window (optionally).
-
-          <!--
-          </li><li> "Only show failed tests" checkbox.
-          </li><li> GZip the std out and strerr data? Would save in order of megabytes.
-          -->
           </li></ul>
         </div>
     </xsl:template>
