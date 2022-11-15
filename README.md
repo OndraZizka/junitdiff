@@ -1,5 +1,5 @@
 
-  JUnitDiff - JUnit test reports aggregator and reporter
+🥪 JUnitDiff - JUnit test reports aggregator and reporter
 ==========================================================
 2022 revival
 

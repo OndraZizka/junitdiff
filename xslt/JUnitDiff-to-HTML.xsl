@@ -136,7 +136,7 @@
     <!-- Content and table. -->
     <xsl:template match="/aggregate">
 
-        <h1><xsl:value-of select="$titleToUse"/></h1>
+        <h1>🍡 <xsl:value-of select="$titleToUse"/></h1>
 
         <h2>Runs:</h2>
         <div class="groups" id="groups">
@@ -147,8 +147,10 @@
                     <span class="stats">
                         (<span class="tests"><xsl:value-of select="count(/aggregate/testcase/testrun[@group = $position])" /> tests</span>)
                     </span>
-                    <span class="name">Test run "<xsl:value-of select="@name" />"</span>
-                    <span class="path">from <xsl:value-of select="@path" /></span>
+                    <span class="name">🎢 Test run "<xsl:value-of select="@name" />"</span>
+                    <span class="path">from 📂 <a>
+                        <xsl:attribute name="href">file://<xsl:value-of select="@path" /></xsl:attribute>
+                        <xsl:value-of select="@path" /></a></span>
                     <span class="index"><xsl:value-of select="position()" /></span>
                 </div>
             </xsl:for-each>
@@ -156,9 +158,9 @@
 
         <h2>Tests \ test runs:</h2>
 
-        <div><input type="checkbox" id="cbShowOnlyNonOkTests" onchange="toggleShowOnlyNonOkTests(this.checked);"/> <label for="cbShowOnlyNonOkTests">Show only non-OK tests (rows)</label></div>
-        <div><input type="checkbox" id="cbShowOnlyDiffTests" onchange="toggleShowOnlyDiffTests(this.checked);"/> <label for="cbShowOnlyDiffTests">Show only tests with differing results (rows)</label></div>
-        <div><input type="checkbox" id="cbShowOnlyNonOkRuns"  onchange="toggleShowOnlyNonOkRuns (this.checked);"/> <label for="cbShowOnlyNonOkRuns" >Show only non-OK runs (columns)</label></div>
+        <div><input type="checkbox" id="cbShowOnlyNonOkTests" onchange="toggleShowOnlyNonOkTests(this.checked);"/> <label for="cbShowOnlyNonOkTests"> ⛔ Show only non-OK tests (rows)</label></div>
+        <div><input type="checkbox" id="cbShowOnlyDiffTests" onchange="toggleShowOnlyDiffTests(this.checked);"/> <label for="cbShowOnlyDiffTests"> 🧮 Show only tests with differing results (rows) - also counts missing vs. present.</label></div>
+        <div><input type="checkbox" id="cbShowOnlyNonOkRuns"  onchange="toggleShowOnlyNonOkRuns (this.checked);"/> <label for="cbShowOnlyNonOkRuns"> 🚧 Show only non-OK runs (columns)</label></div>
 
         <table class="results" id="results-table">
             <thead>
