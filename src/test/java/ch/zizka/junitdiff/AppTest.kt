@@ -1,10 +1,10 @@
 package ch.zizka.junitdiff
 
 import ch.zizka.junitdiff.JUnitDiffApp.Companion.main
-import junit.framework.Test
 import junit.framework.TestCase
-import junit.framework.TestSuite
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.exists
+import kotlin.io.path.pathString
 
 /**
  * Unit test for simple App.
@@ -14,11 +14,12 @@ import java.io.File
  */
 class AppTest (testName: String) : TestCase(testName) {
 
-    fun testHibernateRuns_HtmlOutput() {
+    fun testHtmlOutput_hibernateDataset() {
 
         val dataDir = System.getProperty("junitdiff.test.data.dir")
-        val outPath = "target/test-tmp/" + this.name + "/output.html"
-        val outFile = File(outPath)
+        val outDir = Path.of("testOutput/", this.name)
+        val outFilePath = outDir.resolve("output.html")
+        val outFile = outFilePath.toFile()
         outFile.parentFile.mkdirs()
 
         main(
@@ -27,44 +28,33 @@ class AppTest (testName: String) : TestCase(testName) {
                 "$dataDir/hibernate-run2",
                 "$dataDir/hibernate-run3",
                 "$dataDir/hibernate-run4",
-                "-o", outPath
+                "-o", outFilePath.pathString
             )
         )
 
-        assertTrue(outFile.exists())
+        assertTrue(outFilePath.exists())
+        assertTrue(outDir.resolve("functions.js").exists())
     }
 
-    /**
-     * XML output.
-     */
-    fun testHibernateRunsXML() {
+
+    fun testXmlOutput_hibernateDataset() {
 
         val dataDir = System.getProperty("junitdiff.test.data.dir")
-        val outPath = "target/test-tmp/" + this.name + "/output.xml"
-        val outFile = File(outPath)
-        outFile.parentFile.mkdirs()
-        try {
-            main(
-                arrayOf(
-                    "$dataDir/hibernate-run1",
-                    "$dataDir/hibernate-run2",
-                    "$dataDir/hibernate-run3",
-                    "$dataDir/hibernate-run4",
-                    "-o", outPath, "-xml"
-                )
+        val outDir = Path.of("testOutput/", this.name)
+        val outFilePath = outDir.resolve("aggregatedReport.xml")
+
+        outDir.toFile().mkdirs()
+
+        main(
+            arrayOf(
+                "$dataDir/hibernate-run1",
+                "$dataDir/hibernate-run2",
+                "$dataDir/hibernate-run3",
+                "$dataDir/hibernate-run4",
+                "-o", outFilePath.pathString, "-xml"
             )
-        } catch (t: Throwable) {
-            kotlin.test.fail(t.message)
-        }
-        assertTrue(outFile.exists())
+        )
+        assertTrue(outFilePath.exists())
     }
 
-    companion object {
-        /**
-         * @return the suite of tests being tested
-         */
-        fun suite(): Test {
-            return TestSuite(AppTest::class.java)
-        }
-    }
 }
