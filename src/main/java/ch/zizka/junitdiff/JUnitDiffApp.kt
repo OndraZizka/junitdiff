@@ -9,23 +9,18 @@ import org.slf4j.LoggerFactory
 import java.io.*
 import java.nio.charset.StandardCharsets
 
-/**
- * Useful comment.
- */
 class JUnitDiffApp {
-    /**
-     * runApp()
-     */
-    private fun runApp(paths: MutableList<String>, outPath: String, htmlOutput: Boolean, toStdOut: Boolean, title: String?) {
-        val reportFiles: MutableList<File?> = ArrayList(paths.size)
+
+    private fun runApp(inputPaths: MutableList<String>, outPath: String, htmlOutput: Boolean, toStdOut: Boolean, title: String?) {
+        val reportFiles: MutableList<File?> = ArrayList(inputPaths.size)
 
         // Handle URLs
-        InputPreparation.handleURLs(paths)
+        InputPreparation.handleURLs(inputPaths)
 
         // Check files...
-        for (path in paths) {
+        for (path in inputPaths) {
             val reportFile = File(path)
-            require(reportFile.exists()) { "  File " + reportFile.path + " does not exist." }
+            require(reportFile.exists()) { "  File ${reportFile.path} does not exist." }
             reportFiles.add(reportFile)
         }
 
@@ -181,6 +176,7 @@ class JUnitDiffApp {
             if (null == outFile) {
                 outFile = DEFAULT_OUT_FILE + if (htmlOutput) ".html" else ".xml"
             }
+
             JUnitDiffApp().runApp(args.filterNotNull().toMutableList(), outFile, htmlOutput, stdOut, title)
         }
 
