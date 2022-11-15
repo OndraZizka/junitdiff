@@ -7,15 +7,14 @@ import org.apache.commons.io.DirectoryWalker
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.filefilter.FileFilterUtils
 import org.apache.commons.io.filefilter.IOFileFilter
-import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
-import java.nio.channels.Channels
 import java.nio.charset.StandardCharsets
+import java.nio.file.StandardOpenOption
 import java.util.*
+import kotlin.io.path.outputStream
 
 /**
  *
@@ -63,7 +62,7 @@ object InputPreparation {
      * Handle URLs: If the path starts with http://, it downloads the file and unzips if it ends with .zip.
      * Paths will be replaced in-place in the array.
      */
-    fun handleURLs(paths: MutableList<String>) {
+    fun downloadAndUnzipUrls(paths: MutableList<String>) {
         for (i in paths.indices) {
             val path = paths[i]
 
@@ -88,38 +87,22 @@ object InputPreparation {
         }
     }
 
-    /**
-     *
-     */
-    @Throws(IOException::class)
     private fun downloadZipAndExtractToTempDir(urlStr: String): File? {
-        // Download
         val tmpFile = downloadUrlToTempFile(urlStr)
 
-        // Unzip & return the tmp dir.
         val dirWithZipContent = ZipUtil.unzipFileToTempDir(tmpFile, OverwriteMode.DELETE_FIRST)
         tmpFile.delete()
         return dirWithZipContent
     }
 
-    @Throws(IOException::class)
     private fun downloadUrlToTempFile(urlStr: String): File {
         val url = URL(urlStr)
 
-        // Create the directory.
-        var path = url.path
-        path = StringUtils.strip(path, "\\/")
-        path = path.replace('*', '-')
-        path = path.replace('?', '-')
-        val destZipFile = File(path)
-        destZipFile.parentFile.mkdirs()
-        val rbc = Channels.newChannel(url.openStream())
-        //File tmp = File.createTempFile( "JUnitDiff-tmp-", ".zip" );
-        val fos = FileOutputStream(destZipFile)
-        fos.channel.transferFrom(rbc, 0, (1 shl 24).toLong())
-        rbc.close()
-        fos.close()
-        return destZipFile
+        val downloadToFile = File.createTempFile( "JUnitDiff-tmp-", ".zip" );
+        downloadToFile.toPath().outputStream(StandardOpenOption.TRUNCATE_EXISTING).use { os ->
+            url.openStream().transferTo(os)
+        }
+        return downloadToFile.also { it.deleteOnExit() }
     }
 
     /**
