@@ -1,19 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.jboss.qa.junitdiff</groupId>
+    <groupId>ch.zizka.junitdiff</groupId>
     <artifactId>JUnitDiff</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.7-SNAPSHOT</version>
+    <version>1.6.0-SNAPSHOT</version>
 
     <name>JUnitDiff</name>
     <url>http://ondra.zizka.cz/stranky/programovani/java/junit-test-results-report-comparison-junitdiff.texy</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mainClass>org.jboss.qa.junitdiff.JUnitDiffApp</mainClass>
+        <mainClass>ch.zizka.junitdiff.JUnitDiffApp</mainClass>
         <distDir>${project.basedir}/../dist</distDir>
-        <jvm.args.debug></jvm.args.debug>
+        <jvm.args.debug/>
     </properties>
     
     <scm>
@@ -42,25 +42,32 @@
           
             <!-- Compiler -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.0</version>
-                <configuration>  <source>1.6</source> <target>1.6</target> </configuration>
+                <groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.10.1</version>
+                <configuration>  <source>1.8</source> <target>1.8</target> </configuration>
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>  <artifactId>maven-antrun-plugin</artifactId> <executions> <execution>
-                <phase>clean</phase>  <goals> <goal>run</goal> </goals>  <configuration> <tasks>
-                    <unzip src="src/test/data/hibernate-ann-run1.zip" dest="target/sample-data/" overwrite="true" />
-                    <unzip src="src/test/data/hibernate-ann-run2.zip" dest="target/sample-data/" overwrite="true" />
-                    <unzip src="src/test/data/hibernate-ann-run3.zip" dest="target/sample-data/" overwrite="true" />
-                </tasks> </configuration> </execution> </executions>
+                <groupId>org.apache.maven.plugins</groupId>  <artifactId>maven-antrun-plugin</artifactId> <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>clean</phase>  <goals><goal>run</goal></goals>
+                        <configuration> <tasks>
+                            <unzip src="src/test/data/hibernate-ann-run1.zip" dest="target/sample-data/" overwrite="true" />
+                            <unzip src="src/test/data/hibernate-ann-run2.zip" dest="target/sample-data/" overwrite="true" />
+                            <unzip src="src/test/data/hibernate-ann-run3.zip" dest="target/sample-data/" overwrite="true" />
+                        </tasks> </configuration>
+                    </execution>
+                    <execution> <id>copy-dist</id> <phase>install</phase> <goals><goal>run</goal></goals>
+                        <configuration> <target>
+                            <!--<copy file="${project.build.directory}/dist/${project.artifactId}.${project.packaging}" todir="${project.build.directory}/dist/${project.version}" verbose="true" />-->
+                            <copy file="${project.build.directory}/dist/${project.artifactId}.${project.packaging}" todir="${distDir}/${project.version}" verbose="true" />
+                        </target> </configuration> 
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
-                <groupId>org.codehaus.mojo</groupId> 
-                <artifactId>appassembler-maven-plugin</artifactId> 
-                <version>1.1</version>
+                <groupId>org.codehaus.mojo</groupId><artifactId>appassembler-maven-plugin</artifactId><version>1.10</version>
                 <!--<executions>  <execution>     <phase>package</phase>  <goals><goal>assemble</goal></goals>  </execution>  </executions>-->
                 <configuration>
                     <programs>
@@ -74,7 +81,7 @@
 
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <executions>  <execution>     <phase>package</phase>  <goals><goal>single</goal></goals>  </execution>  </executions>
+                <executions><execution><phase>package</phase><goals><goal>single</goal></goals></execution></executions>
                 <configuration>
                     <appendAssemblyId>false</appendAssemblyId>
                     <finalName>${project.artifactId}</finalName>
@@ -94,25 +101,9 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-                <executions> <execution> <id>copy-dist</id> <phase>install</phase> <goals> <goal>run</goal> </goals>
-                <configuration> <target>
-                    <!--<copy file="${project.build.directory}/dist/${project.artifactId}.${project.packaging}" todir="${project.build.directory}/dist/${project.version}" verbose="true" />-->
-                    <copy file="${project.build.directory}/dist/${project.artifactId}.${project.packaging}" todir="${distDir}/${project.version}" verbose="true" />
-                </target> </configuration> </execution> </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.12.4</version> <!-- Needs to be set, does not work without. -->
+                <groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId><version>2.22.2</version>
                 <configuration>
-                    <systemProperties>
-                        <junitdiff.test.data.dir>${basedir}/src/test/data</junitdiff.test.data.dir>
-                        <moje>AaA</moje>
-                    </systemProperties>
+                    <workingDirectory>target/</workingDirectory>
                     <systemPropertyVariables>
                         <junitdiff.test.data.dir>${basedir}/src/test/data</junitdiff.test.data.dir>
                         <moje>AaA</moje>
@@ -145,113 +136,33 @@
     <dependencies>
 
         <!-- Commons -->
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
-
+        <dependency><groupId>org.apache.commons</groupId><artifactId>commons-lang3</artifactId><version>3.12.0</version></dependency>
+        <dependency><groupId>org.apache.commons</groupId><artifactId>commons-text</artifactId><version>1.10.0</version></dependency>
+        <dependency><groupId>commons-io</groupId><artifactId>commons-io</artifactId><version>2.11.0</version></dependency>
 
         <!-- JDom -->
-        <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom</artifactId>
-            <version>1.1.3</version>
-        </dependency>
-        <!-- JDom's XPath needs this - XPath.newInstance("/testsuite/testcase") -> CNFEx org.jaxen.NamespaceContext -->
-        <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jaxen-core</artifactId>
-            <version>1.0-FCS</version>
-        </dependency>
-        <!-- JDom's XPath needs this - XPath.newInstance("/testsuite/testcase") -> NoClassDefFoundError: org/jaxen/jdom/JDOMXPath: org/jaxen/jdom/JDOMXPath -->
-        <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jaxen-jdom</artifactId>
-            <version>1.0-FCS</version>
-        </dependency>
-        <!-- JDom's XPath needs this - XPath.newInstance("/testsuite/testcase") -> CNFEx org.saxpath.SAXPathException -->
-        <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>saxpath</artifactId>
-            <version>1.0-FCS</version>
-        </dependency>
+        <dependency><groupId>org.jdom</groupId><artifactId>jdom</artifactId><version>1.1.3</version></dependency>
+        <!-- JDom's XPath needs these, otherwise XPath.newInstance("/testsuite/testcase") throws... -->
+        <dependency><groupId>org.jdom</groupId><artifactId>jaxen-core</artifactId><version>1.0-FCS</version></dependency> <!-- CNFEx org.jaxen.NamespaceContext -->
+        <dependency><groupId>org.jdom</groupId><artifactId>jaxen-jdom</artifactId><version>1.0-FCS</version></dependency><!-- NoClassDefFoundError: org/jaxen/jdom/JDOMXPath: org/jaxen/jdom/JDOMXPath -->
+        <dependency><groupId>org.jdom</groupId><artifactId>saxpath</artifactId><version>1.0-FCS</version></dependency><!-- CNFEx org.saxpath.SAXPathException -->
 
+        <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-log4j12</artifactId><version>1.7.36</version></dependency>
 
+        <!-- Test dependencies -->
+        <dependency><groupId>junit</groupId><artifactId>junit</artifactId><version>4.13.2</version><scope>test</scope></dependency>
 
-        <!-- Slf4j -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.5.11</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.1</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <pluginRepositories>
-        <pluginRepository>
-            <id>codehaus</id>
-            <name>Codehaus Release Repo</name>
-            <url>http://repository.codehaus.org</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>codehaus-snapshot</id>
-            <name>Codehaus Snapshot Repo</name>
-            <url>http://snapshots.repository.codehaus.org</url>
-        </pluginRepository>
+        <pluginRepository><id>codehaus</id><name>Codehaus Release Repo</name><url>http://repository.codehaus.org</url></pluginRepository>
+        <pluginRepository><id>codehaus-snapshot</id><name>Codehaus Snapshot Repo</name><url>http://snapshots.repository.codehaus.org</url></pluginRepository>
     </pluginRepositories>
 
     <distributionManagement>
         <downloadUrl>http://code.google.com/p/junitdiff/downloads/list</downloadUrl>
-        <!-- SVN:
-        <repository>
-            <id>gc-junitdiff</id>
-            <url>git:releases://git@github.com:OndraZizka/junitdiff.git</url>
-        </repository>        
-        <snapshotRepository>
-            <id>jboss-snapshots-repository</id>
-            <name>JBoss Snapshots Repository</name>
-            <url>https://repository.jboss.org/nexus/content/repositories/snapshots</url>
-        </snapshotRepository>
-        -->        
-        <!-- SVN:
-        <repository>
-            <id>maven-config-processor-plugin-repo-releases</id>
-            <url>svn:https://maven-config-processor-plugin.googlecode.com/svn/maven-repo/releases</url>
-            <uniqueVersion>false</uniqueVersion>
-        </repository>
-        <snapshotRepository>
-            <id>maven-config-processor-plugin-repo-releases</id>
-            <name>Maven Repository for Config Processor Plugin (snapshots)</name>
-            <url>svn:https://maven-config-processor-plugin.googlecode.com/svn/maven-repo/snapshots</url>
-            <uniqueVersion>false</uniqueVersion>
-        </snapshotRepository>
-        -->        
-        <!-- Local:
-        -->
-        <repository>
-            <id>local-hack-repo</id>
-            <name>LocalDir</name>
-            <url>file://${project.basedir}/../dist-maven</url>
-        </repository>
-        <snapshotRepository>
-            <id>local-hack-repo-snap</id>
-            <name>LocalDir</name>
-            <url>file://${project.basedir}/../dist-maven</url>
-        </snapshotRepository>
+        <repository><id>local-hack-repo</id><name>LocalDir</name><url>file://${project.basedir}/../dist-maven</url></repository>
+        <snapshotRepository><id>local-hack-repo-snap</id><name>LocalDir</name><url>file://${project.basedir}/../dist-maven</url></snapshotRepository>
     </distributionManagement>  
 
 </project>

@@ -9,7 +9,8 @@
             <properties>
                 <exec.classpathScope>runtime</exec.classpathScope>
                 <exec.workingdir>target/workdir</exec.workingdir>
-                <exec.args>-classpath %classpath org.jboss.qa.junitdiff.JUnitDiffApp -o - ../../src/test/data/hibernate-run1 ../../src/test/data/hibernate-run2 ../../src/test/data/hibernate-run3 ../../src/test/data/hibernate-run4</exec.args>
+                <exec.args>-classpath %classpath ch.zizka.junitdiff.JUnitDiffApp -o - ../../src/test/data/hibernate-run1 ../../src/test/data/hibernate-run2
+                    ../../src/test/data/hibernate-run3 ../../src/test/data/hibernate-run4</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
@@ -22,7 +23,8 @@
             <properties>
                 <exec.classpathScope>runtime</exec.classpathScope>
                 <exec.workingdir>target/workdir</exec.workingdir>
-                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath org.jboss.qa.junitdiff.JUnitDiffApp -o - ../../src/test/data/hibernate-run1 ../../src/test/data/hibernate-run2 ../../src/test/data/hibernate-run3 ../../src/test/data/hibernate-run4</exec.args>
+                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath ch.zizka.junitdiff.JUnitDiffApp -o -
+                    ../../src/test/data/hibernate-run1 ../../src/test/data/hibernate-run2 ../../src/test/data/hibernate-run3 ../../src/test/data/hibernate-run4</exec.args>
                 <jpda.listen>true</jpda.listen>
                 <exec.executable>java</exec.executable>
             </properties>
@@ -34,7 +36,8 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.1.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>${profiler.args} -classpath %classpath org.jboss.qa.junitdiff.JUnitDiffApp -o - ../../src/test/data/hibernate-run1 ../../src/test/data/hibernate-run2 ../../src/test/data/hibernate-run3 ../../src/test/data/hibernate-run4</exec.args>
+                <exec.args>${profiler.args} -classpath %classpath ch.zizka.junitdiff.JUnitDiffApp -o - ../../src/test/data/hibernate-run1 ../../src/test/data/hibernate-run2
+                    ../../src/test/data/hibernate-run3 ../../src/test/data/hibernate-run4</exec.args>
                 <exec.workingdir>target/workdir</exec.workingdir>
                 <profiler.action>profile</profiler.action>
                 <exec.executable>${profiler.java}</exec.executable>
