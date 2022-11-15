@@ -51,7 +51,7 @@ object FileParsing {
             }
         }
         if (errors.isNotEmpty()) {
-            throw JUnitDiffException("Errors (" + errors.size + ") when processing files.", errors)
+            throw JUnitDiffException("${errors.size} errors:" + errors.map { it.message }.joinToString(prefix = "\n") )
         }
         return reportsLists
     }
@@ -95,14 +95,11 @@ object FileParsing {
 
 
         // Read lines and treat as XML files.
-        val readLines: List<String>
-        readLines = try {
-            FileUtils.readLines(file)
-        } catch (ex: IOException) {
-            throw JUnitDiffException("  Error reading from file '" + file.path + "': " + ex.message)
-        }
-        val trls: MutableList<TestRunResultsList?> = ArrayList()
-        val errors: MutableList<Exception?> = ArrayList()
+        val readLines = try { FileUtils.readLines(file) }
+            catch (ex: IOException) { throw JUnitDiffException("  Error reading from file '" + file.path + "': " + ex.message) }
+
+        val trls: MutableList<TestRunResultsList> = ArrayList()
+        val errors: MutableList<Exception> = ArrayList()
         for (line in readLines) {
             val line2 = line.trim { it <= ' ' }
             try {
@@ -121,7 +118,7 @@ object FileParsing {
             }
         }
         if (!errors.isEmpty()) {
-            throw JUnitDiffException("  Errors (" + errors.size + ") occured when parsing the list of files", errors)
+            throw JUnitDiffException("${errors.size} errors  when parsing the list of files:" + errors.map { it.message }.joinToString(prefix = "\n") )
         }
         return TestRunResultsList.fromList(trls)
     }
@@ -130,9 +127,9 @@ object FileParsing {
      * Tries parsing as XML.
      */
     @Throws(JDOMException::class, IOException::class)
-    private fun tryParsingAsXml(`is`: FileInputStream): TestSuite {
+    private fun tryParsingAsXml(stream: FileInputStream): TestSuite {
         val builder = SAXBuilder()
-        val doc = builder.build(`is`)
+        val doc = builder.build(stream)
         return parseJUnitXmlReport(doc)
     }
 

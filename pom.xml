@@ -66,11 +66,11 @@
                 <executions>
                     <execution>
                         <phase>clean</phase>  <goals><goal>run</goal></goals>
-                        <configuration> <tasks>
+                        <configuration> <target>
                             <unzip src="src/test/data/hibernate-ann-run1.zip" dest="target/sample-data/" overwrite="true" />
                             <unzip src="src/test/data/hibernate-ann-run2.zip" dest="target/sample-data/" overwrite="true" />
                             <unzip src="src/test/data/hibernate-ann-run3.zip" dest="target/sample-data/" overwrite="true" />
-                        </tasks> </configuration>
+                        </target> </configuration>
                     </execution>
                     <execution> <id>copy-dist</id> <phase>install</phase> <goals><goal>run</goal></goals>
                         <configuration> <target>

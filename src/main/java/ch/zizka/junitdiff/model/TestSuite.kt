@@ -29,25 +29,17 @@ class TestSuite(
     var origin: String? = null
         set(origin) {
             field = origin
-            // Transfer group / origin to the collection of testRunResults, so they know.
             testRunResultsList.origin = origin
         }
 
     var group: String? = null
         set(group) {
             field = group
-            // Transfer group / origin to the collection of testRunResults, so they know.
             testRunResultsList.group = group
         }
 
 
-    override fun equals(other: Any?): Boolean {
-        if (javaClass != other?.javaClass) return false
-
-        val other = other as TestSuite
-        return if (className == null) other.className == null else className == other.className
-    }
-
+    override fun equals(other: Any?) = other is TestSuite && other.className == this.className
     override fun hashCode() = className?.hashCode() ?: 0
 
     val fullName: String
