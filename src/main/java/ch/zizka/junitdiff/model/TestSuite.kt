@@ -41,10 +41,10 @@ class TestSuite(
         }
 
 
-    override fun equals(obj: Any?): Boolean {
-        if (javaClass != obj?.javaClass) return false
+    override fun equals(other: Any?): Boolean {
+        if (javaClass != other?.javaClass) return false
 
-        val other = obj as TestSuite
+        val other = other as TestSuite
         return if (className == null) other.className == null else className == other.className
     }
 
