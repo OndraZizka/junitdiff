@@ -51,11 +51,11 @@ You can use the XSLT template on it to get the HTML on the fly, using `xsltproc`
 
 ## Changelog
 
-* **Plan for 2.1:** Make it also a Maven reporting plugin. 
-* **Plan for 2.0:** Planning to make it great again.
-  * Make it work 
+* **Plan for 2.2:** Make it also a Maven reporting plugin. 
+* **Plan for 2.1:** Fix the in-page popups. 
+* **In progress 2.0:** Make it great again.
+  * Made it work 
   * Clean up the xslt/ dir
-  * Make the transformation without a bash script
 * **Version 1.6:** Switched to kotlin
 * **Version 1.5:** Not sure what happened there but XSLT seems not to work
 * **Version 1.4:** Last version known to work properly
