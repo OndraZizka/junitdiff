@@ -321,7 +321,7 @@
             <div class="trace text"><xsl:value-of select="normalize-space(.)"/>BBB</div>
           </div>
     </xsl:template>
-    
+
     <xsl:template name="failure-content-modal-CT">
         <xsl:param name="testCaseNode"/>
 
@@ -342,7 +342,7 @@
     </xsl:template>
 
 
-    
+
     <!-- Test suite - data. All that is common to whole testsuite. -->
     <!-- This is a storage, JavaScript will take data from here. -->
     <xsl:template name="testsuite-content" mode="content" match="/aggregate/testsuites/testsuite">
