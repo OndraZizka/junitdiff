@@ -44,12 +44,12 @@ object ZipUtil {
      * If ONLY_NEW and the dir exists, returns false and does nothing.
      * @return true if the zip was unzipped to the given dir.
      */
-    fun unzipFileToDir(zip: File?, intoDir: File, mode: OverwriteMode): Boolean {
+    fun unzipFileToDir(zip: File, intoDir: File, mode: OverwriteMode): Boolean {
         if (intoDir.exists()) {
-            if (mode == OverwriteMode.ONLY_NEW) {
-                return false
-            } else if (mode == OverwriteMode.DELETE_FIRST) {
-                FileUtils.deleteDirectory(intoDir)
+            when (mode) {
+                OverwriteMode.ONLY_NEW -> return false
+                OverwriteMode.DELETE_FIRST -> FileUtils.deleteDirectory(intoDir)
+                else -> {}
             }
         }
         unzipFileToDir(zip, intoDir)
@@ -59,9 +59,9 @@ object ZipUtil {
 
     /** Unzip method which can filter files to extract. */
     @JvmOverloads
-    fun unzipFileToDir(zipFile: File?, intoDir: File?, fileFilter: FileFilter? = null as FileFilter?, mode: OverwriteMode? = OverwriteMode.WRITE_INTO) {
+    fun unzipFileToDir(zipFile: File, intoDir: File, fileFilter: FileFilter? = null, mode: OverwriteMode? = OverwriteMode.WRITE_INTO) {
         val zip = ZipFile(zipFile)
-        val entries = zip.entries() as Enumeration<ZipEntry>
+        val entries = zip.entries() as Enumeration<out ZipEntry>
         val buf = ByteArray(BUFFER_SIZE)
         try {
             while (entries.hasMoreElements()) {
@@ -85,7 +85,7 @@ object ZipUtil {
                 iStream.close()
             }
         } catch (ex: Exception) {
-            log.error(" Error when unzipping " + zipFile!!.path + ": " + ex.message)
+            log.error(" Error when unzipping " + zipFile.path + ": " + ex.message)
         }
     }
 

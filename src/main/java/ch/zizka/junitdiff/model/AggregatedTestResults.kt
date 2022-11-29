@@ -47,7 +47,7 @@ class AggregatedTestResults {
             if (trace) log.trace("  Aggregating {}", testResultsList) ///
 
             // Add all their tests, grouped by full name, to the aggregated matrix.
-            for (curTest in testResultsList!!.testResults) {
+            for (curTest in testResultsList.testResults) {
                 var testclass = findTestsByClassName(curTest.classname)
                 if (testclass == null) {
                     testclass = TestClassInfo(curTest.classname)

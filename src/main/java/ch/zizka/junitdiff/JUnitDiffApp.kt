@@ -186,7 +186,7 @@ class JUnitDiffApp {
         private fun processGroup(groupName: String, reportFiles: List<File>): List<TestSuite> {
 
             //  Get the test result lists - one for each XML file or a ".txt" list of XML files.
-            log.info("Parsing test reports group '" + groupName + "': " + reportFiles!!.size + " files.")
+            log.info("Parsing test reports group '" + groupName + "': " + reportFiles.size + " files.")
 
             val testSuites: List<TestSuite>
             testSuites = try {
