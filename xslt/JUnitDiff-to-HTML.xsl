@@ -275,15 +275,17 @@
 
         <!-- Modal test -->
 
-        <a data-bs-toggle="modal" data-bs-target="#modal-{$resultId_cssIdEscaped}">x</a>
+        <a data-bs-toggle="modal" data-bs-target="#modal-{$resultId_cssIdEscaped}"><xsl:value-of select="@result"/></a>
         <div class="modal fade" id="modal-{$resultId_cssIdEscaped}" tabindex="-1" aria-labelledby="modal-{$resultId_cssIdEscaped}-Label" style="display: none;" aria-hidden="true">
             <div class="modal-dialog modal-fullscreen">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title h4" id="modal-{$resultId_cssIdEscaped}-Label">Full screen modal</h5>
+                        <h5 class="modal-title h4" id="modal-{$resultId_cssIdEscaped}-Label"><xsl:value-of select="concat($testClassName,'#',$testMethodName)"/></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">Here would go the logs.</div>
+                    <div class="modal-body">
+                        <xsl:apply-templates select="." mode="modalBodyContent" />
+                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close (or press <code>Esc</code>)</button>
                     </div>
@@ -291,23 +293,12 @@
             </div>
         </div>
 
+        <!-- The original way of showing the popup, by showing a prepared hidden DIV at the bottom of the page.
         <a>
-              <!--
-              <xsl:attribute name="href">javascript:out('<xsl:value-of
-                select="concat($testCaseFullNameEscaped,'|',$groupNameEscaped)"/>', '<xsl:value-of
-                select="concat($testClassName,'|',$groupNameEscaped)"/>', '<xsl:value-of select="@result"/>');</xsl:attribute>
-              <xsl:attribute name="href">javascript:out('<xsl:value-of
-                select="concat($testClassName)"/>','<xsl:value-of
-                select="concat($testMethodName)"/>','<xsl:value-of
-                select="concat($groupNameEscaped)"/>','<xsl:value-of
-                select="@result"/>');</xsl:attribute>
-              -->
-              <!-- TODO: Replace sGroup with group index (will significantly reduce output size). -->
-              <xsl:attribute name="onclick">out2(this,<xsl:value-of
-                select="count(/aggregate/groups/group[@path=current()/@group]/preceding-sibling::*)+1"/>);</xsl:attribute>
-                <!-- concat($groupNameEscaped) -->
+              <xsl:attribute name="onclick">out2(this,<xsl:value-of select="count(/aggregate/groups/group[@path=current()/@group]/preceding-sibling::*)+1"/>);</xsl:attribute>
               <xsl:value-of select="@result"/>
         </a>
+        -->
         <xsl:if test="@result = 'FAIL'">
             <xsl:text> </xsl:text>
             <a class="known" href="#" onclick="kb_ki(event.target)">kn.is.</a>
@@ -319,20 +310,35 @@
     
     <!-- Test run popup - failure. -->
     <xsl:template name="failure-content" mode="content" match="/aggregate/testcase/testrun/failure">
-          <!-- TODO: To reduce size, only put here DIVs with -->
           <div class="failure hidden">
             <div class="type">    <span class="label">Failure: </span> <span class="text"><xsl:value-of select="@type"/></span> </div>
             <div class="message"> <span class="label">Message: </span>
                 <a class="text" href="#" onclick="jira(this)"><xsl:value-of select="@message"/></a>
-                <!--Jira:
-                    <a class="text" href="#" onclick="hbn(this.parentElement)">hbn</a>
-                    <a class="text" href="#" onclick="jira(this.parentElement)">jboss</a>
-                 -->
             </div>
-            <div class="trace text"><xsl:value-of select="."/></div>
+            <div class="trace text"><xsl:value-of select="normalize-space(.)"/>BBB</div>
           </div>
     </xsl:template>
     
+    <!-- Test run popup - failure - the second way of calling, for the Bootstrap modal dialog. -->
+    <xsl:template name="failure-content-modal" match="failure" mode="modalBodyContent">
+          <div class="failure">
+            <div class="type">    <span class="label">Failure: </span> <a class="text" href="#" onclick="google(this)"><xsl:value-of select="@type"/></a></div>
+            <div class="message"> <span class="label">Message: </span> <a class="text" href="#" onclick="google(this)"><xsl:value-of select="@message"/></a></div>
+              <xsl:value-of select="./text()"/>
+              <xsl:value-of select="text()"/>
+              <xsl:value-of select="."/>
+              <xsl:for-each select="text()">
+                  X<xsl:value-of select="normalize-space(./text())"/>
+              </xsl:for-each>
+              <xsl:value-of select="normalize-space(text())"/>
+              <xsl:value-of select="normalize-space(.)"/>
+              <xsl:text><xsl:value-of select="."/></xsl:text>
+              <xsl:message><xsl:value-of select="."/></xsl:message>
+            <div class="trace text"><xsl:value-of select="text()"/></div>
+              <!-- Not sure how to get the text of the node - refuses to appear... -->
+          </div>
+    </xsl:template>
+
 
     
     <!-- Test suite - data. All that is common to whole testsuite. -->

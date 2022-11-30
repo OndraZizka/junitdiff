@@ -159,6 +159,9 @@ function toggleShowOnlyNonOkRuns( bShowOnlyNonOK ){
 }
 
 function jira( elmAnchor ){
-    alert( elmAnchor );
     window.open( "https://jira.jboss.org/secure/QuickSearch.jspa?searchString=" + elmAnchor.innerHTML, "jiraJBoss", "" );
+}
+
+function google( elmAnchor ){
+    window.open( "https://www.google.com/search?client=junitdiff&q=" + elmAnchor.innerHTML, "junitDiffSearch", "" );
 }
