@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!-- I think this is not even used anywhere, some old bootstrap? -->
+
 <xsl:stylesheet version="1.0" 
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 >
@@ -45,7 +47,7 @@
     <xsl:template match="/testsuite/testcase">
         <tr>
             <td>
-                <xsl:value-of select="concat(@classname,'.',@name" />
+                <xsl:value-of select="concat(@classname,'.',@name)" />
             </td>
             <xsl:apply-templates select="testrun" />
         </tr>
@@ -55,7 +57,7 @@
     <!-- Test run. -->
     <xsl:template match="/testsuite/testcase/testrun">
             <td>
-                <xsl:value-of select="concat(@result,' ',@time" />
+                <xsl:value-of select="concat(@result,' ',@time)" />
                 <xsl:apply-templates select="failure" />
             </td>
     </xsl:template>

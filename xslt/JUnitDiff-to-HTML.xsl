@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-    <xsl:output method="html" encoding="UTF-8" omit-xml-declaration="yes" indent="yes"/>
+    <xsl:output method="html" encoding="UTF-8" omit-xml-declaration="yes" indent="yes" doctype-public="html"/>
 
     <xsl:key name="isOkRow" match="/aggregate/testcase/testrun[@result != 'OK']" use="@group"/>
 	<xsl:variable name="groupCount" select="count(/aggregate/groups/group)"/>
@@ -20,8 +20,14 @@
        <html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
           <head>
               <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+              <meta charset="utf-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
               <title><xsl:value-of select="count(/aggregate/groups/group)"/> runs - JUnitDiff</title>
-              <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"><!-- --></script>
+              <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"><xsl:comment> </xsl:comment></script>
+              <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"><xsl:comment> </xsl:comment></link>
+              <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"><xsl:comment> </xsl:comment></script>
+
               <link rel="shortcut icon" href="http://static.jquery.com/favicon.ico" type="image/x-icon"/>
               <style type="text/css" id="style">
                   * { font-family: Verdana; }
@@ -261,6 +267,29 @@
           </xsl:call-template>
         </xsl:variable>
 
+        <xsl:variable name="resultId_cssIdEscaped">
+          <xsl:call-template name="escapeCssId">
+            <xsl:with-param name="stringIn" select="concat($testCaseFullNameEscaped,'_',$groupNameEscaped)"/>
+          </xsl:call-template>
+        </xsl:variable>
+
+        <!-- Modal test -->
+        <a data-bs-toggle="modal" data-bs-target="#modal-{$resultId_cssIdEscaped}">x</a>
+        <div class="modal fade" id="#modal-{$resultId_cssIdEscaped}" tabindex="-1" aria-labelledby="#modal-{$resultId_cssIdEscaped}-label" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title h4" id="#modal-{$resultId_cssIdEscaped}-label">Full screen modal</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"/>
+                    </div>
+                    <div class="modal-body">Here would go the logs.</div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close (or press <code>Esc</code>)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <a>
               <!--
               <xsl:attribute name="href">javascript:out('<xsl:value-of
@@ -371,6 +400,17 @@
         </xsl:call-template>
     </xsl:template>
     
+    <!-- CSS ID escape -->
+    <xsl:template name="escapeCssId">
+        <xsl:param name="stringIn"/>
+
+        <xsl:call-template name="replaceCharsInString">
+          <xsl:with-param name="stringIn" select="string($stringIn)"/>
+          <xsl:with-param name="charsIn" select="'.'"/>
+          <xsl:with-param name="charsOut" select="'_'"/>
+        </xsl:call-template>
+    </xsl:template>
+
 
     <!-- here is the template that does the replacement -->
     <xsl:template name="replaceCharsInString">
