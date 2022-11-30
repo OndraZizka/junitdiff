@@ -10,6 +10,9 @@
     <description>JUnitDiff creates a HTML table from JUnit results. Rows are tests, columns are runs. Clicking the statuses reveals a pop-up with the logs and the stacktrace if any. </description>
     <url>https://github.com/OndraZizka/junitdiff</url>
     <!--    <url>http://ondra.zizka.cz/stranky/programovani/java/junit-test-results-report-comparison-junitdiff.texy</url> -->
+    <licenses><license><name>The Apache Software License, Version 2.0</name><url>http://www.apache.org/licenses/LICENSE-2.0.txt</url><distribution>repo</distribution></license></licenses>
+    <developers><developer><name>Ondrej Zizka</name><email>zizka@seznam.cz</email></developer></developers>
+    <issueManagement><system>GitHub Issues</system><url>https://github.com/OndraZizka/junitdiff/issues</url></issueManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -146,7 +149,7 @@
         </profile>
 
         <profile>
-            <id>packageDistributable</id>
+            <id>packageDistributable</id> <activation><property><name>release</name></property></activation>
             <build>
                 <plugins>
                     <!-- Copy the dependencies to /lib -->
@@ -199,7 +202,7 @@
         </profile>
 
         <profile>
-            <id>e2eTest</id>
+            <id>e2eTest</id> <activation><property><name>release</name></property></activation>
             <build>
                 <plugins>
                     <!-- One real execution of the tool from outside JUnit. -->
@@ -223,7 +226,7 @@
         </profile>
 
         <!-- Release. -->
-        <profile><id>release</id>
+        <profile><id>release</id> <activation><property><name>release</name></property></activation>
             <properties>
                 <ossrh.host>oss.sonatype.org</ossrh.host>
             </properties>
