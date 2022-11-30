@@ -274,13 +274,14 @@
         </xsl:variable>
 
         <!-- Modal test -->
+
         <a data-bs-toggle="modal" data-bs-target="#modal-{$resultId_cssIdEscaped}">x</a>
-        <div class="modal fade" id="#modal-{$resultId_cssIdEscaped}" tabindex="-1" aria-labelledby="#modal-{$resultId_cssIdEscaped}-label" style="display: none;" aria-hidden="true">
+        <div class="modal fade" id="modal-{$resultId_cssIdEscaped}" tabindex="-1" aria-labelledby="modal-{$resultId_cssIdEscaped}-Label" style="display: none;" aria-hidden="true">
             <div class="modal-dialog modal-fullscreen">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title h4" id="#modal-{$resultId_cssIdEscaped}-label">Full screen modal</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"/>
+                        <h5 class="modal-title h4" id="modal-{$resultId_cssIdEscaped}-Label">Full screen modal</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">Here would go the logs.</div>
                     <div class="modal-footer">
