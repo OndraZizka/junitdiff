@@ -53,10 +53,13 @@ You can use the XSLT template on it to get the HTML on the fly, using `xsltproc`
 ## Changelog
 
 * **Plan for 2.2:** Make it also a Maven reporting plugin. 
-* **Plan for 2.1:** Fix the in-page popups. 
-* **In progress 2.0:** Make it great again.
+* **Plan for 2.1:** 
+  * Improve the generated page
+  * Include stdout and stderr in the popups
+* **Version 2.0:** Made it great again.
   * Made it work
-  * Clean up the xslt/ dir
+  * Fix the in-page popups.
+  * Clean up 
 * **Version 1.6:** Switched to Kotlin.
 * **Version 1.5:** The XSLT in this version seems not to work.
 * **Version 1.4:** The version from around 2009.
