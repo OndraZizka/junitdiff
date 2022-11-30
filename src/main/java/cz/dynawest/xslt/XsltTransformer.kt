@@ -43,7 +43,7 @@ object XsltTransformer {
      * Transform from file names.
      */
     @Throws(TransformerConfigurationException::class, TransformerException::class)
-    fun transform(inXML: String?, inXSL: String?, outTXT: String) {
+    fun transform(inXML: String, inXSL: String, outTXT: String) {
         val factory = TransformerFactory.newInstance()
         val xslStream = StreamSource(inXSL)
         val transformer = factory.newTransformer(xslStream)
@@ -51,7 +51,7 @@ object XsltTransformer {
         val `in` = StreamSource(inXML)
         val out = StreamResult(outTXT)
         transformer.transform(`in`, out)
-        println("The generated HTML file is:$outTXT")
+        println("The generated HTML file is: $outTXT")
     }
 
     /**
@@ -59,13 +59,15 @@ object XsltTransformer {
      */
     @JvmOverloads
     @Throws(TransformerConfigurationException::class, TransformerException::class)
-    fun transform(`in`: InputStream?, xsl: InputStream?, out: File?, params: Map<String?, Any?> = Collections.emptyMap()) {
+    fun transform(inputStream: InputStream, xsl: InputStream, outputFile: File, params: Map<String, Any> = Collections.emptyMap()) {
+        outputFile.parentFile.mkdirs()
+
         val factory = TransformerFactory.newInstance()
         val xslStream = StreamSource(xsl)
         val transformer = factory.newTransformer(xslStream)
         transformer.errorListener = MyErrorListener()
-        val inSource = StreamSource(`in`)
-        val outResult = StreamResult(out)
+        val inSource = StreamSource(inputStream)
+        val outResult = StreamResult(outputFile)
         for ((key, value) in params) {
             if (null == key) continue
             transformer.setParameter(key, value)

@@ -3,7 +3,8 @@
 ==========================================================
 2022 revival
 
-JUnitDiff is a tool, which aggregates several JUnit reports, 
+JUnitDiff is a tool, which aggregates several
+[JUnit reports](https://howtodoinjava.com/junit5/xml-reports/), 
 and creates a comprehensible comparison table.
 Here is a sample output screenshot:
 

@@ -1,34 +1,46 @@
-<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.1 https://maven.apache.org/xsd/assembly-2.1.1.xsd">
     <id>assembly-dist</id>
     <formats>
         <format>zip</format>
     </formats>
+    <baseDirectory>junitdiff-${version}</baseDirectory>
     <fileSets>
+        <!-- The executable JAR -->
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory>./</outputDirectory>
+            <includes><include>*-executable.jar</include></includes>
+        </fileSet>
+        <!-- All dependencies into /lib -->
+        <fileSet>
+            <directory>${project.build.directory}/lib/</directory>
+            <outputDirectory>lib/</outputDirectory>
+            <includes><include>*</include></includes>
+        </fileSet>
+        <!-- Config from /config -->
+        <fileSet>
+            <directory>${project.basedir}/config/</directory>
+            <outputDirectory>config/</outputDirectory>
+            <includes><include>*.sample.*</include></includes>
+        </fileSet>
+        <!-- Scripts into the root -->
+        <fileSet>
+            <directory>${project.basedir}/src/scripts/</directory>
+            <outputDirectory>./</outputDirectory>
+            <includes><include>*</include></includes>
+        </fileSet>
+        <!-- Docs from the root -->
         <fileSet>
             <directory>${project.basedir}</directory>
-            <outputDirectory>.</outputDirectory>
+            <outputDirectory>./</outputDirectory>
             <includes>
                 <include>README*</include>
                 <include>LICENSE*</include>
                 <include>NOTICE*</include>
             </includes>
         </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/src/scripts/</directory>
-            <outputDirectory>.</outputDirectory>
-            <includes>
-                <include>*</include>
-            </includes>
-        </fileSet>
-        <fileSet>
-            <directory>${project.build.directory}</directory>
-            <outputDirectory>.</outputDirectory>
-            <includes>
-                <include>*-single.jar</include>
-            </includes>
-        </fileSet>
+        <!-- Reports, if generated -->
         <fileSet>
             <directory>${project.build.directory}/site</directory>
             <outputDirectory>docs</outputDirectory>

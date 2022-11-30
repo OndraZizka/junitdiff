@@ -21,16 +21,16 @@ object XmlExporter {
      * Intentionally written using appender for the sake of speed.
      */
     @Throws(JUnitDiffException::class)
-    fun exportToHtmlFile(aggData: AggregatedData, fout: File?, title: String?) {
+    fun exportToHtmlFile(aggData: AggregatedData, outFile: File, title: String?) {
         //exportToXML( atr, new PrintStream( fout, "uft8" ) );
         val baos = ByteArrayOutputStream()
         exportToXML(aggData, PrintStream(baos))
         try {
             val ris = ReaderInputStream(StringReader(baos.toString("utf8")), "utf8")
-            val xslTemplate = XmlExporter::class.java.getResourceAsStream(XSL_TEMPLATE_PATH)
-            val params: MutableMap<String?, Any?> = HashMap()
+            val xslTemplate = XmlExporter::class.java.getResourceAsStream(XSL_TEMPLATE_PATH) ?: throw JUnitDiffException("Template resource not found: $XSL_TEMPLATE_PATH (a bug)")
+            val params: MutableMap<String, Any> = HashMap()
             if (title != null) params["title"] = title
-            XsltTransformer.transform(ris, xslTemplate, fout, params)
+            XsltTransformer.transform(ris, xslTemplate, outFile, params)
         } catch (ex: TransformerException) {
             throw JUnitDiffException("Error when creating HTML file: " + ex.message, ex)
         } catch (ex: UnsupportedEncodingException) {
