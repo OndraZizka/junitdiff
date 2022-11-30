@@ -164,7 +164,7 @@ object FileParsing {
             if (null != child) {
                 val message = child.getAttributeValue("message")
                 val type = child.getAttributeValue("type")
-                var trace = child.textNormalize
+                var trace = child.text
                 val fail = Failure(message, type, trace)
                 info.result = TestRunInfo.Result.FAIL
                 info.failure = fail
@@ -175,7 +175,7 @@ object FileParsing {
             if (null != child) {
                 val message = child.getAttributeValue("message")
                 val type = child.getAttributeValue("type")
-                var trace = child.textNormalize
+                var trace = child.text
                 val fail = Failure(message, type, trace)
                 info.result = TestRunInfo.Result.ERROR
                 info.failure = fail

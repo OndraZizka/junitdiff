@@ -118,5 +118,6 @@ object XmlExporter {
     private fun x(s: String?): String {
         if (s == null) return ""
         return StringEscapeUtils.escapeXml11(s)
+        //return StringUtils.replaceEach(s, arrayOf("<", "&"), arrayOf("&lt;", "&amp;"))
     }
 }

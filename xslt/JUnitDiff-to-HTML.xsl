@@ -85,7 +85,7 @@
                   .run.popup .failure       .trace { border-left: 2px solid orange; }
                   .run.popup .testsuite.out .text { border-left: 2px solid green; }
                   .run.popup .testsuite.err .text { border-left: 2px solid red; }
-                  .run .judPopup .trace.text { white-space: pre-wrap }
+                  .run .judPopup .trace.text { white-space: pre-wrap; font-family: "DejaVu Sans Mono", monospace }
               </style>
               <script type="text/javascript" src="functions.js"/>
           </head>
