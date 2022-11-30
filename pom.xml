@@ -4,7 +4,7 @@
     <groupId>ch.zizka.junitdiff</groupId>
     <artifactId>JUnitDiff</artifactId>
     <packaging>jar</packaging>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.0</version>
 
     <name>JUnitDiff</name>
     <description>JUnitDiff creates a HTML table from JUnit results. Rows are tests, columns are runs. Clicking the statuses reveals a pop-up with the logs and the stacktrace if any. </description>
@@ -18,7 +18,7 @@
         <version.kotlin-dokka>1.7.20</version.kotlin-dokka>
         <mainClass>ch.zizka.junitdiff.JUnitDiffApp</mainClass>
         <distDir>${project.basedir}/./dist</distDir>
-        <jvm.args.debug/>
+        <jvm.args.debug />
         <kotlin.version>${version.kotlin}</kotlin.version>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
     </properties>
@@ -27,7 +27,8 @@
         <url>https://github.com/OndraZizka/junitdiff</url>
         <connection>scm:git:git://github.com/OndraZizka/junitdiff.git</connection>
         <developerConnection>scm:git:git@github.com:OndraZizka/junitdiff.git</developerConnection>
-    </scm>
+      <tag>JUnitDiff-2.0.0</tag>
+  </scm>
 
     <build>
 
