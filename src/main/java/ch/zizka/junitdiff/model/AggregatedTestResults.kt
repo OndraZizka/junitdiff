@@ -44,7 +44,7 @@ class AggregatedTestResults {
 
         // For all reports...
         for (testResultsList in reportsLists) {
-            if (trace) log.trace("  Aggregating {}", testResultsList) ///
+            if (trace) log.trace("  Aggregating {}", testResultsList)
 
             // Add all their tests, grouped by full name, to the aggregated matrix.
             for (curTest in testResultsList.testResults) {
@@ -57,7 +57,7 @@ class AggregatedTestResults {
                 testclass.add(curTest)
             }
         }
-    } // merge()
+    }
 
     // Group name generation.
     private var nextGroupNum = 1

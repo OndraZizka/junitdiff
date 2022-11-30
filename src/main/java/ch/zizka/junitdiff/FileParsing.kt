@@ -3,7 +3,6 @@ package ch.zizka.junitdiff
 import ch.zizka.junitdiff.ex.JUnitDiffException
 import ch.zizka.junitdiff.model.*
 import org.apache.commons.io.FileUtils
-import org.apache.commons.lang3.StringUtils
 import org.jdom.Document
 import org.jdom.Element
 import org.jdom.JDOMException
@@ -166,7 +165,6 @@ object FileParsing {
                 val message = child.getAttributeValue("message")
                 val type = child.getAttributeValue("type")
                 var trace = child.textNormalize
-                trace = StringUtils.substringAfter(trace, "\n")
                 val fail = Failure(message, type, trace)
                 info.result = TestRunInfo.Result.FAIL
                 info.failure = fail
@@ -178,7 +176,6 @@ object FileParsing {
                 val message = child.getAttributeValue("message")
                 val type = child.getAttributeValue("type")
                 var trace = child.textNormalize
-                trace = StringUtils.substringAfter(trace, "\n")
                 val fail = Failure(message, type, trace)
                 info.result = TestRunInfo.Result.ERROR
                 info.failure = fail
@@ -195,11 +192,11 @@ object FileParsing {
 
         /*
        * <testsuite errors="0" failures="0" 
-       * hostname="mm18-3.mm.atl2.redhat.com" 
-       * name="org.hibernate.test.annotations.access.AccessTest" 
-       * tests="6" 
-       * time="60.045" 
-       * timestamp="2010-11-16T00:22:54">
+       *     hostname="mm18-3.mm.atl2.redhat.com"
+       *     name="org.hibernate.test.annotations.access.AccessTest"
+       *     tests="6"
+       *     time="60.045"
+       *     timestamp="2010-11-16T00:22:54">
        */
 
         // System output

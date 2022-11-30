@@ -18,6 +18,7 @@ object XmlExporter {
 
     /**
      * Exports given matrix to the given file, as a JUnit-like XML.
+     * Intentionally written using appender for the sake of speed.
      */
     @Throws(JUnitDiffException::class)
     fun exportToHtmlFile(aggData: AggregatedData, fout: File?, title: String?) {
@@ -46,7 +47,7 @@ object XmlExporter {
     }
 
     /**
-     * Exports given matrix to the given printstream, as a JUnit-like XML.
+     * Exports given matrix to the given PrintStream, as a JUnit-like XML.
      * TODO: SAX-like output?
      */
     private fun exportToXML(aggData: AggregatedData, out: PrintStream) {
@@ -62,7 +63,8 @@ object XmlExporter {
 
         /*for (String group : groups) {
 				out.append("\t\t<group name=\"").append(x( group )).append("\" path=\"").append(x( group )).append("\"/>\n");
-		}*/for (g in groups) {
+		}*/
+        for (g in groups) {
             out.append("\t\t<group name=\"").append(x(g.name))
                 .append("\" path=\"").append(x(g.path))
                 .append("\" id=\"").append(x(g.id.toString()))

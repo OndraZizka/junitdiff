@@ -85,6 +85,7 @@
                   .run.popup .failure       .trace { border-left: 2px solid orange; }
                   .run.popup .testsuite.out .text { border-left: 2px solid green; }
                   .run.popup .testsuite.err .text { border-left: 2px solid red; }
+                  .run .judPopup .trace.text { white-space: pre-wrap }
               </style>
               <script type="text/javascript" src="functions.js"/>
           </head>
@@ -276,7 +277,7 @@
         <!-- Modal test -->
 
         <a data-bs-toggle="modal" data-bs-target="#modal-{$resultId_cssIdEscaped}"><xsl:value-of select="@result"/></a>
-        <div class="modal fade" id="modal-{$resultId_cssIdEscaped}" tabindex="-1" aria-labelledby="modal-{$resultId_cssIdEscaped}-Label" style="display: none;" aria-hidden="true">
+        <div class="modal fade judPopup" id="modal-{$resultId_cssIdEscaped}" tabindex="-1" aria-labelledby="modal-{$resultId_cssIdEscaped}-Label" style="display: none;" aria-hidden="true">
             <div class="modal-dialog modal-fullscreen">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -285,6 +286,7 @@
                     </div>
                     <div class="modal-body">
                         <xsl:apply-templates select="." mode="modalBodyContent" />
+                        <!-- <xsl:call-template name="failure-content-modal-CT"><xsl:with-param name="testCaseNode" select="."/></xsl:call-template> -->
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close (or press <code>Esc</code>)</button>
@@ -319,23 +321,22 @@
           </div>
     </xsl:template>
     
+    <xsl:template name="failure-content-modal-CT">
+        <xsl:param name="testCaseNode"/>
+
+        <div class="failure">
+            <div class="type">    <span class="label">Failure: </span> <a class="text" href="#" onclick="google(this)"><xsl:value-of select="$testCaseNode/@type"/></a></div>
+            <div class="message"> <span class="label">Message: </span> <a class="text" href="#" onclick="google(this)"><xsl:value-of select="$testCaseNode/@message"/></a></div>
+            <div class="trace text"><xsl:value-of select="."/></div>
+        </div>
+    </xsl:template>
+
     <!-- Test run popup - failure - the second way of calling, for the Bootstrap modal dialog. -->
     <xsl:template name="failure-content-modal" match="failure" mode="modalBodyContent">
           <div class="failure">
             <div class="type">    <span class="label">Failure: </span> <a class="text" href="#" onclick="google(this)"><xsl:value-of select="@type"/></a></div>
             <div class="message"> <span class="label">Message: </span> <a class="text" href="#" onclick="google(this)"><xsl:value-of select="@message"/></a></div>
-              <xsl:value-of select="./text()"/>
-              <xsl:value-of select="text()"/>
-              <xsl:value-of select="."/>
-              <xsl:for-each select="text()">
-                  X<xsl:value-of select="normalize-space(./text())"/>
-              </xsl:for-each>
-              <xsl:value-of select="normalize-space(text())"/>
-              <xsl:value-of select="normalize-space(.)"/>
-              <xsl:text><xsl:value-of select="."/></xsl:text>
-              <xsl:message><xsl:value-of select="."/></xsl:message>
-            <div class="trace text"><xsl:value-of select="text()"/></div>
-              <!-- Not sure how to get the text of the node - refuses to appear... -->
+            <div class="trace text"><xsl:value-of select="."/></div>
           </div>
     </xsl:template>
 

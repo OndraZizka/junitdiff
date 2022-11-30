@@ -159,7 +159,7 @@
   </testcase>
   <testcase classname="org.hibernate.test.annotations.any.AnyTest" name="testManyToAnyWithMap" time="2.3"></testcase>
   <testcase classname="org.hibernate.test.annotations.any.AnyTest" name="testMetaDataUseWithManyToAny" time="2.685">
-    <failure message="Exception message 123" type="org.jboss.jopr.jsfunit.exceptions.HtmlElementNotFoundException">Bar</failure>
+    <failure message="Exception message 567" type="org.jboss.jopr.jsfunit.exceptions.HtmlElementNotFoundException">Bar</failure>
   </testcase>
   <system-out><![CDATA[org.hibernate.dialect.Oracle10gDialect
 org.hibernate.dialect.Oracle10gDialect
