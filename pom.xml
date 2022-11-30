@@ -117,7 +117,7 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId><version>2.22.2</version>
+                <groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId><version>3.0.0-M7</version>
                 <configuration>
                     <workingDirectory>target/</workingDirectory>
                     <systemPropertyVariables>
@@ -146,10 +146,6 @@
     </profiles>
 
 
-    <repositories>
-        <repository><id>ondrazizka-googlecode</id><url>http://ondrazizka.googlecode.com/svn/maven</url></repository>
-    </repositories>
-
     <dependencies>
 
         <dependency><groupId>org.jetbrains.kotlin</groupId><artifactId>kotlin-stdlib-jdk8</artifactId><version>${kotlin.version}</version></dependency>
@@ -167,11 +163,11 @@
         <dependency><groupId>org.jdom</groupId><artifactId>jaxen-jdom</artifactId><version>1.0-FCS</version></dependency><!-- NoClassDefFoundError: org/jaxen/jdom/JDOMXPath: org/jaxen/jdom/JDOMXPath -->
         <dependency><groupId>org.jdom</groupId><artifactId>saxpath</artifactId><version>1.0-FCS</version></dependency><!-- CNFEx org.saxpath.SAXPathException -->
 
-        <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId><version>2.0.3</version></dependency>
-        <dependency><groupId>org.slf4j</groupId><artifactId>jcl-over-slf4j</artifactId><version>2.0.3</version></dependency>
-        <dependency><groupId>org.slf4j</groupId><artifactId>log4j-over-slf4j</artifactId><version>2.0.3</version></dependency><!-- for for Log4J 1.x -->
-        <dependency><groupId>ch.qos.logback</groupId><artifactId>logback-classic</artifactId><version>1.4.4</version></dependency>
-        <dependency><groupId>ch.qos.logback</groupId><artifactId>logback-core</artifactId><version>1.4.4</version></dependency>
+        <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId><version>2.0.5</version></dependency>
+        <dependency><groupId>org.slf4j</groupId><artifactId>jcl-over-slf4j</artifactId><version>2.0.5</version></dependency>
+        <dependency><groupId>org.slf4j</groupId><artifactId>log4j-over-slf4j</artifactId><version>2.0.5</version></dependency><!-- for for Log4J 1.x -->
+        <dependency><groupId>ch.qos.logback</groupId><artifactId>logback-classic</artifactId><version>1.4.5</version></dependency>
+        <dependency><groupId>ch.qos.logback</groupId><artifactId>logback-core</artifactId><version>1.4.5</version></dependency>
 
         <!-- Test dependencies -->
         <dependency><groupId>junit</groupId><artifactId>junit</artifactId><version>4.13.2</version><scope>test</scope></dependency>
@@ -182,11 +178,5 @@
         <pluginRepository><id>codehaus</id><name>Codehaus Release Repo</name><url>http://repository.codehaus.org</url></pluginRepository>
         <pluginRepository><id>codehaus-snapshot</id><name>Codehaus Snapshot Repo</name><url>http://snapshots.repository.codehaus.org</url></pluginRepository>
     </pluginRepositories>
-
-    <distributionManagement>
-        <downloadUrl>http://code.google.com/p/junitdiff/downloads/list</downloadUrl>
-        <repository><id>local-hack-repo</id><name>LocalDir</name><url>file://${project.basedir}/../dist-maven</url></repository>
-        <snapshotRepository><id>local-hack-repo-snap</id><name>LocalDir</name><url>file://${project.basedir}/../dist-maven</url></snapshotRepository>
-    </distributionManagement>  
 
 </project>
