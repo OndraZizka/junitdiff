@@ -14,7 +14,7 @@
         </xsl:if>
     </xsl:variable>
 
-    <!-- HTML sauce. -->
+
     <xsl:template match="/">
        <!-- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> -->
        <html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
@@ -30,6 +30,7 @@
 
               <link rel="shortcut icon" href="http://static.jquery.com/favicon.ico" type="image/x-icon"/>
               <style type="text/css" id="style">
+                  body { padding: 1ex }
                   * { font-family: Verdana; }
                   h1 { font-size: 20pt; }
                   h2 { font-size: 14pt; }
