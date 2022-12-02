@@ -1,7 +1,7 @@
 
 🥪 JUnitDiff - JUnit test reports aggregator
 ==========================================================
-2022 revival
+*2022 revival*
 
 JUnitDiff is a tool, which aggregates several
 [JUnit reports](https://howtodoinjava.com/junit5/xml-reports/), 
