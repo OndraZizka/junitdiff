@@ -186,6 +186,7 @@
                                 <configuration>
                                     <finalName>${project.artifactId}-${project.version}-dist</finalName>
                                     <appendAssemblyId>false</appendAssemblyId>
+                                    <attach>true</attach>
                                     <archive>
                                         <manifest>
                                             <mainClass>${mainClass}</mainClass>
@@ -279,6 +280,9 @@
                             <serverId>ossrh</serverId>
                             <nexusUrl>https://${ossrh.host}/</nexusUrl>
                             <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                            <attachedArtifacts>
+                                <artifact>target/${project.artifactId}-${project.version}-dist.zip</artifact>
+                            </attachedArtifacts>
                         </configuration>
                     </plugin>
 
