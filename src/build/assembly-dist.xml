@@ -4,13 +4,13 @@
     <formats>
         <format>zip</format>
     </formats>
-    <baseDirectory>junitdiff-${version}</baseDirectory>
+    <baseDirectory>junitdiff-${project.version}</baseDirectory>
     <fileSets>
         <!-- The executable JAR -->
         <fileSet>
             <directory>${project.build.directory}</directory>
             <outputDirectory>./</outputDirectory>
-            <includes><include>*-executable.jar</include></includes>
+            <includes><include>*-${project.version}-executable.jar</include></includes>
         </fileSet>
         <!-- All dependencies into /lib -->
         <fileSet>
@@ -37,7 +37,6 @@
             <includes>
                 <include>README*</include>
                 <include>LICENSE*</include>
-                <include>NOTICE*</include>
             </includes>
         </fileSet>
         <!-- Reports, if generated -->
