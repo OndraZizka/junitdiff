@@ -16,10 +16,31 @@ Here is a sample output screenshot:
 
 Clicking on the `OK` reveals the output (and a stacktrace) of that test.
 
+### Download:
+
+1) Download the latest release's distribution:
+
+```bash
+wget --no-check-certificate https://github.com/OndraZizka/junitdiff/releases/download/JUnitDiff-2.0.0/JUnitDiff-2.0.0-dist.zip
+unzip JUnitDiff-*-dist.zip
+```
+
+2) Install and try:
+
+```bash
+java -jar junitdiff-*/JUnitDiff-2.0.0-executable.jar
+sudo echo 'java -jar $(pwd)/junitdiff-*/JUnitDiff-2.0.0-executable.jar "$@"' > /usr/bin/junitdiff
+sudo chmod +x /usr/bin/junitdiff
+
+junitdiff
+```
 
 ### Usage:
 
 ```
+junitdiff <input1> <input2> ... -o <output-path> [-xml]
+
+# Or, without the installation steps above:
 java -jar JUnitDiff.jar <input1> <input2> ... -o <output-path> [-xml]
 ```
 
