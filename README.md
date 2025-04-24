@@ -73,10 +73,11 @@ You can use the XSLT template on it to get the HTML on the fly, using `xsltproc`
 
 ## Changelog
 
-* **Plan for 2.2:** Make it also a Maven reporting plugin. 
-* **Plan for 2.1:** 
+* **Plan for 3.x:** Make it also a Maven reporting plugin. 
+* **Plan for 2.next:** 
   * Improve the generated page
   * Include stdout and stderr in the popups
+* **Version 2.1:** Upgrade the dependencies, except JDOM (requres migration) 
 * **Version 2.0:** Made it great again.
   * Made it work
   * Fix the in-page popups.
