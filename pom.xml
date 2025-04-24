@@ -22,7 +22,7 @@
         <mainClass>ch.zizka.junitdiff.JUnitDiffApp</mainClass>
         <distDir>${project.basedir}/./dist</distDir>
         <jvm.args.debug />
-        <kotlin.version>${version.kotlin}</kotlin.version>
+        <kotlin.version>2.1.0</kotlin.version>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
     </properties>
     
@@ -319,9 +319,9 @@
         <dependency><groupId>org.jetbrains.kotlin</groupId><artifactId>kotlin-test-junit</artifactId><version>${kotlin.version}</version><scope>test</scope></dependency>
 
         <!-- Commons -->
-        <dependency><groupId>org.apache.commons</groupId><artifactId>commons-lang3</artifactId><version>3.13.0</version></dependency>
-        <dependency><groupId>org.apache.commons</groupId><artifactId>commons-text</artifactId><version>1.11.0</version></dependency>
-        <dependency><groupId>commons-io</groupId><artifactId>commons-io</artifactId><version>2.12.0</version></dependency>
+        <dependency><groupId>org.apache.commons</groupId><artifactId>commons-lang3</artifactId><version>3.14.0</version></dependency>
+        <dependency><groupId>org.apache.commons</groupId><artifactId>commons-text</artifactId><version>1.12.0</version></dependency>
+        <dependency><groupId>commons-io</groupId><artifactId>commons-io</artifactId><version>2.13.0</version></dependency>
 
         <!-- JDom -->
         <!-- To upgrade to 2.x, see https://github.com/hunterhacker/jdom/wiki/JDOM2-Feature-XPath-Upgrade -->
@@ -331,11 +331,11 @@
         <dependency><groupId>org.jdom</groupId><artifactId>jaxen-jdom</artifactId><version>1.0-FCS</version></dependency><!-- NoClassDefFoundError: org/jaxen/jdom/JDOMXPath: org/jaxen/jdom/JDOMXPath -->
         <dependency><groupId>org.jdom</groupId><artifactId>saxpath</artifactId><version>1.0-FCS</version></dependency><!-- CNFEx org.saxpath.SAXPathException -->
 
-        <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId><version>2.0.6</version></dependency>
-        <dependency><groupId>org.slf4j</groupId><artifactId>jcl-over-slf4j</artifactId><version>2.0.6</version></dependency>
-        <dependency><groupId>org.slf4j</groupId><artifactId>log4j-over-slf4j</artifactId><version>2.0.6</version></dependency><!-- for for Log4J 1.x -->
-        <dependency><groupId>ch.qos.logback</groupId><artifactId>logback-classic</artifactId><version>1.4.6</version></dependency>
-        <dependency><groupId>ch.qos.logback</groupId><artifactId>logback-core</artifactId><version>1.4.6</version></dependency>
+        <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId><version>2.0.7</version></dependency>
+        <dependency><groupId>org.slf4j</groupId><artifactId>jcl-over-slf4j</artifactId><version>2.0.7</version></dependency>
+        <dependency><groupId>org.slf4j</groupId><artifactId>log4j-over-slf4j</artifactId><version>2.0.7</version></dependency><!-- for for Log4J 1.x -->
+        <dependency><groupId>ch.qos.logback</groupId><artifactId>logback-classic</artifactId><version>1.4.7</version></dependency>
+        <dependency><groupId>ch.qos.logback</groupId><artifactId>logback-core</artifactId><version>1.4.7</version></dependency>
 
         <!-- Test dependencies -->
         <dependency><groupId>junit</groupId><artifactId>junit</artifactId><version>4.13.2</version><scope>test</scope></dependency>
