@@ -331,6 +331,24 @@
 
         </profile>
 
+        <profile>
+            <id>goodies</id><activation><property><name>!dummy</name></property></activation>
+            <build>
+                <plugins>
+                    <!-- Download sources and docs as part of the dependency resolution. -->
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals><goal>sources</goal><goal>resolve</goal></goals>
+                                <configuration><classifier>javadoc</classifier></configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
 
 
@@ -367,5 +385,6 @@
         <pluginRepository><id>codehaus</id><name>Codehaus Release Repo</name><url>http://repository.codehaus.org</url></pluginRepository>
         <pluginRepository><id>codehaus-snapshot</id><name>Codehaus Snapshot Repo</name><url>http://snapshots.repository.codehaus.org</url></pluginRepository>
     </pluginRepositories>
+
 
 </project>
