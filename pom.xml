@@ -287,9 +287,11 @@
                             <serverId>ossrh</serverId>
                             <nexusUrl>https://${ossrh.host}/</nexusUrl>
                             <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                            <!--
                             <attachedArtifacts>
                                 <artifact>target/${project.artifactId}-${project.version}-dist.zip</artifact>
                             </attachedArtifacts>
+                            -->
                         </configuration>
                     </plugin>
 
