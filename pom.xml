@@ -17,7 +17,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.java>11</version.java>
-        <version.kotlin>2.1.0</version.kotlin>
+        <version.kotlin>2.1.20</version.kotlin>
         <version.kotlin-dokka>2.0.0</version.kotlin-dokka>
 
         <mainClass>ch.zizka.junitdiff.JUnitDiffApp</mainClass>
@@ -350,8 +350,8 @@
         <!-- JDOM is abandoned, better migrate to something else. -->
 
         <!-- JDom's XPath needs these, otherwise XPath.newInstance("/testsuite/testcase") throws... -->
-        <dependency><groupId>jaxen</groupId><artifactId>jaxen</artifactId><version>1.2.0</version></dependency>
-        <dependency><groupId>xalan</groupId><artifactId>xalan</artifactId><version>2.7.2</version></dependency>
+        <dependency><groupId>jaxen</groupId><artifactId>jaxen</artifactId><version>2.0.0</version></dependency>
+        <dependency><groupId>xalan</groupId><artifactId>xalan</artifactId><version>2.7.3</version></dependency>
         <dependency><groupId>xerces</groupId><artifactId>xercesImpl</artifactId><version>2.12.2</version></dependency>
 
         <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId><version>2.0.17</version></dependency>
