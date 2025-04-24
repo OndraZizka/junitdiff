@@ -61,10 +61,7 @@ object FileParsing {
      * @param file May be a text file with a list of files to parse, or a JUnit .xml report.
      */
     @Throws(JUnitDiffException::class)
-    private fun parseFile(file: File?): TestSuite {
-        // Determine whether a file is a list of .xml files or a .xml file (report)
-        val isXml = file!!.name.endsWith(".xml")
-
+    private fun parseFile(file: File): TestSuite {
 
         // Try to parse as XML.
         return try {
@@ -94,7 +91,7 @@ object FileParsing {
 
 
         // Read lines and treat as XML files.
-        val readLines = try { FileUtils.readLines(file) }
+        val readLines = try { FileUtils.readLines(file, Charsets.UTF_8) }
             catch (ex: IOException) { throw JUnitDiffException("  Error reading from file '" + file.path + "': " + ex.message) }
 
         val trls: MutableList<TestRunResultsList> = ArrayList()
