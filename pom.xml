@@ -4,7 +4,7 @@
     <groupId>ch.zizka.junitdiff</groupId>
     <artifactId>JUnitDiff</artifactId>
     <packaging>jar</packaging>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.0.1-SNAPSHOT</version>
 
     <name>JUnitDiff</name>
     <description>JUnitDiff creates a HTML table from JUnit results. Rows are tests, columns are runs. Clicking the statuses reveals a pop-up with the logs and the stacktrace if any. </description>
