@@ -17,12 +17,13 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.java>11</version.java>
-        <version.kotlin>1.8.0-Beta</version.kotlin>
-        <version.kotlin-dokka>1.7.20</version.kotlin-dokka>
+        <version.kotlin>2.1.0</version.kotlin>
+        <version.kotlin-dokka>2.0.0</version.kotlin-dokka>
+
         <mainClass>ch.zizka.junitdiff.JUnitDiffApp</mainClass>
         <distDir>${project.basedir}/./dist</distDir>
         <jvm.args.debug />
-        <kotlin.version>2.1.0</kotlin.version>
+        <kotlin.version>${version.kotlin}</kotlin.version><!-- Is it needed? -->
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
     </properties>
     
@@ -30,8 +31,8 @@
         <url>https://github.com/OndraZizka/junitdiff</url>
         <connection>scm:git:git://github.com/OndraZizka/junitdiff.git</connection>
         <developerConnection>scm:git:git@github.com:OndraZizka/junitdiff.git</developerConnection>
-      <tag>JUnitDiff-2.0.0</tag>
-  </scm>
+        <tag>JUnitDiff-2.0.0</tag>
+    </scm>
 
     <build>
 
@@ -131,8 +132,9 @@
 
         <pluginManagement>
             <plugins>
-                <!-- Last updated 2025-04-17 -->
-                <plugin><groupId>org.jetbrains.kotlin</groupId><artifactId>kotlin-maven-plugin</artifactId><version>${kotlin.version}</version></plugin>
+                <!-- Last updated 2025-04-24. To get new: mvn versions:display-plugin-updates -Dmaven.version.ignore='(?i).*(beta|alpha|RC|CR).*' -->
+                <plugin><groupId>org.jetbrains.kotlin</groupId><artifactId>kotlin-maven-plugin</artifactId><version>2.1.20</version></plugin>
+                <plugin><groupId>org.jetbrains.dokka</groupId><artifactId>dokka-maven-plugin</artifactId><version>2.0.0</version></plugin>
                 <plugin><groupId>io.fabric8</groupId><artifactId>docker-maven-plugin</artifactId><version>0.46.0</version></plugin>
                 <plugin><groupId>io.quarkus.platform</groupId><artifactId>quarkus-maven-plugin</artifactId><version>${quarkus.platform.version}</version><extensions>true</extensions></plugin>
                 <plugin><artifactId>maven-enforcer-plugin</artifactId><version>3.5.0</version></plugin>
@@ -141,11 +143,11 @@
                 <plugin><artifactId>maven-compiler-plugin</artifactId><version>3.14.0</version></plugin>
                 <plugin><artifactId>maven-source-plugin</artifactId><version>3.3.1</version></plugin>
                 <plugin><artifactId>maven-resources-plugin</artifactId><version>3.3.1</version></plugin>
-                <plugin><artifactId>maven-javadoc-plugin</artifactId><version>3.11.1</version></plugin>
-                <plugin><artifactId>maven-surefire-plugin</artifactId><version>${surefire-plugin.version}</version></plugin>
-                <plugin><artifactId>maven-failsafe-plugin</artifactId><version>${surefire-plugin.version}</version></plugin>
+                <plugin><artifactId>maven-javadoc-plugin</artifactId><version>3.11.2</version></plugin>
+                <plugin><artifactId>maven-surefire-plugin</artifactId><version>3.5.3</version></plugin>
+                <plugin><artifactId>maven-failsafe-plugin</artifactId><version>3.5.3</version></plugin>
                 <plugin><artifactId>maven-jar-plugin</artifactId><version>3.4.2</version></plugin>
-                <plugin><artifactId>maven-install-plugin</artifactId><version>3.1.2</version></plugin>
+                <plugin><artifactId>maven-install-plugin</artifactId><version>3.1.4</version></plugin>
                 <plugin><artifactId>maven-assembly-plugin</artifactId><version>3.7.1</version></plugin>
                 <plugin><artifactId>maven-release-plugin</artifactId><version>3.1.1</version></plugin>
                 <plugin><artifactId>maven-deploy-plugin</artifactId><version>3.1.4</version></plugin>
@@ -153,8 +155,8 @@
                 <plugin><artifactId>maven-site-plugin</artifactId><version>4.0.0-M16</version></plugin>
                 <plugin><groupId>com.soebes.maven.plugins</groupId><artifactId>echo-maven-plugin</artifactId><version>0.5.0</version></plugin>
                 <plugin><groupId>org.codehaus.mojo</groupId><artifactId>exec-maven-plugin</artifactId><version>3.5.0</version></plugin>
-                <plugin><groupId>org.flywaydb</groupId><artifactId>flyway-maven-plugin</artifactId><version>11.6.0</version></plugin>
-                <plugin><groupId>io.smallrye</groupId><artifactId>jandex-maven-plugin</artifactId><version>3.2.7</version></plugin>
+                <plugin><groupId>org.flywaydb</groupId><artifactId>flyway-maven-plugin</artifactId><version>11.8.0</version></plugin>
+                <plugin><groupId>io.smallrye</groupId><artifactId>jandex-maven-plugin</artifactId><version>3.3.0</version></plugin>
             </plugins>
         </pluginManagement>
 
@@ -273,9 +275,7 @@
                         <executions><execution><id>attach-javadocs</id><goals><goal>jar</goal></goals></execution></executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.jetbrains.dokka</groupId>
-                        <artifactId>dokka-maven-plugin</artifactId>
-                        <version>${version.kotlin-dokka}</version>
+                        <groupId>org.jetbrains.dokka</groupId><artifactId>dokka-maven-plugin</artifactId><version>${version.kotlin-dokka}</version>
                         <executions>
                             <execution><id>dokka-site</id><phase>pre-site</phase><goals><goal>dokka</goal></goals></execution>
                             <execution><id>dokka-jar</id><phase>package</phase><goals><goal>javadocJar</goal></goals></execution>
