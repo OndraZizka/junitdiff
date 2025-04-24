@@ -346,8 +346,8 @@
 
         <!-- JDom -->
         <!-- To upgrade to 2.x, see https://github.com/hunterhacker/jdom/wiki/JDOM2-Feature-XPath-Upgrade -->
-        <dependency><groupId>org.jdom</groupId><artifactId>jdom</artifactId><version>1.1.3</version></dependency>
         <dependency><groupId>org.jdom</groupId><artifactId>jdom2</artifactId><version>2.0.6.1</version></dependency>
+        <!-- JDOM is abandoned, better migrate to something else. -->
 
         <!-- JDom's XPath needs these, otherwise XPath.newInstance("/testsuite/testcase") throws... -->
         <dependency><groupId>jaxen</groupId><artifactId>jaxen</artifactId><version>1.2.0</version></dependency>
