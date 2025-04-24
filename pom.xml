@@ -63,7 +63,7 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.10.1</version>
+                <groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.14.0</version>
                 <executions>
                     <execution><id>default-compile</id><goals><goal>compile</goal></goals><phase>none</phase></execution>
                     <execution><id>default-test-compile</id><goals><goal>testCompile</goal></goals><phase>none</phase></execution>
@@ -86,7 +86,7 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId><artifactId>maven-assembly-plugin</artifactId><version>3.4.2</version>
+                <groupId>org.apache.maven.plugins</groupId><artifactId>maven-assembly-plugin</artifactId><version>3.7.1</version>
                 <!-- The executable JAR(s), flattened -->
                 <executions>
                     <execution><phase>package</phase><goals><goal>single</goal></goals>
@@ -111,7 +111,7 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId><version>3.0.0-M7</version>
+                <groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId><version>3.5.3</version>
                 <configuration>
                     <workingDirectory>target/</workingDirectory>
                     <systemPropertyVariables>
@@ -121,21 +121,28 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId><artifactId>maven-enforcer-plugin</artifactId><version>3.1.0</version>
+                <groupId>org.apache.maven.plugins</groupId><artifactId>maven-enforcer-plugin</artifactId><version>3.5.0</version>
                 <executions><execution><id>enforce-maven</id><goals><goal>enforce</goal></goals></execution></executions>
                 <configuration><rules><requireMavenVersion><version>3.8.1</version></requireMavenVersion></rules></configuration>
             </plugin>
 
-            <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-clean-plugin</artifactId><version>3.2.0</version></plugin>
-            <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-dependency-plugin</artifactId><version>3.3.0</version></plugin>
-            <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-deploy-plugin</artifactId><version>3.0.0</version></plugin>
-            <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-install-plugin</artifactId><version>3.0.1</version></plugin>
-            <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-jar-plugin</artifactId><version>3.3.0</version></plugin>
-            <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-release-plugin</artifactId><version>3.0.0-M7</version></plugin>
-            <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-resources-plugin</artifactId><version>3.3.0</version></plugin>
-            <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-site-plugin</artifactId><version>4.0.0-M3</version></plugin>
 
         </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-clean-plugin</artifactId><version>3.4.1</version></plugin>
+                <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-dependency-plugin</artifactId><version>3.8.1</version></plugin>
+                <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-deploy-plugin</artifactId><version>3.1.4</version></plugin>
+                <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-install-plugin</artifactId><version>3.1.2</version></plugin>
+                <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-jar-plugin</artifactId><version>3.4.2</version></plugin>
+                <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-release-plugin</artifactId><version>3.1.1</version></plugin>
+                <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-resources-plugin</artifactId><version>3.3.1</version></plugin>
+                <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-source-plugin</artifactId><version>3.3.1</version></plugin>
+                <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-site-plugin</artifactId><version>4.0.0-M7</version></plugin>
+                <plugin><groupId>org.codehaus.mojo</groupId><artifactId>exec-maven-plugin</artifactId><version>3.5.0</version></plugin>
+            </plugins>
+        </pluginManagement>
 
     </build>
 
@@ -155,7 +162,7 @@
                 <plugins>
                     <!-- Copy the dependencies to /lib -->
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-dependency-plugin</artifactId><version>3.3.0</version>
+                        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-dependency-plugin</artifactId>
                         <executions><execution><id>copyDeps</id><phase>prepare-package</phase><goals><goal>copy-dependencies</goal></goals></execution></executions>
                         <configuration>
                             <outputDirectory>${project.build.directory}/lib</outputDirectory>
@@ -165,7 +172,7 @@
                     </plugin>
                     <!-- Add the /lib above to the classPath. -->
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-jar-plugin</artifactId><version>3.3.0</version>
+                        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-jar-plugin</artifactId>
                         <executions>
                             <execution> <!-- If the jars are within a jar, it would need a special classloader. -->
                                 <id>executable</id><goals><goal>jar</goal></goals><phase>prepare-package</phase>
@@ -178,7 +185,7 @@
                     </plugin>
 
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-assembly-plugin</artifactId><version>3.4.2</version>
+                        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-assembly-plugin</artifactId>
                         <executions>
                             <!-- Create the distributable ZIP. -->
                             <execution>
@@ -209,7 +216,7 @@
                 <plugins>
                     <!-- One real execution of the tool from outside JUnit. -->
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId><artifactId>exec-maven-plugin</artifactId><version>3.1.0</version>
+                        <groupId>org.codehaus.mojo</groupId><artifactId>exec-maven-plugin</artifactId>
                         <executions>
                             <execution>
                                 <id>testJunitDiffExecutable-simple</id><phase>integration-test</phase><goals><goal>exec</goal></goals>
@@ -243,12 +250,12 @@
 
                     <!-- Generate a JavaDoc and source jars -->
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-source-plugin</artifactId><version>3.2.1</version>
+                        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-source-plugin</artifactId>
                         <configuration><includes>**/*.kt</includes></configuration>
                         <executions><execution><id>attach-sources</id><goals><goal>jar</goal></goals></execution></executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-javadoc-plugin</artifactId><version>3.4.1</version>
+                        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-javadoc-plugin</artifactId>
                         <executions><execution><id>attach-javadocs</id><goals><goal>jar</goal></goals></execution></executions>
                     </plugin>
                     <plugin>
@@ -264,7 +271,7 @@
 
                     <!-- Release plugin -->
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-release-plugin</artifactId><version>3.0.0-M7</version>
+                        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-release-plugin</artifactId>
                         <configuration>
                             <autoVersionSubmodules>true</autoVersionSubmodules>
                             <useReleaseProfile>false</useReleaseProfile>
@@ -274,7 +281,7 @@
                     </plugin>
 
                     <plugin>
-                        <groupId>org.sonatype.plugins</groupId><artifactId>nexus-staging-maven-plugin</artifactId><version>1.6.13</version>
+                        <groupId>org.sonatype.plugins</groupId><artifactId>nexus-staging-maven-plugin</artifactId><version>1.7.0</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>
@@ -288,9 +295,7 @@
 
                     <!-- This relies on the gpg command being installed and the GPG credentials being available e.g. from settings.xml. -->
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.0.1</version>
+                        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-gpg-plugin</artifactId><version>3.2.7</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
