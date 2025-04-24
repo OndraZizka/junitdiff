@@ -326,7 +326,7 @@
         <!-- Commons -->
         <dependency><groupId>org.apache.commons</groupId><artifactId>commons-lang3</artifactId><version>3.14.0</version></dependency>
         <dependency><groupId>org.apache.commons</groupId><artifactId>commons-text</artifactId><version>1.12.0</version></dependency>
-        <dependency><groupId>commons-io</groupId><artifactId>commons-io</artifactId><version>2.13.0</version></dependency>
+        <dependency><groupId>commons-io</groupId><artifactId>commons-io</artifactId><version>2.14.0</version></dependency>
 
         <!-- JDom -->
         <!-- To upgrade to 2.x, see https://github.com/hunterhacker/jdom/wiki/JDOM2-Feature-XPath-Upgrade -->
@@ -339,8 +339,8 @@
         <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId><version>2.0.7</version></dependency>
         <dependency><groupId>org.slf4j</groupId><artifactId>jcl-over-slf4j</artifactId><version>2.0.7</version></dependency>
         <dependency><groupId>org.slf4j</groupId><artifactId>log4j-over-slf4j</artifactId><version>2.0.7</version></dependency><!-- for for Log4J 1.x -->
-        <dependency><groupId>ch.qos.logback</groupId><artifactId>logback-classic</artifactId><version>1.4.7</version></dependency>
-        <dependency><groupId>ch.qos.logback</groupId><artifactId>logback-core</artifactId><version>1.4.7</version></dependency>
+        <dependency><groupId>ch.qos.logback</groupId><artifactId>logback-classic</artifactId><version>1.5.11</version></dependency>
+        <dependency><groupId>ch.qos.logback</groupId><artifactId>logback-core</artifactId><version>1.5.8</version></dependency>
 
         <!-- Test dependencies -->
         <dependency><groupId>junit</groupId><artifactId>junit</artifactId><version>4.13.2</version><scope>test</scope></dependency>
